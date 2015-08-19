@@ -1,0 +1,171 @@
+<dom-module id="nuxeo-listing">
+  <style>
+    :host {
+      display: block;
+    }
+
+    .item {
+      padding-top: 0.5em;
+      margin: 5px;
+      height: 1em;
+      background-color: white;
+      display: inline-block;
+      width: 300px;
+      overflow: hidden;
+      @apply(--shadow-elevation-2dp);
+    }
+
+    .item[selected] {
+      font-weight: bold;
+      border-left-color: var(--default-primary-color);
+      border-left-style: solid;
+    }
+
+    .breadcumb {
+      margin: 5px;
+    }
+
+    .path {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .path {
+      padding: 5px;
+      text-decoration: none;
+      color: black;
+      display: inline-block;
+    }
+
+    .path:last-of-type {
+      color: #aaa;
+      pointer-events: none;
+    }
+
+    @media (max-width: 600px) {
+      h1.paper-font-display1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+  <template>
+    <nx-connection id="nx"></nx-connection>
+
+    <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
+    <nx-resource id="query" path="/query" response="{{response}}"></nx-resource>
+
+    <div class="breadcumb">
+      <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
+          / <span class="path" on-tap="_up">[[item]]</span>
+      </template>
+    </div>
+
+    <div class="list">
+      <template is="dom-repeat" items="[[response.entries]]">
+        <paper-item class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
+          <img src="[[_iconFor(item)]]"></img> <span>[[item.title]]</span>
+        </paper-item>
+      </template>
+    </div>
+
+  </template>
+
+  <script>
+    (function() {
+      Polymer({
+        is: 'nuxeo-listing',
+
+        properties: {
+          path: {
+            type: String,
+            value: '/default-domain'
+          },
+          searchTerm: {
+            type: String,
+            notify: true
+          },
+          currentParent: {
+            type: Object,
+            notify: true
+          },
+          selected: {
+            type: Object,
+            notify: true
+          }
+        },
+
+        observers: [
+          '_fetchParent(path)',
+          '_fetch(currentParent.uid, searchTerm)'
+        ],
+
+        _fetchParent: function(path) {
+          this.$.parentResource.path = '/path' + path;
+          return this.$.parentResource.get();
+        },
+
+        _fetch: function(parentId, searchTerm) {
+          this.$.query.params = this._getQueryParams(parentId, searchTerm);
+          this.$.query.get();
+        },
+
+        _select: function(e) {
+          var item = e.model.item;
+          // if folder and already selected navigate to it (dbl click)
+          if (this._isSame(item, this.selected) && this._isFolder(item)) {
+            this.selected = undefined; // clear selection
+            this.searchTerm = ''; // clear search term
+            this.currentParent = item;
+          } else {
+            if (this._isSame(item, this.selected) && window.opener) {
+              window.opener.postMessage(item, '*');
+            }
+            this.selected = item;
+          }
+        },
+
+        _up: function(e) {
+          var pathParts = this._splitPath(this.currentParent.path);
+          var parentPath = '/' + pathParts.splice(0, e.model.index + 1).join('/');
+          this._fetchParent(parentPath);
+        },
+
+        _isSame: function(item, selected) {
+            return selected && selected.uid === item.uid;
+        },
+
+        _getQueryParams: function(parentId, searchTerm) {
+          var query = 'SELECT * FROM Document WHERE ecm:currentLifeCycleState != \'deleted\' ' +
+              ' AND ecm:isCheckedInVersion = 0 ' +
+              ' AND ecm:mixinType != \'HiddenInNavigation\' ';
+
+          if (searchTerm) {
+            return { query: query + ' AND ecm:fulltext=\'' + searchTerm + '*\''};
+          }
+          return {
+            query: query + ' AND ecm:parentId = ?',
+            queryParams: parentId
+          };
+        },
+
+        _iconFor: function(doc) {
+          if (doc.properties['common:icon']) {
+            return this.$.nx.client._baseURL + doc.properties['common:icon'];
+          }
+        },
+
+        _isFolder: function(doc) {
+          return doc.facets.some(function(e){ return e === 'Folderish'; });
+        },
+
+        _splitPath: function(path) {
+          return (path) ? path.split('/').splice(1) : [];
+        }
+      });
+    })();
+  </script>
+
+</dom-module>

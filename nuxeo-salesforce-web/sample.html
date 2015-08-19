@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html class=''>
+<head></head>
+<body>
+<button onclick="nuxeo.Picker.open(onFile)">Pick a file</button>
+<div id="selected"></div>
+<script>
+function onFile(file) {
+  document.getElementById('selected').innerHTML = file.title;
+}
+</script>
+
+<!-- nuxeo.picker.js -->
+<script>
+var nuxeo = nuxeo || {};
+nuxeo.Picker = nuxeo.Picker || {
+    open: function (cb) {
+        var width = 650;
+        var height = 600;
+        var left = window.screenX + window.outerWidth / 2 - width / 2;
+        var top = window.screenY + window.outerHeight / 2 - height / 2;
+        var popup = window.open('http://localhost:3000', 'popup', 'height=' + height + ',width=' + width + ',top=' + top + ',left=' + left);
+        window.addEventListener('message', function (e) {
+            popup.close();
+            cb && cb(e.data);
+        });
+    }
+};
+</script>
+</body></html>

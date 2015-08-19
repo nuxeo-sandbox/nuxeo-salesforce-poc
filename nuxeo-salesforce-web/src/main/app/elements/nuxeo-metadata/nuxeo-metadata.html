@@ -1,0 +1,135 @@
+<dom-module id="nuxeo-metadata">
+  <style>
+    :host {
+      display: block;
+    }
+
+    .card {
+      padding: 5px;
+      margin: 5px;
+      width: 280px;
+      background-color: white;
+      display: inline-block;
+      @apply(--shadow-elevation-2dp);
+    }
+
+    .property {
+      margin: 5px;
+      font-size: 14px;
+      display: block;
+    }
+
+    .property .label {
+      width: 110px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      float: left;
+      font-weight: bold;
+    }
+
+    .property .value {
+      margin-left: 0px;
+      flex: 1;
+    }
+
+    paper-toolbar {
+      color: var(--secondary-text-color);
+      background-color: var(--drawer-menu-color);
+      border-bottom: var(--drawer-toolbar-border-color);
+    }
+
+    @media (max-width: 600px) {
+      h1.paper-font-display1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+  <template>
+    <nx-connection id="nx"></nx-connection>
+
+    <paper-toolbar id="drawerToolbar">
+      <img src="[[icon]]"></img>&nbsp;<span class="paper-font-title">{{doc.title}}</span>
+    </paper-toolbar>
+
+    <template is="dom-if" if="[[thumbnail]]">
+      <div class="card"><img src$="[[thumbnail]]"></img></div>
+    </template>
+
+    <section id="common" class="card">
+      <div class="property">
+        <span class="label">Created at</span>
+        <span class="value">[[_date(doc, 'dc:created')]]</span>
+      </div>
+
+      <div class="property">
+        <span class="label">Last modified</span>
+        <span class="value">[[_date(doc, 'dc:modified')]]</span>
+      </div>
+
+      <div class="property">
+        <span class="label">Author</span>
+        <span class="value">[[_prop(doc, 'dc:creator')]]</span>
+      </div>
+
+      <div class="property">
+        <span class="label">Contributors</span>
+        <span class="value">[[_prop(doc, 'dc:creator')]]</span>
+      </div>
+
+      <div class="property">
+        <span class="label">Last contributor</span>
+        <span class="value">[[_prop(doc, 'dc:creator')]]</span>
+      </div>
+
+    </section>
+
+  </template>
+
+  <script>
+    (function() {
+      Polymer({
+        is: 'nuxeo-metadata',
+
+        properties: {
+          doc: {
+            type: Object
+          },
+          icon: {
+            computed: '_icon(doc)'
+          },
+          thumbnail: {
+            computed: '_thumbnail(doc)'
+          }
+        },
+
+        _icon: function(doc) {
+          if (doc && doc.properties['common:icon']) {
+            return this.$.nx.client._baseURL + doc.properties['common:icon'];
+          }
+        },
+
+        _thumbnail: function(doc) {
+          if (doc && doc.properties['thumb:thumbnail']) {
+            return doc.properties['thumb:thumbnail'].data;
+          }
+        },
+
+        _prop: function(doc, path) {
+          if (!doc.properties) {
+            return;
+          }
+          return doc.properties[path];
+        },
+
+        _date: function(doc, path) {
+          if (!doc.properties) {
+            return;
+          }
+          return new Date(doc.properties[path]).toLocaleString();
+        }
+
+      });
+    })();
+  </script>
+
+</dom-module>
