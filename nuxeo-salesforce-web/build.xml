@@ -46,7 +46,7 @@
           failonerror="false" />
   </target>
   <target name="build-skip-tests" if="skipTests">
-    <exec executable="${cmd.gulp}" failonerror="true">
+    <exec executable="${cmd.gulp}" failonerror="false">
     </exec>
   </target>
 
