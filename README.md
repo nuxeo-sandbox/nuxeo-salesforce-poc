@@ -1,13 +1,12 @@
-#Nuxeo Salesforce (Work in progress)
+#Nuxeo Salesforce
 
 # Projects
 
 - Tree
-  - `nuxeo-for-salesforce`: Salesforce plugin bringing access to Nuxeo instances
-  - `nuxeo-salesforce-core`: Nuxeo plugin Core bringing access to Salesforce accounts
-  - `nuxeo-salesforce-web`: Nuxeo plugin Web providing UI components for Salesforce plugin and views for Nuxeo plugin
+  - `nuxeo-salesforce-core`: Nuxeo plugin Core bringing access to Salesforce accounts (NOT IMPLEMENTED)
+  - `nuxeo-salesforce-web`: Nuxeo plugin Web providing UI components accessing Salesforce Objects
 
-# Getting Started
+# Getting Started (Work in progres)
 
 - [Download a Nuxeo server](http://www.nuxeo.com/en/downloads) (the zip version)
 
