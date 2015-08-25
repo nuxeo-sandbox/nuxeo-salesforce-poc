@@ -61,7 +61,7 @@ gulp.task('elements', function () {
 // Lint JavaScript
 gulp.task('jshint', function () {
   return gulp.src([
-      APP + '/scripts/**/*.js',
+      APP + '/scripts/app.js',
       APP + '/elements/**/*.js',
       APP + '/elements/**/*.html'
     ])

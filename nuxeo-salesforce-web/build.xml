@@ -38,7 +38,7 @@
   <target name="build" depends="init,build-with-tests,build-skip-tests" />
   <target name="build-with-tests" unless="skipTests">
     <echo message="build and test" />
-    <exec executable="${cmd.gulp}" failonerror="false">
+    <exec executable="${cmd.gulp}" failonerror="true">
     </exec>
     <mkdir dir="target/surefire-reports" />
     <copy file="test-results.xml"
@@ -46,7 +46,7 @@
           failonerror="false" />
   </target>
   <target name="build-skip-tests" if="skipTests">
-    <exec executable="${cmd.gulp}" failonerror="false">
+    <exec executable="${cmd.gulp}" failonerror="true">
     </exec>
   </target>
 
