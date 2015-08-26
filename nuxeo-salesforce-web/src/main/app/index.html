@@ -114,14 +114,14 @@
   <script src="https://na34.salesforce.com/canvas/sdk/js/34.0/canvas-all.js"></script>
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
   <script>
-    function callback(msg) {
-      if (msg.status !== 200) {
-        alert("Error: " + msg.status);
-        return;
+    Sfdc.canvas(function() {
+      var loggedIn = Sfdc.canvas.oauth.loggedin();
+      if (loggedIn) {
+        sessionStorage.setItem("client",JSON.stringify(Sfdc.canvas.oauth.client()));
+        Sfdc.canvas.client.ctx(callback, Sfdc.canvas.oauth.client())
       }
-      alert("Payload: " + msg.status);
-    }
-
+      window.onload = loginHandler;
+    })
     function loginHandler(e) {
       var uri;
       if (!Sfdc.canvas.oauth.loggedin()) {
@@ -136,28 +136,28 @@
         });
       } else {
         Sfdc.canvas.oauth.logout();
-        login.innerHTML = "Login";
-        Sfdc.canvas.byId("oauth").innerHTML = "";
       }
       return false;
     }
-
-    // Bootstrap the page once the DOM is ready.
-    Sfdc.canvas(function() {
-      // On Ready...
-      var login = Sfdc.canvas.byId("login"),
-        loggedIn = Sfdc.canvas.oauth.loggedin(),
-        token = Sfdc.canvas.oauth.token()
-      login.innerHTML = (loggedIn) ? "Logout" : "Login";
-      if (loggedIn) {
-        // Only displaying part of the OAuth token for better formatting.
-        Sfdc.canvas.byId("oauth").innerHTML = Sfdc.canvas.oauth.token()
-          .substring(1, 40) + "…";
-        Sfdc.canvas.client.ctx(callback, Sfdc.canvas.oauth.client())
+    function callback(ctx) {
+      if (ctx.status !== 200) {
+        alert("Error: " + ctx.status);
+        return;
       }
-      login.onclick = loginHandler;
-    });
-
+      var opportunity = {};
+      var opId = ctx.payload.environment.record.Id;
+      var queryUrl = ctx.payload.links.queryUrl;
+      var soqlQuery = "SELECT Name, id from Opportunity where id='"+opId+"'";
+      Sfdc.canvas.client.ajax(queryUrl + "?q=" + soqlQuery, {
+        client: JSON.parse(sessionStorage.getItem("client")),
+        method: 'GET',
+        contentType: "application/json",
+        success : function(response){
+          opportunity = response.payload;
+          alert("Opportunity : "+JSON.stringify(opportunity));
+        }
+      })
+    };
   </script>
 </body>
 
