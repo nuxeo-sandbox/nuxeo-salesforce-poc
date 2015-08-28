@@ -56,7 +56,7 @@
 
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
     <nx-resource id="query" path="/query" response="{{response}}"></nx-resource>
-    <nx-operation id="operation" op="Document.Query" params='{"query":"select * from Document"}' response="{{response}}"></nx-operation>
+    <nx-operation id="OpportunityDocuments" op="opportunitychain" params="{{params}}" response="{{response}}"></nx-operation>
 
     <div class="breadcumb">
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
@@ -155,10 +155,9 @@
         },
 
         _executeOp: function(opportunity){
-          this.ctx.opportunity = opportunity;
-          this.params.query = "select * from Document where dc:source = ?"
-          this.params.queryParams = opportunity.Id;
-          this.$.opportunityDocuments.execute();
+          this.params.opportunityId = opportunity.Id;
+          this.params.opportunityName = opportunity.Name;
+          this.$.OpportunityDocuments.execute();
         },
 
         _fetchParent: function(path) {
