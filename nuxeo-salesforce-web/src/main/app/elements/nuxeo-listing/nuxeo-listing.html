@@ -56,6 +56,7 @@
 
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
     <nx-resource id="query" path="/query" response="{{response}}"></nx-resource>
+    <nx-operation id="operation" op="Document.Query" params='{"query":"select * from Document"}' response="{{response}}"></nx-operation>
 
     <div class="breadcumb">
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
@@ -113,15 +114,17 @@
             notify: true
           },
           opportunity: {
-            type: Object
+            type: Object,
+            notify: true
           }
         },
 
         //Deactivated temporarily
-        // observers: [
-        //   '_fetchParent(path)',
-        //   '_fetch(currentParent.uid, searchTerm)'
-        // ],
+        observers: [
+          '_executeOp(opportunity)'
+          // '_fetchParent(path)',
+          // '_fetch(currentParent.uid, searchTerm)'
+        ],
 
         _getCtx: function(){
           if (this._isLogin) {
@@ -147,8 +150,11 @@
 
         _callbackOpportunity: function(response){
           this.opportunity = response.payload.records[0];
-          alert(this.opportunity.Id);
-          //this._fetchParent("/default-domain");
+          //alert(this.opportunity.Id);
+        },
+
+        _executeOp: function(opportunity){
+          this.$.operation.execute();
         },
 
         _fetchParent: function(path) {
