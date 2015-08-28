@@ -262,7 +262,7 @@ gulp.task('default', ['clean'], function (cb) {
   runSequence(
     ['copy', 'styles'],
     'elements',
-    ['jshint', 'images', 'fonts', 'html', 'compress'],
+    ['images', 'fonts', 'html', 'compress'],
     'vulcanize', 'dist:bower',
     cb);
     // Note: add , 'precache' , after 'vulcanize', if your are going to use Service Worker
