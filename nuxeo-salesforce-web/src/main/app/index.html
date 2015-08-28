@@ -95,24 +95,12 @@
   <!-- build:js scripts/vendor/json2.js -->
   <script src="scripts/vendor/json2.js"></script>
   <!-- endbuild-->
-  <!-- build:js scripts/vendor/canvas-all.js -->
+  <!-- build:js https://na34.salesforce.com/canvas/sdk/js/34.0/canvas-all.js -->
   <script src="https://na34.salesforce.com/canvas/sdk/js/34.0/canvas-all.js"></script>
   <!-- endbuild-->
 
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
 
-
-
-  <!-- Salesforce Script -->
-  <div>access_token = <span id="oauth"></span></div>
-  <div><a id="login" href="#">Login</a>
-    <br>
-  </div>
-
-  <script src="scripts/app.js"></script>
-  <script src="scripts/vendor/json2.js"></script>
-  <script src="https://na34.salesforce.com/canvas/sdk/js/34.0/canvas-all.js"></script>
-  <script src="../bower_components/jquery/dist/jquery.min.js"></script>
   <script>
     Sfdc.canvas(function() {
       var loggedIn = Sfdc.canvas.oauth.loggedin();
