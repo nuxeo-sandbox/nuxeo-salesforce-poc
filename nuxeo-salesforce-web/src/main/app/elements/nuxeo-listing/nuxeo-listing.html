@@ -116,14 +116,16 @@
           opportunity: {
             type: Object,
             notify: true
+          },
+          params: {
+            type:Object,
+            value: {}
           }
         },
 
-        //Deactivated temporarily
         observers: [
+          '_fetch(currentParent.uid, searchTerm)',
           '_executeOp(opportunity)'
-          // '_fetchParent(path)',
-          // '_fetch(currentParent.uid, searchTerm)'
         ],
 
         _getCtx: function(){
@@ -150,25 +152,23 @@
 
         _callbackOpportunity: function(response){
           this.opportunity = response.payload.records[0];
-          //alert(this.opportunity.Id);
         },
 
         _executeOp: function(opportunity){
-          this.$.operation.execute();
+          this.ctx.opportunity = opportunity;
+          this.params.query = "select * from Document where dc:source = ?"
+          this.params.queryParams = opportunity.Id;
+          this.$.opportunityDocuments.execute();
         },
 
         _fetchParent: function(path) {
-          if (this._isLogin) {
-            this.$.parentResource.path = '/path' + path;
-            return this.$.parentResource.get();
-          }
+          this.$.parentResource.path = '/path' + path;
+          return this.$.parentResource.get();
         },
 
         _fetch: function(parentId, searchTerm) {
-          if (this._isLogin) {
-            this.$.query.params = this._getQueryParams(parentId, searchTerm);
-            this.$.query.get();
-          }
+          this.$.query.params = this._getQueryParams(parentId, searchTerm);
+          this.$.query.get();
         },
 
         _select: function(e) {
