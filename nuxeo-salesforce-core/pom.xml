@@ -40,6 +40,12 @@
       <groupId>org.nuxeo.ecm.core</groupId>
       <artifactId>nuxeo-core-schema</artifactId>
     </dependency>
+
+    <dependency>
+        <groupId>com.nuxeo.studio</groupId>
+        <artifactId>vpasquier-SANDBOX</artifactId>
+        <version>SNAPSHOT-0.0.0</version>
+    </dependency>
   </dependencies>
 
 </project>
