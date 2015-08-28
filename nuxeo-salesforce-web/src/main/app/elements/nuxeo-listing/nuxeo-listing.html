@@ -75,9 +75,26 @@
 
   <script>
     (function() {
+      var isLogin = Sfdc.canvas.oauth.loggedin();
+      if(isLogin){
+        sessionStorage.setItem("client", JSON.stringify(Sfdc.canvas.oauth.client()));
+      } else {
+        var uri = Sfdc.canvas.oauth.loginUrl();
+        Sfdc.canvas.oauth.login({
+          uri: uri,
+          params: {
+            response_type: "token",
+            client_id: "3MVG9KI2HHAq33Rw3X7mQauk5.B.uuz_9Q8V8spV9ydsDyov4MaFEvyrajf2BKGgedc.W4WXaupu0q2dkEA_y",
+            redirect_uri: encodeURIComponent("https://172.28.255.143:8443/nuxeo/picker/callback/callback.html")
+          }
+        });
+      }
       Polymer({
         is: 'nuxeo-listing',
-
+        created: function() {
+          this._isLogin = isLogin;
+          this._getCtx();
+        },
         properties: {
           path: {
             type: String,
@@ -94,22 +111,58 @@
           selected: {
             type: Object,
             notify: true
+          },
+          opportunity: {
+            type: Object
           }
         },
 
-        observers: [
-          '_fetchParent(path)',
-          '_fetch(currentParent.uid, searchTerm)'
-        ],
+        //Deactivated temporarily
+        // observers: [
+        //   '_fetchParent(path)',
+        //   '_fetch(currentParent.uid, searchTerm)'
+        // ],
+
+        _getCtx: function(){
+          if (this._isLogin) {
+            var callback = this._callbackCtx.bind(this);
+            Sfdc.canvas.client.ctx(callback, JSON.parse(sessionStorage.getItem("client")));
+          }
+        },
+
+        _callbackCtx: function(ctx){
+          var opId = ctx.payload.environment.record.Id;
+          var queryUrl = ctx.payload.links.queryUrl;
+          var soqlQuery = "SELECT Name, id from Opportunity where id='" + opId + "'";
+          var callbackOp = this._callbackOpportunity.bind(this);
+          var settings = {
+            client: JSON.parse(sessionStorage.getItem("client")),
+            method: 'GET',
+            async: true,
+            contentType: "application/json",
+            success: callbackOp
+          }
+          Sfdc.canvas.client.ajax(queryUrl + "?q=" + soqlQuery, settings);
+        },
+
+        _callbackOpportunity: function(response){
+          this.opportunity = response.payload.records[0];
+          alert(this.opportunity.Id);
+          //this._fetchParent("/default-domain");
+        },
 
         _fetchParent: function(path) {
-          this.$.parentResource.path = '/path' + path;
-          return this.$.parentResource.get();
+          if (this._isLogin) {
+            this.$.parentResource.path = '/path' + path;
+            return this.$.parentResource.get();
+          }
         },
 
         _fetch: function(parentId, searchTerm) {
-          this.$.query.params = this._getQueryParams(parentId, searchTerm);
-          this.$.query.get();
+          if (this._isLogin) {
+            this.$.query.params = this._getQueryParams(parentId, searchTerm);
+            this.$.query.get();
+          }
         },
 
         _select: function(e) {
@@ -134,13 +187,13 @@
         },
 
         _isSame: function(item, selected) {
-            return selected && selected.uid === item.uid;
+          return selected && selected.uid === item.uid;
         },
 
         _getQueryParams: function(parentId, searchTerm) {
           var query = 'SELECT * FROM Document WHERE ecm:currentLifeCycleState != \'deleted\' ' +
-              ' AND ecm:isCheckedInVersion = 0 ' +
-              ' AND ecm:mixinType != \'HiddenInNavigation\' ';
+            ' AND ecm:isCheckedInVersion = 0 ' +
+            ' AND ecm:mixinType != \'HiddenInNavigation\' ';
 
           if (searchTerm) {
             return { query: query + ' AND ecm:fulltext=\'' + searchTerm + '*\''};

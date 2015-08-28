@@ -85,8 +85,6 @@
       </paper-header-panel>
     </paper-drawer-panel>
 
-    <div id="leaddetails"></div>
-
   </template>
 
   <!-- build:js scripts/app.js -->
@@ -100,53 +98,6 @@
   <!-- endbuild-->
 
   <script src="../bower_components/jquery/dist/jquery.min.js"></script>
-
-  <script>
-    Sfdc.canvas(function() {
-      var loggedIn = Sfdc.canvas.oauth.loggedin();
-      if (loggedIn) {
-        sessionStorage.setItem("client",JSON.stringify(Sfdc.canvas.oauth.client()));
-        Sfdc.canvas.client.ctx(callback, Sfdc.canvas.oauth.client())
-      }
-      window.onload = loginHandler;
-    })
-    function loginHandler(e) {
-      var uri;
-      if (!Sfdc.canvas.oauth.loggedin()) {
-        uri = Sfdc.canvas.oauth.loginUrl();
-        Sfdc.canvas.oauth.login({
-          uri: uri,
-          params: {
-            response_type: "token",
-            client_id: "3MVG9KI2HHAq33Rw3X7mQauk5.B.uuz_9Q8V8spV9ydsDyov4MaFEvyrajf2BKGgedc.W4WXaupu0q2dkEA_y",
-            redirect_uri: encodeURIComponent("https://172.28.255.143:8443/nuxeo/picker/callback/callback.html")
-          }
-        });
-      } else {
-        Sfdc.canvas.oauth.logout();
-      }
-      return false;
-    }
-    function callback(ctx) {
-      if (ctx.status !== 200) {
-        alert("Error: " + ctx.status);
-        return;
-      }
-      var opportunity = {};
-      var opId = ctx.payload.environment.record.Id;
-      var queryUrl = ctx.payload.links.queryUrl;
-      var soqlQuery = "SELECT Name, id from Opportunity where id='"+opId+"'";
-      Sfdc.canvas.client.ajax(queryUrl + "?q=" + soqlQuery, {
-        client: JSON.parse(sessionStorage.getItem("client")),
-        method: 'GET',
-        contentType: "application/json",
-        success : function(response){
-          opportunity = response.payload;
-          alert("Opportunity : "+JSON.stringify(opportunity));
-        }
-      })
-    };
-  </script>
 </body>
 
 </html>
