@@ -66,7 +66,8 @@
 
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
     <nx-resource id="query" path="/query" response="{{response}}"></nx-resource>
-    <nx-operation id="OpportunityDocuments" op="opportunitychain" params="{{params}}" response="{{response}}"></nx-operation>
+    <nx-operation id="Opportunity" op="opportunitychain" params="{{params}}" response="{{currentParent}}"></nx-operation>
+    <nx-operation id="OpportunityDocuments" op="opportunitydocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
 
     <div class="breadcumb">
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
@@ -135,7 +136,8 @@
 
         observers: [
           '_fetch(currentParent.uid, searchTerm)',
-          '_executeOp(opportunity)'
+          '_executeOp(opportunity)',
+          '_getChildren(opportunity)'
         ],
 
         listeners: {
@@ -174,7 +176,7 @@
         _executeOp: function(opportunity){
           this.params.opportunityId = opportunity.Id;
           this.params.opportunityName = opportunity.Name;
-          this.$.OpportunityDocuments.execute();
+          this.$.Opportunity.execute();
         },
 
         _fetchParent: function(path) {
@@ -185,6 +187,11 @@
         _fetch: function(parentId, searchTerm) {
           this.$.query.params = this._getQueryParams(parentId, searchTerm);
           this.$.query.get();
+        },
+
+        _getChildren: function(opportunity){
+          this.params.opportunityId = opportunity.Id;
+          this.$.OpportunityDocuments.execute();
         },
 
         _select: function(e) {
