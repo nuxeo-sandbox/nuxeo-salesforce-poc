@@ -285,8 +285,8 @@
           var uploads = [];
           for (var i = 0; i < files.length; i++) {
             uploads.push(new Promise(function (resolve, reject) {
-              uploader.uploadFile(files[i], function (error, data) {
-                (error) ? reject(error) : resolve(data);
+              uploader.uploadFile(files[i], function (data) {
+                resolve(data);
               });
             }));
           }
