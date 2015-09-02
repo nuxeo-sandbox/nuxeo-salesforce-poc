@@ -69,11 +69,11 @@
     <nx-operation id="Opportunity" op="opportunitychain" params="{{params}}" response="{{currentParent}}"></nx-operation>
     <nx-operation id="OpportunityDocuments" op="opportunitydocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
 
-    <div class="breadcumb">
+    <!--<div class="breadcumb">
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
         / <span class="path" on-tap="_up">[[item]]</span>
       </template>
-    </div>
+    </div>-->
 
     <div id="list" class="list">
       <template is="dom-repeat" items="[[response.entries]]">
@@ -87,9 +87,13 @@
 
   <script>
     (function() {
-      var isLogin = Sfdc.canvas.oauth.loggedin();
-      if(isLogin){
-        sessionStorage.setItem("client", JSON.stringify(Sfdc.canvas.oauth.client()));
+      var isLogging = Sfdc.canvas.oauth.loggedin();
+      var isLogged = !!sessionStorage.getItem("isLogged");
+      if(isLogging || isLogged){
+        if(isLogging) {
+          sessionStorage.setItem("client", JSON.stringify(Sfdc.canvas.oauth.client()));
+          sessionStorage.setItem("isLogged", true);
+        }
       } else {
         var uri = Sfdc.canvas.oauth.loginUrl();
         Sfdc.canvas.oauth.login({
@@ -104,7 +108,8 @@
       Polymer({
         is: 'nuxeo-listing',
         created: function() {
-          this._isLogin = isLogin;
+          this._isLogging = isLogging;
+          this._isLogged = isLogged;
           this._getCtx();
         },
         properties: {
@@ -148,7 +153,7 @@
         },
 
         _getCtx: function(){
-          if (this._isLogin) {
+          if (this._isLogging || this._isLogged) {
             var callback = this._callbackCtx.bind(this);
             Sfdc.canvas.client.ctx(callback, JSON.parse(sessionStorage.getItem("client")));
           }
