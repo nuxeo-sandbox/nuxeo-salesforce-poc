@@ -175,6 +175,9 @@
         },
 
         _callbackOpportunity: function(response){
+          if(!response.payload.records){
+            $(".fullbleed").hide();
+          }
           this.opportunity = response.payload.records[0];
         },
 
