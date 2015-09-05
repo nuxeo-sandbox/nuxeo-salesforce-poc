@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="generator" content="Polymer Starter Kit" />
-  <title>Nuxeo Picker</title>
+  <title>Nuxeo Salesforce</title>
   <!-- Place favicon.ico in the `app/` directory -->
 
   <!-- Chrome for Android theme color -->
@@ -41,9 +41,6 @@
   <script src="../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
   <!-- endbuild -->
 
-  <!-- build:js scripts/app.js -->
-  <script src="scripts/app.js"></script>
-  <!-- endbuild-->
   <!-- build:js scripts/vendor/json2.js -->
   <script src="scripts/vendor/json2.js"></script>
   <!-- endbuild-->
@@ -79,11 +76,10 @@
         <paper-toolbar id="mainToolbar">
           <div class="horizontal layout center">
             Related Documents from Nuxeo
-            <!--<paper-icon-button id="icon" icon="search" on-tap="toggleSearch"></paper-icon-button>-->
-            <paper-input id="search" hidden type="search" bind-value="{{searchTerm}}" on-blur="toggleSearch" autocomplete="off" placeholder="Search"></paper-input>
           </div>
           <span class="flex"></span>
-
+          <paper-input id="search" hidden type="search" bind-value="{{searchTerm}}" on-blur="toggleSearch" autocomplete="off" placeholder="Search"></paper-input>
+          <paper-icon-button id="icon" icon="search" on-tap="toggleSearch"></paper-icon-button>
           <!-- Toolbar icons -->
           <template is="dom-if" if="[[selected]]">
             <paper-icon-button id="paperToggle" icon="info" paper-drawer-toggle></paper-icon-button>
@@ -100,5 +96,7 @@
 
   </template>
 </body>
-
+<!-- build:js scripts/app.js -->
+<script src="scripts/app.js"></script>
+<!-- endbuild-->
 </html>

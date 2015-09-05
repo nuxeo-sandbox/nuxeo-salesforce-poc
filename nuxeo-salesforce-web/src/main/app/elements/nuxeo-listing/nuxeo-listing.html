@@ -233,7 +233,10 @@
             ' AND ecm:mixinType != \'HiddenInNavigation\' ';
 
           if (searchTerm) {
-            return { query: query + ' AND ecm:fulltext=\'' + searchTerm + '*\''};
+            return {
+              query: query + ' AND ecm:parentId = ?' + ' AND ecm:fulltext=\'' + searchTerm + '*\'',
+              queryParams: parentId
+            };
           }
           return {
             query: query + ' AND ecm:parentId = ?',
