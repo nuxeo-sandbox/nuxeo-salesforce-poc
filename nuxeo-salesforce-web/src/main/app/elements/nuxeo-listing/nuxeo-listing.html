@@ -64,8 +64,8 @@
   <template>
     <nx-connection id="nx"></nx-connection>
 
-    <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
-    <nx-resource id="query" path="/query" response="{{response}}"></nx-resource>
+    <nx-resource id="parentResource" response="{{currentParent}}" enrichers="preview"></nx-resource>
+    <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview"></nx-resource>
     <nx-operation id="Opportunity" op="opportunitychain" params="{{params}}" response="{{currentParent}}"></nx-operation>
     <nx-operation id="OpportunityDocuments" op="opportunitydocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
 
@@ -78,7 +78,8 @@
     <div id="list" class="list">
       <template is="dom-repeat" items="[[response.entries]]">
         <paper-item class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
-          <img src="[[_iconFor(item)]]"> <span>[[item.title]]</span>
+          <img src="[[_iconFor(item)]]"/><span>[[item.title]]</span>
+          <a href="[[_preview(item)]]" target="_blank"><i class="material-icons">visibility</i></a>
         </paper-item>
       </template>
     </div>
@@ -248,6 +249,10 @@
           if (doc.properties['common:icon']) {
             return this.$.nx.client._baseURL + doc.properties['common:icon'];
           }
+        },
+
+        _preview: function(doc) {
+          return doc.contextParameters.preview.url;
         },
 
         _isFolder: function(doc) {
