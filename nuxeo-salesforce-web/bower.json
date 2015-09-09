@@ -4,6 +4,7 @@
   "dependencies": {
     "iron-elements": "PolymerElements/iron-elements#1.0.0",
     "paper-elements": "PolymerElements/paper-elements#1.0.1",
+    "core-elements": "PolymerElements/paper-tooltip#1.0.1",
     "platinum-elements": "PolymerElements/platinum-elements#1.0.1",
     "neon-elements": "PolymerElements/neon-elements#1.0.0",
     "nuxeo-elements": "nuxeo/nuxeo-elements#master"
