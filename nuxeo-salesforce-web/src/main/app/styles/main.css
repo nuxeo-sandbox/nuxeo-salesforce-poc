@@ -9,6 +9,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 body {
   background: #fafafa;
-  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  color: #333;
+  font-family: Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333
+}
+paper-dialog.folder-box {
+  background-color: #fff;
+  position: fixed;
+  top: 50px;
+  left: 300px;
+  width: 300px;
+  height: 200px
+}
+.row_actions{
+  float:right
+}
+paper-button.colorful {
+  color: #3372DF;
 }

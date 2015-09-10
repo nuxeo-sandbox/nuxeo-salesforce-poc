@@ -73,6 +73,7 @@
     <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL"></nx-resource>
     <nx-operation id="Opportunity" op="opportunitychain" params="{{params}}" response="{{currentParent}}"></nx-operation>
     <nx-operation id="OpportunityDocuments" op="opportunitydocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
+    <nx-operation id="CreateFolder" op="Document.Create" input="{{currentParent.path}}" params="{{params}}"></nx-operation>
 
     <div class="breadcumb">
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
@@ -80,15 +81,32 @@
       </template>
     </div>
 
+    <section class="sub_toolbar_actions" onclick="createFolderBox(event)">
+      <paper-button tabindex="0" data-dialog="create_folder_box"><iron-icon icon="folder"></iron-icon>add folder</paper-button>
+    </section>
+    <paper-dialog id="create_folder_box" class="folder-box">
+      <h3>Add folder</h3>
+      <div>
+        <paper-input id="folder_name" placeholder="Folder Title" value="{{folderName}}" required auto-validate error-message="The folder title is required">
+        </paper-input>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss="">Cancel</paper-button>
+        <paper-button dialog-confirm="" on-tap="_createFolder">Create</paper-button>
+      </div>
+    </paper-dialog>
+
     <div id="list" class="list">
+      <template is="dom-if" if="[[_isEmpty(response)]]">
+        There is no related document
+      </template>
       <template is="dom-repeat" items="[[response.entries]]">
         <paper-item class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
           <img src="[[_iconFor(item)]]"><span>[[item.title]]</span>
-          <!-- Im CSSorry in advance -->
-          <div style="float:right">
+          <div class="row_actions">
             <a href="[[_preview(item)]]" target="_blank"><i id="preview_action" class="material-icons">visibility</i></a>
             <paper-tooltip for="preview_action">Preview the document</paper-tooltip>
-            <a href="[[_downloadURL(item)]]"><i id="download_action" class="material-icons">get_app</i></a>
+            <a href="[[_downloadURL(item)]]" target="_blank"><i id="download_action" class="material-icons">get_app</i></a>
             <paper-tooltip for="download_action">Download the document</paper-tooltip>
             <a href="[[_docURL(item)]]" target="_blank"><i id="edit_action" class="material-icons">create</i></a>
             <paper-tooltip for="edit_action">Edit in Nuxeo</paper-tooltip>
@@ -100,6 +118,23 @@
   </template>
 
   <script>
+    function validate() {
+      document.getElementById('folder_name').validate();
+    }
+    function createFolderBox(e) {
+      var button = e.target;
+      while (!button.hasAttribute('data-dialog') && button !== document.body) {
+        button = button.parentElement;
+      }
+      if (!button.hasAttribute('data-dialog')) {
+        return;
+      }
+      var id = button.getAttribute('data-dialog');
+      var dialog = document.getElementById(id);
+      if (dialog) {
+        dialog.open();
+      }
+    }
     (function() {
       var isLogging = Sfdc.canvas.oauth.loggedin();
       var isLogged = !!sessionStorage.getItem("isLogged");
@@ -150,6 +185,9 @@
           params: {
             type:Object,
             value: {}
+          },
+          folderName: {
+            type: String
           }
         },
 
@@ -201,6 +239,10 @@
           this.$.Opportunity.execute();
         },
 
+        _isEmpty: function(response){
+          return response===null;
+        },
+
         _fetchParent: function(path) {
           this.$.parentResource.path = '/path' + path;
           return this.$.parentResource.get();
@@ -209,6 +251,16 @@
         _fetch: function(parentId, searchTerm) {
           this.$.query.params = this._getQueryParams(parentId, searchTerm);
           this.$.query.get();
+        },
+
+        _createFolder: function() {
+          this.params.name=this.folderName;
+          this.params.type="Folder";
+          this.params.properties = {};
+          this.params.properties["dc:title"]=this.folderName;
+          this.$.CreateFolder.execute().then(function() {
+            return this.$.query.get();
+          }.bind(this));
         },
 
         _getChildren: function(opportunity){
@@ -265,15 +317,29 @@
         },
 
         _preview: function(doc) {
-          return doc.contextParameters.preview.url;
+          if(doc.contextParameters!==undefined){
+            if(doc.contextParameters.preview!==undefined) {
+              return doc.contextParameters.preview.url;
+            } else {
+              return doc.contextParameters.documentURL;
+            }
+          }
         },
 
         _docURL: function(doc) {
-          return doc.contextParameters.documentURL;
+          if(doc.contextParameters!==undefined){
+            return doc.contextParameters.documentURL;
+          }
         },
 
         _downloadURL: function(doc) {
-          return doc.properties["file:content"].data;
+          if(doc.properties["file:content"]!==undefined && doc.properties["file:content"]!==null){
+            return doc.properties["file:content"].data;
+          }else{
+            if(doc.contextParameters!==undefined){
+              return doc.contextParameters.documentURL;
+            }
+          }
         },
 
         _isFolder: function(doc) {
