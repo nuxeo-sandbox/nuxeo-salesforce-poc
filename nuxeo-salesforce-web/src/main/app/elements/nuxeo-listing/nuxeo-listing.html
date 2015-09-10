@@ -74,11 +74,11 @@
     <nx-operation id="Opportunity" op="opportunitychain" params="{{params}}" response="{{currentParent}}"></nx-operation>
     <nx-operation id="OpportunityDocuments" op="opportunitydocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
 
-    <!--<div class="breadcumb">
+    <div class="breadcumb">
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
         / <span class="path" on-tap="_up">[[item]]</span>
       </template>
-    </div>-->
+    </div>
 
     <div id="list" class="list">
       <template is="dom-repeat" items="[[response.entries]]">
