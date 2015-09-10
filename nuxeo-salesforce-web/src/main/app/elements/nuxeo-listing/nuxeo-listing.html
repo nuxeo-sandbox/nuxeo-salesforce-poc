@@ -69,8 +69,8 @@
   <template>
     <nx-connection id="nx"></nx-connection>
 
-    <nx-resource id="parentResource" response="{{currentParent}}" enrichers="preview"></nx-resource>
-    <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview"></nx-resource>
+    <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
+    <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL"></nx-resource>
     <nx-operation id="Opportunity" op="opportunitychain" params="{{params}}" response="{{currentParent}}"></nx-operation>
     <nx-operation id="OpportunityDocuments" op="opportunitydocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
 
@@ -88,9 +88,9 @@
           <div style="float:right">
             <a href="[[_preview(item)]]" target="_blank"><i id="preview_action" class="material-icons">visibility</i></a>
             <paper-tooltip for="preview_action">Preview the document</paper-tooltip>
-            <a href="[[_preview(item)]]" target="_blank"><i id="download_action" class="material-icons">get_app</i></a>
+            <a href="[[_downloadURL(item)]]"><i id="download_action" class="material-icons">get_app</i></a>
             <paper-tooltip for="download_action">Download the document</paper-tooltip>
-            <a href="[[_preview(item)]]" target="_blank"><i id="edit_action" class="material-icons">create</i></a>
+            <a href="[[_docURL(item)]]" target="_blank"><i id="edit_action" class="material-icons">create</i></a>
             <paper-tooltip for="edit_action">Edit in Nuxeo</paper-tooltip>
           </div>
         </paper-item>
@@ -266,6 +266,14 @@
 
         _preview: function(doc) {
           return doc.contextParameters.preview.url;
+        },
+
+        _docURL: function(doc) {
+          return doc.contextParameters.documentURL;
+        },
+
+        _downloadURL: function(doc) {
+          return doc.properties["file:content"].data;
         },
 
         _isFolder: function(doc) {
