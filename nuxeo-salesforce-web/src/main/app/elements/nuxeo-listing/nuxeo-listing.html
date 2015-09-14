@@ -87,7 +87,7 @@
     <paper-dialog id="create_folder_box" class="folder-box">
       <h3>Add folder</h3>
       <div>
-        <paper-input id="folder_name" placeholder="Folder Title" value="{{folderName}}" required auto-validate error-message="The folder title is required">
+        <paper-input id="folder_name" placeholder="Folder Title" value="{{folderName}}" required="" auto-validate="" error-message="The folder title is required">
         </paper-input>
       </div>
       <div class="buttons">
@@ -150,7 +150,7 @@
           params: {
             response_type: "token",
             client_id: "3MVG9KI2HHAq33Rw3X7mQauk5.B.uuz_9Q8V8spV9ydsDyov4MaFEvyrajf2BKGgedc.W4WXaupu0q2dkEA_y",
-            redirect_uri: encodeURIComponent("https://172.28.255.143:8443/nuxeo/picker/callback/callback.html")
+            redirect_uri: encodeURIComponent("https://172.28.255.155:8443/nuxeo/picker/callback/callback.html")
           }
         });
       }
@@ -240,7 +240,7 @@
         },
 
         _isEmpty: function(response){
-          return response===null;
+          return response===null || response.resultsCount === 0;
         },
 
         _fetchParent: function(path) {
