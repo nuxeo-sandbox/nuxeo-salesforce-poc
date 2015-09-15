@@ -103,17 +103,19 @@
       <template is="dom-repeat" items="[[response.entries]]">
         <paper-item class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
           <img src="[[_iconFor(item)]]"><span>[[item.title]]</span>
-          <div class="row_actions">
-            <a href="[[_preview(item)]]" target="_blank"><i id="preview_action" class="material-icons">visibility</i></a>
-            <paper-tooltip for="preview_action">Preview the document</paper-tooltip>
-            <a href="[[_downloadURL(item)]]" target="_blank"><i id="download_action" class="material-icons">get_app</i></a>
-            <paper-tooltip for="download_action">Download the document</paper-tooltip>
-            <a href="[[_docURL(item)]]" target="_blank"><i id="edit_action" class="material-icons">create</i></a>
-            <paper-tooltip for="edit_action">Edit in Nuxeo</paper-tooltip>
-            <template is="dom-if" if="[[_isLock(item)]]">
-              <i class="material-icons">lock</i>
-            </template>
-          </div>
+          <template is="dom-if" if="[[_isNotFolder(item)]]">
+            <div class="row_actions">
+              <a href="[[_preview(item)]]" target="_blank"><i id="preview_action" class="material-icons">visibility</i></a>
+              <paper-tooltip for="preview_action">Preview the document</paper-tooltip>
+              <a href="[[_downloadURL(item)]]" target="_blank"><i id="download_action" class="material-icons">get_app</i></a>
+              <paper-tooltip for="download_action">Download the document</paper-tooltip>
+              <a href="[[_docURL(item)]]" target="_blank"><i id="edit_action" class="material-icons">create</i></a>
+              <paper-tooltip for="edit_action">Edit in Nuxeo</paper-tooltip>
+              <template is="dom-if" if="[[_isLock(item)]]">
+                <i class="material-icons">lock</i>
+              </template>
+            </div>
+          </template>
         </paper-item>
       </template>
     </div>
@@ -274,7 +276,7 @@
         _select: function(e) {
           var item = e.model.item;
           // if folder and already selected navigate to it (dbl click)
-          if (this._isSame(item, this.selected) && this._isFolder(item)) {
+          if (this._isFolder(item)) {
             this.selected = undefined; // clear selection
             this.searchTerm = ''; // clear search term
             this.currentParent = item;
@@ -351,6 +353,10 @@
 
         _isFolder: function(doc) {
           return doc.facets.some(function(e){ return e === 'Folderish'; });
+        },
+
+        _isNotFolder: function(doc) {
+          return doc.facets.some(function(e){ return e !== 'Folderish'; });
         },
 
         _splitPath: function(path) {
