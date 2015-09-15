@@ -183,7 +183,7 @@
             type: Object,
             notify: true
           },
-          opportunity: {
+          sfObject: {
             type: Object,
             notify: true
           },
@@ -198,8 +198,8 @@
 
         observers: [
           '_fetch(currentParent.uid, searchTerm)',
-          '_executeOp(opportunity)',
-          '_getChildren(opportunity)'
+          '_executeOp(sfObject)',
+          '_getChildren(sfObject)'
         ],
 
         listeners: {
@@ -219,7 +219,8 @@
         _callbackCtx: function(ctx){
           var opId = ctx.payload.environment.record.Id;
           var queryUrl = ctx.payload.links.queryUrl;
-          var soqlQuery = "SELECT Name, id from Opportunity where id='" + opId + "'";
+          var sfObject = ctx.payload.environment.record.attributes.type;
+          var soqlQuery = "SELECT Name, id from " + sfObject + " where id='" + opId + "'";
           var callbackOp = this._callbackOpportunity.bind(this);
           var settings = {
             client: JSON.parse(sessionStorage.getItem("client")),
@@ -235,7 +236,7 @@
           if(!response.payload.records){
             $(".fullbleed").hide();
           }
-          this.opportunity = response.payload.records[0];
+          this.sfObject = response.payload.records[0];
         },
 
         _executeOp: function(opportunity){
