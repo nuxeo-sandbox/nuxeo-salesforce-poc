@@ -110,6 +110,9 @@
             <paper-tooltip for="download_action">Download the document</paper-tooltip>
             <a href="[[_docURL(item)]]" target="_blank"><i id="edit_action" class="material-icons">create</i></a>
             <paper-tooltip for="edit_action">Edit in Nuxeo</paper-tooltip>
+            <template is="dom-if" if="[[_isLock(item)]]">
+              <i class="material-icons">lock</i>
+            </template>
           </div>
         </paper-item>
       </template>
@@ -324,6 +327,10 @@
               return doc.contextParameters.documentURL;
             }
           }
+        },
+
+        _isLock: function(doc) {
+          return doc.lockOwner!==undefined;
         },
 
         _docURL: function(doc) {
