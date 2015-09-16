@@ -2,15 +2,23 @@
 
 # Projects
 
-- Tree
-  - `nuxeo-salesforce-core`: Nuxeo plugin Core bringing access to Salesforce accounts (NOT IMPLEMENTED)
-  - `nuxeo-salesforce-web`: Nuxeo plugin Web providing UI components accessing Salesforce Objects
+- Repository:
+  - `nuxeo-salesforce-core`: Nuxeo plugin Core bringing access to Salesforce accounts.
+  - `nuxeo-salesforce-web`: Nuxeo plugin Web providing UI components accessing Salesforce Objects.
 
-# Getting Started (Work in progres)
+## Building
+
+`mvn clean install`
+
+# Getting Started
 
 - [Download a Nuxeo server](http://www.nuxeo.com/en/downloads) (the zip version)
 
 - Unzip it
+
+- Deploy `nuxeo-salesforce-core` and `nuxeo-salesforce-web` in `NUXEO_HOME/nxserver/bundles`
+
+OR
 
 - Install nuxeo-salesforce plugin from command line
   - Linux/Mac:
@@ -22,6 +30,8 @@
     - `NUXEO_HOME\bin\nuxeoctl.bat mp-install nuxeo-salesforce`
     - `NUXEO_HOME\bin\nuxeoctl.bat start`
 
+  or Install [the Nuxeo Salesforce Marketplace Package](https://connect.nuxeo.com/nuxeo/site/marketplace/package/nuxeo-salesforce).
+
 - From your browser, go to `http://localhost:8080/nuxeo`
 
 - Follow Nuxeo Wizard by clicking 'Next' buttons, re-start once completed
@@ -30,22 +40,41 @@
   - username: Administrator
   - password: Administrator
 
-- You can now use the addon.
+- HTTPS configuration:
 
+	Salesforce is requiring Nuxeo server to be accessed through HTTPS. Follow this [documentation](https://doc.nuxeo.com/x/GAFc) to configure your reverse proxy for production purpose. For a dev or test environment, you can configure your Nuxeo server in HTTPS directly with the following configuration parameters example:
 
-Note: Your machine needs internet access. If you have a proxy setting, skip the mp-init and mp-install steps at first, just do nuxeoctl start and run the wizzard where you will be asked your proxy settings.
+		nuxeo.server.https.port=8443
+		nuxeo.server.https.keystoreFile=/Users/vpasquier/.keystore
+		nuxeo.server.https.keystorePass=******
 
-## Building
+	You can setup the keystore by following the [Oracle documentation](https://docs.oracle.com/cd/E19509-01/820-3503/ggfen/index.html)
 
-    mvn clean install
+- Add the following configuration parameter (in `NUXEO_HOME/bin/nuxeo.conf`):
 
-## Deploying
+		org.nuxeo.salesforce.consumer.key=YOUR_SALESFORCE_CONSUMER_KEY
+		org.nuxeo.salesforce.callback.url=https://NUXEO_URL/nuxeo/picker/callback/callback.html
 
-Install [the Nuxeo Salesforce Marketplace Package](https://connect.nuxeo.com/nuxeo/site/marketplace/package/nuxeo-salesforce).
+If you're using `Firefox` browser, you don't need to configure it for accessing the plugin within Salesforce. However with `chrome`, here are the guidelines to allow the access:
 
-Or manually copy the built artifacts into `$NUXEO_HOME/templates/custom/bundles/` and activate the "custom" template.
+- Authorize `Popups` from Salesforce (to allow OAuth execution)
+- Go to `https://localhost:8443/nuxeo` and allow `chrome` to access in HTTPS your Nuxeo server
 
-## Configuring
+In your Salesforce account, you can setup the Nuxeo Salesforce plugin through the Salesforce Marketplace 
+
+OR directly from your Salesforce dashboard:
+
+- Go in your Salesforce dashboard
+- Go on `Setup` (top right)
+- Go to `Build > Create > Apps`
+- Add a new `Connected Apps` named Nuxeo
+- Configure `OAuth` settings by referencing the callback URL: `https://NUXEO_URL/nuxeo/picker/callback/callback.html`
+- Configure Canvas App URL `https://NUXEO_URL/nuxeo/picker` and select OAuth Webflow for Access Method
+- Save the Nuxeo `Connected App`
+- Go to `Customize > Any SF Object` like Opportunity
+- Click on `Pages Layout > Edit SF Object Layout`
+- Add Nuxeo `Canvas App` anywhere in the page
+- Save
 
 ## QA results
 
