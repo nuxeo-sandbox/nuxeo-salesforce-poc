@@ -70,6 +70,7 @@ OR directly from your Salesforce dashboard:
 - Add a new `Connected Apps` named Nuxeo
 - Configure `OAuth` settings by referencing the callback URL: `https://NUXEO_URL/nuxeo/picker/callback/callback.html`
 - Configure Canvas App URL `https://NUXEO_URL/nuxeo/picker` and select OAuth Webflow for Access Method
+- Configure Canvas App locations > Layouts and Mobile Cards
 - Save the Nuxeo `Connected App`
 - Go to `Customize > Any SF Object` like Opportunity
 - Click on `Pages Layout > Edit SF Object Layout`
