@@ -1,0 +1,88 @@
+<dom-module id="nuxeo-contentview" assetpath="nuxeo-contentview/">
+
+  <template>
+    <nx-connection id="nx"></nx-connection>
+    <nx-operation id="QueryAudit" op="Audit.QueryWithPageProvider" params="{{params}}" response="{{response}}"></nx-operation>
+    <paper-material>
+      <sweet-material-table id="table" title="Audit" data="[[response.entries]]" columns="[[columns]]" available-columns="[[availableColumns]]" start="1" per-page="10" sort-column="Username" sort-direction="descending" total="100" actions="[[actions]]" loading="" global-actions="[[globalActions]]">
+      </sweet-material-table>
+    </paper-material>
+  </template>
+  <script>
+    Polymer({
+      is: 'nuxeo-contentview',
+      properties: {
+        params: {
+          type: Object,
+          value: {}
+        },
+        columns: {
+          type: Array,
+          value: function () {
+            return [
+              {key: 'principalName', title: 'Username'},
+              {key: 'category', title: 'Category'},
+              {key: 'docUUID', title: 'Document'},
+              {key: 'comment', title: 'Comment'},
+              {key: 'docLifeCycle', title: 'State'}
+            ]
+          }
+        },
+        availableColumns: {
+          type: Array,
+          value: function () {
+            return [
+              {key: 'principalName', title: 'Username'},
+              {key: 'category', title: 'Category'},
+              {key: 'docUUID', title: 'Document'},
+              {key: 'comment', title: 'Comment'},
+              {key: 'docLifeCycle', title: 'State'}
+            ]
+          }
+        },
+        perPage: {
+          type: Number,
+          value: 50
+        },
+        start: {
+          type: Number,
+          value: 0
+        },
+        total: {
+          type: Number,
+          value: 150
+        },
+        globalActions: {
+          type: Array,
+          value: function () {
+            return [
+              {
+                name: 'refresh',
+                icon: 'icons:refresh',
+                title: 'Refresh'
+              }
+            ];
+          }
+        },
+        response: {
+          type: Object,
+          notify : true
+        }
+      },
+      _updateQuery: function (response) {
+        this.params.providerName="AUDIT_BROWSER";
+        this.$.QueryAudit.execute();
+      },
+      ready: function () {
+        this._updateQuery();
+        this.$.table.addEventListener('action', this._onAction.bind(this));
+      },
+      _onAction: function (event) {
+        if (event.detail.name === 'refresh') {
+          this._updateQuery();
+          this.$.table.addEventListener('action', this._onAction.bind(this));
+        }
+      }
+    });
+  </script>
+</dom-module>

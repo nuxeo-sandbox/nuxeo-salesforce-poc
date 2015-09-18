@@ -89,13 +89,20 @@
           <template is="dom-if" if="[[selected]]">
             <paper-icon-button id="paperToggle" icon="info" paper-drawer-toggle></paper-icon-button>
           </template>
-
         </paper-toolbar>
+        <paper-tabs selected="{{selectedTab}}" noink="">
+          <paper-tab>Documents</paper-tab>
+          <paper-tab>Audit</paper-tab>
+        </paper-tabs>
+        <iron-pages selected="{{selectedTab}}" style="padding:0 0">
+          <div>
+            <nuxeo-listing search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-listing>
+          </div>
+          <div>
+            <nuxeo-contentview></nuxeo-contentview>
+          </div>
+        </iron-pages>
 
-        <!-- Main Content -->
-        <div class="content">
-          <nuxeo-listing search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-listing>
-        </div>
       </paper-header-panel>
     </paper-drawer-panel>
 
@@ -104,4 +111,10 @@
 <!-- build:js scripts/app.js -->
 <script src="scripts/app.js"></script>
 <!-- endbuild-->
+<script>
+  document.addEventListener('WebComponentsReady', function () {
+    var template = document.querySelector('template[is="dom-bind"]');
+    template.selectedTab = 0;
+  });
+</script>
 </html>
