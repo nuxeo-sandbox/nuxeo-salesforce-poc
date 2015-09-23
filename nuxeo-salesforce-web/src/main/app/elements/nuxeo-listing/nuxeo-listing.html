@@ -67,8 +67,13 @@
     }
   </style>
   <template>
+    <!-- Nuxeo and Salesforce connections -->
     <nx-connection id="nx"></nx-connection>
+    <nx-salesforce-connection id="sf"
+                              clientid="3MVG9KI2HHAq33Rw3X7mQauk5.B.uuz_9Q8V8spV9ydsDyov4MaFEvyrajf2BKGgedc.W4WXaupu0q2dkEA_y"
+                              callback="https://172.28.255.155:8443/nuxeo/picker/callback/callback.html" sfobject="{{sfobject}}"></nx-salesforce-connection>
 
+    <!-- Nuxeo resources -->
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
     <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL"></nx-resource>
     <nx-operation id="Opportunity" op="opportunitychain" params="{{params}}" response="{{currentParent}}"></nx-operation>
@@ -141,31 +146,8 @@
       }
     }
     (function() {
-      var isLogging = Sfdc.canvas.oauth.loggedin();
-      var isLogged = !!sessionStorage.getItem("isLogged");
-      if(isLogging || isLogged){
-        if(isLogging) {
-          sessionStorage.setItem("client", JSON.stringify(Sfdc.canvas.oauth.client()));
-          sessionStorage.setItem("isLogged", true);
-        }
-      } else {
-        var uri = Sfdc.canvas.oauth.loginUrl();
-        Sfdc.canvas.oauth.login({
-          uri: uri,
-          params: {
-            response_type: "token",
-            client_id: "3MVG9KI2HHAq33Rw3X7mQauk5.B.uuz_9Q8V8spV9ydsDyov4MaFEvyrajf2BKGgedc.W4WXaupu0q2dkEA_y",
-            redirect_uri: encodeURIComponent("https://172.28.255.155:8443/nuxeo/picker/callback/callback.html")
-          }
-        });
-      }
       Polymer({
         is: 'nuxeo-listing',
-        created: function() {
-          this._isLogging = isLogging;
-          this._isLogged = isLogged;
-          this._getCtx();
-        },
         properties: {
           path: {
             type: String,
@@ -183,23 +165,24 @@
             type: Object,
             notify: true
           },
-          sfObject: {
-            type: Object,
-            notify: true
-          },
           params: {
             type:Object,
             value: {}
           },
           folderName: {
             type: String
+          },
+          sfobject: {
+            type: Object,
+            value: {},
+            notify: true
           }
         },
 
         observers: [
           '_fetch(currentParent.uid, searchTerm)',
-          '_executeOp(sfObject)',
-          '_getChildren(sfObject)'
+          '_executeOp(sfobject)',
+          '_getChildren(sfobject)'
         ],
 
         listeners: {
@@ -209,40 +192,12 @@
           'list.dragleave': '_onDragLeave'
         },
 
-        _getCtx: function(){
-          if (this._isLogging || this._isLogged) {
-            var callback = this._callbackCtx.bind(this);
-            Sfdc.canvas.client.ctx(callback, JSON.parse(sessionStorage.getItem("client")));
-          }
-        },
-
-        _callbackCtx: function(ctx){
-          var opId = ctx.payload.environment.record.Id;
-          var queryUrl = ctx.payload.links.queryUrl;
-          var sfObject = ctx.payload.environment.record.attributes.type;
-          var soqlQuery = "SELECT Name, id from " + sfObject + " where id='" + opId + "'";
-          var callbackOp = this._callbackOpportunity.bind(this);
-          var settings = {
-            client: JSON.parse(sessionStorage.getItem("client")),
-            method: 'GET',
-            async: true,
-            contentType: "application/json",
-            success: callbackOp
-          }
-          Sfdc.canvas.client.ajax(queryUrl + "?q=" + soqlQuery, settings);
-        },
-
-        _callbackOpportunity: function(response){
-          if(!response.payload.records){
-            $(".fullbleed").hide();
-          }
-          this.sfObject = response.payload.records[0];
-        },
-
         _executeOp: function(opportunity){
-          this.params.opportunityId = opportunity.Id;
-          this.params.opportunityName = opportunity.Name;
-          this.$.Opportunity.execute();
+          if(Object.keys(opportunity).length!==0){
+            this.params.opportunityId = opportunity.Id;
+            this.params.opportunityName = opportunity.Name;
+            this.$.Opportunity.execute();
+          }
         },
 
         _isEmpty: function(response){
@@ -270,8 +225,10 @@
         },
 
         _getChildren: function(opportunity){
-          this.params.opportunityId = opportunity.Id;
-          this.$.OpportunityDocuments.execute();
+          if(Object.keys(opportunity).length!==0){
+            this.params.opportunityId = opportunity.Id;
+            this.$.OpportunityDocuments.execute();
+          }
         },
 
         _select: function(e) {
