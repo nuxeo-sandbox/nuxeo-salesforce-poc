@@ -7,5 +7,6 @@ Bundle-Vendor: Nuxeo
 Bundle-Version: 1.0.qualifier
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: nuxeo-salesforce-core
+Nuxeo-WebModule: org.nuxeo.ecm.webengine.app.WebEngineModule;headless=true;name=salesforce;extends=api;package=org/nuxeo/salesforce
 Nuxeo-Component: OSGI-INF/automation-contrib.xml,
  OSGI-INF/schema-contrib.xml
