@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <component name="org.nuxeo.salesforce.automation.contrib">
   <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
              point="chains">
@@ -22,7 +23,7 @@
           sfobject.id = params.sfobjectId;
           sfobject.name = params.sfobjectName;
           var docs = Repository.Query(null, {
-          'query': "select * from Document where dc:source = '" + sfobject.id + "'",
+            'query': "select * from Document where sf:objectid = '" + sfobject.id + "'",
           });
           if (docs.length>0) {
             return Repository.GetDocument(null, {
@@ -37,7 +38,7 @@
                   "name" : sfobject.name,
                   "properties" : {
                       "dc:title" : sfobject.name,
-                       "dc:source" : sfobject.id
+                       "sf:objectid" : sfobject.id
                   }
             });
             return newSFobject;
