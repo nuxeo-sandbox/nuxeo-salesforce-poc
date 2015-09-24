@@ -76,8 +76,8 @@
     <!-- Nuxeo resources -->
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
     <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL"></nx-resource>
-    <nx-operation id="Opportunity" op="opportunitychain" params="{{params}}" response="{{currentParent}}"></nx-operation>
-    <nx-operation id="OpportunityDocuments" op="opportunitydocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
+    <nx-operation id="sfobjectchain" op="sfobjectchain" params="{{params}}" response="{{currentParent}}"></nx-operation>
+    <nx-operation id="sfobjectdocumentschain" op="sfobjectdocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
     <nx-operation id="CreateFolder" op="Document.Create" input="{{currentParent.path}}" params="{{params}}"></nx-operation>
 
     <div class="breadcumb">
@@ -192,11 +192,11 @@
           'list.dragleave': '_onDragLeave'
         },
 
-        _executeOp: function(opportunity){
-          if(Object.keys(opportunity).length!==0){
-            this.params.opportunityId = opportunity.Id;
-            this.params.opportunityName = opportunity.Name;
-            this.$.Opportunity.execute();
+        _executeOp: function(sfobject){
+          if(Object.keys(sfobject).length!==0){
+            this.params.sfobjectId = sfobject.Id;
+            this.params.sfobjectName = sfobject.Name;
+            this.$.sfobjectchain.execute();
           }
         },
 
@@ -224,10 +224,10 @@
           }.bind(this));
         },
 
-        _getChildren: function(opportunity){
-          if(Object.keys(opportunity).length!==0){
-            this.params.opportunityId = opportunity.Id;
-            this.$.OpportunityDocuments.execute();
+        _getChildren: function(sfobject){
+          if(Object.keys(sfobject).length!==0){
+            this.params.sfobjectId = sfobject.Id;
+            this.$.sfobjectdocumentschain.execute();
           }
         },
 

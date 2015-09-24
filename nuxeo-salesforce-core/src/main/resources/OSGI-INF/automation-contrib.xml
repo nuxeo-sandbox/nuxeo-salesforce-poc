@@ -1,0 +1,48 @@
+<component name="org.nuxeo.salesforce.automation.contrib">
+  <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
+             point="chains">
+    <chain id="sfobjectchain">
+      <operation id="javascript.FetchSFObject"/>
+    </chain>
+    <chain id="sfobjectdocumentschain">
+      <operation id="javascript.FetchSFObject"/>
+      <operation id="Document.GetChildren"/>
+    </chain>
+  </extension>
+  <extension
+          target="org.nuxeo.automation.scripting.internals.AutomationScriptingComponent"
+          point="operation">
+    <scriptedOperation id="javascript.FetchSFObject">
+      <inputType>void</inputType>
+      <outputType>void</outputType>
+      <category>javascript</category>
+      <script>
+        <![CDATA[function run(input, params) {
+          var sfobject = {};
+          sfobject.id = params.sfobjectId;
+          sfobject.name = params.sfobjectName;
+          var docs = Repository.Query(null, {
+          'query': "select * from Document where dc:source = '" + sfobject.id + "'",
+          });
+          if (docs.length>0) {
+            return Repository.GetDocument(null, {
+              'value': docs[0].id
+            });
+          } else {
+            var workspaces = Repository.GetDocument(null, {
+                "value" : "/default-domain/workspaces"
+            });
+            var newSFobject = Document.Create(workspaces, {
+                  "type" : "Workspace",
+                  "name" : sfobject.name,
+                  "properties" : {
+                      "dc:title" : sfobject.name,
+                       "dc:source" : sfobject.id
+                  }
+            });
+            return newSFobject;
+        }}]]>
+      </script>
+    </scriptedOperation>
+  </extension>
+</component>

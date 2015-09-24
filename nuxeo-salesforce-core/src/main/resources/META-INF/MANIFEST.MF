@@ -7,3 +7,4 @@ Bundle-Vendor: Nuxeo
 Bundle-Version: 1.0.qualifier
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: nuxeo-salesforce-core
+Nuxeo-Component: OSGI-INF/automation-contrib.xml
