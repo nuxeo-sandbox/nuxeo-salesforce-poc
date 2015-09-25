@@ -1,4 +1,4 @@
-<dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
+</dom-module><dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
   <style>
     :host {
       display: block;
@@ -178,7 +178,8 @@
         },
 
         observers: [
-          '_fetch(currentParent.uid, searchTerm)',
+          '_fetch(currentParent.uid, searchTerm, sfobject)',
+          '_displayCanvasApp(sfobject)',
           '_executeOp(sfobject)',
           '_getChildren(sfobject)'
         ],
@@ -188,6 +189,14 @@
           'list.dragenter': '_onDragEnter',
           'list.drop': '_onDrop',
           'list.dragleave': '_onDragLeave'
+        },
+
+        _displayCanvasApp: function(sfobject){
+          if(Object.keys(sfobject).length!==0){
+            $(".fullbleed").show();
+          }	else {
+            $(".fullbleed").hide();
+          }
         },
 
         _executeOp: function(sfobject){
@@ -207,7 +216,7 @@
           return this.$.parentResource.get();
         },
 
-        _fetch: function(parentId, searchTerm) {
+        _fetch: function(parentId, searchTerm, sfobject) {
           this.$.query.params = this._getQueryParams(parentId, searchTerm);
           this.$.query.get();
         },

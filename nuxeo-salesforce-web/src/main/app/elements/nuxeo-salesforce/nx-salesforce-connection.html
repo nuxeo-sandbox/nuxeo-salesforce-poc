@@ -64,6 +64,9 @@ Note: Elements that depend on a id use `sf` as default.
       ],
 
       _getCtx: function (result) {
+        if(Object.keys(result).length===0){
+          return;
+        }
         this.clientid = result.clientId;
         this.callback = result.userAuthorizationURL;
         var isLogging = Sfdc.canvas.oauth.loggedin();
@@ -107,9 +110,6 @@ Note: Elements that depend on a id use `sf` as default.
       },
 
       _callbackSFObject: function (response) {
-        if (!response.payload.records) {
-          $(".fullbleed").hide();
-        }
         this.sfobject = response.payload.records[0];
       }
 

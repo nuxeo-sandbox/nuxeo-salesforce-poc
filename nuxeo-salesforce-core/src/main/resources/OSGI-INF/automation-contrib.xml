@@ -23,7 +23,7 @@
           sfobject.id = params.sfobjectId;
           sfobject.name = params.sfobjectName;
           var docs = Repository.Query(null, {
-            'query': "select * from Document where sf:objectid = '" + sfobject.id + "'",
+            'query': "SELECT * FROM Document WHERE ecm:currentLifeCycleState != 'deleted' AND sf:objectid = '" + sfobject.id + "' AND ecm:isCheckedInVersion = 0 AND ecm:mixinType != 'HiddenInNavigation'",
           });
           if (docs.length>0) {
             return Repository.GetDocument(null, {
