@@ -22,13 +22,15 @@ Contributors:
 Note: Elements that depend on a id use `sf` as default.
 @homepage http://www.nuxeo.org
 -->
-<dom-module id="nx-salesforce-connection">
+<dom-module id="nx-salesforce-connection" assetpath="nuxeo-salesforce/">
   <template>
     <style>
       :host {
         display: none;
       }
     </style>
+    <!-- Nuxeo resources for Salesforce connection -->
+    <nx-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}"></nx-resource>
   </template>
 </dom-module>
 <script>
@@ -37,7 +39,7 @@ Note: Elements that depend on a id use `sf` as default.
       is: 'nx-salesforce-connection',
 
       ready: function () {
-        this._getCtx();
+        this.$.oauth2directory.execute();
       },
 
       properties: {
@@ -51,10 +53,19 @@ Note: Elements that depend on a id use `sf` as default.
         callback: {type: String, value: ''},
 
         /* The Salesforce Object */
-        sfobject: {type: Object, value: {}, notify:true}
+        sfobject: {type: Object, value: {}, notify:true},
+
+        /* Result from the oauth2directory response */
+        result: {type: Object, value: {}, notify:true}
       },
 
-      _getCtx: function () {
+      observers: [
+        '_getCtx(result)'
+      ],
+
+      _getCtx: function (result) {
+        this.clientid = result.clientId;
+        this.callback = result.userAuthorizationURL;
         var isLogging = Sfdc.canvas.oauth.loggedin();
         var isLogged = !!sessionStorage.getItem("isLogged");
         if (isLogging || isLogged) {

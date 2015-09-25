@@ -69,9 +69,7 @@
   <template>
     <!-- Nuxeo and Salesforce connections -->
     <nx-connection id="nx"></nx-connection>
-    <nx-salesforce-connection id="sf"
-                              clientid="3MVG9KI2HHAq33Rw3X7mQauk5.B.uuz_9Q8V8spV9ydsDyov4MaFEvyrajf2BKGgedc.W4WXaupu0q2dkEA_y"
-                              callback="https://172.28.255.155:8443/nuxeo/picker/callback/callback.html" sfobject="{{sfobject}}"></nx-salesforce-connection>
+    <nx-salesforce-connection id="sf" sfobject="{{sfobject}}"></nx-salesforce-connection>
 
     <!-- Nuxeo resources -->
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
