@@ -1,10 +1,10 @@
-<dom-module id="nuxeo-contentview" assetpath="nuxeo-contentview/">
+<dom-module id="nuxeo-contentview" assetpath="nuxeo-contentview`/">
 
   <template>
     <nx-connection id="nx"></nx-connection>
     <nx-operation id="QueryAudit" op="Audit.QueryWithPageProvider" params="{{params}}" response="{{response}}"></nx-operation>
     <paper-material>
-      <sweet-material-table id="table" title="Audit" data="[[response.entries]]" columns="[[columns]]" available-columns="[[availableColumns]]" start="1" per-page="10" sort-column="Username" sort-direction="descending" total="100" actions="[[actions]]" loading="" global-actions="[[globalActions]]">
+      <sweet-material-table id="table" title="Audit" data="[[response.entries]]" columns="[[columns]]" available-columns="[[availableColumns]]" start="[[response.currentPageIndex]]" per-page="[[response.currentPageSize]]" sort-column="Username" sort-direction="descending" total="[[response.resultsCount]]" actions="[[actions]]" global-actions="[[globalActions]]">
       </sweet-material-table>
     </paper-material>
   </template>
@@ -40,25 +40,12 @@
             ]
           }
         },
-        perPage: {
-          type: Number,
-          value: 50
-        },
-        start: {
-          type: Number,
-          value: 0
-        },
-        total: {
-          type: Number,
-          value: 150
-        },
         globalActions: {
           type: Array,
           value: function () {
             return [
               {
                 name: 'refresh',
-                icon: 'icons:refresh',
                 title: 'Refresh'
               }
             ];
@@ -71,6 +58,8 @@
       },
       _updateQuery: function (response) {
         this.params.providerName="AUDIT_BROWSER";
+        this.params.namedQueryParams={};
+        this.params.namedQueryParams["bas:targetDocumentPath"]="/default-domain";
         this.$.QueryAudit.execute();
       },
       ready: function () {
