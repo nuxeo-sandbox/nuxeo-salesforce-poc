@@ -43,6 +43,8 @@ OR
   - username: Administrator
   - password: Administrator
 
+### Nuxeo Configuration
+
 - HTTPS configuration:
 
 	Salesforce is requiring Nuxeo server to be accessed through HTTPS. Follow this [documentation](https://doc.nuxeo.com/x/GAFc) to configure your reverse proxy for production purpose. For a dev or test environment, you can configure your Nuxeo server in HTTPS directly with the following configuration parameters example:
@@ -53,17 +55,19 @@ OR
 
 	You can setup the keystore by following the [Oracle documentation](https://docs.oracle.com/cd/E19509-01/820-3503/ggfen/index.html)
 
-- Add the following configuration parameter (in `NUXEO_HOME/bin/nuxeo.conf`):
+- Add the following configuration parameter (in `Admin Center> Cloud Services > OAuth2 Provider > Add`):
 
-		org.nuxeo.salesforce.consumer.key=YOUR_SALESFORCE_CONSUMER_KEY
-		org.nuxeo.salesforce.callback.url=https://NUXEO_URL/nuxeo/picker/callback/callback.html
+		CliendID=YOUR_SALESFORCE_CONSUMER_KEY
+		User Authorization URL=https://NUXEO_URL/nuxeo/picker/callback/callback.html
 
 If you're using `Firefox` browser, you don't need to configure it for accessing the plugin within Salesforce. However with `chrome`, here are the guidelines to allow the access:
 
 - Authorize `Popups` from Salesforce (to allow OAuth execution)
-- Go to `https://localhost:8443/nuxeo` and allow `chrome` to access in HTTPS your Nuxeo server
+- Go to `https://NUXEO_URL:8443/nuxeo` and allow `chrome` to access in HTTPS your Nuxeo server
 
-In your Salesforce account, you can setup the Nuxeo Salesforce plugin through the Salesforce Marketplace 
+### Salesforce Configuration
+
+In your Salesforce account, you can setup the Nuxeo Salesforce plugin through the Salesforce Marketplace (In progress)
 
 OR directly from your Salesforce dashboard:
 
