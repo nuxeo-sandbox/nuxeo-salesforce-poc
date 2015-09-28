@@ -1,4 +1,4 @@
-<dom-module id="nuxeo-contentview" assetpath="nuxeo-contentview`/">
+<dom-module id="nuxeo-contentview" assetpath="nuxeo-contentview/">
 
   <template>
     <nx-connection id="nx"></nx-connection>
@@ -21,9 +21,9 @@
           value: function () {
             return [
               {key: 'principalName', title: 'Username'},
-              {key: 'category', title: 'Category'},
-              {key: 'docUUID', title: 'Document'},
-              {key: 'comment', title: 'Comment'},
+              {key: 'eventId', title: 'Category'},
+              {key: 'comment', title: 'Document'},
+              {key: 'eventDate', title: 'Event Date'},
               {key: 'docLifeCycle', title: 'State'}
             ]
           }
@@ -33,9 +33,9 @@
           value: function () {
             return [
               {key: 'principalName', title: 'Username'},
-              {key: 'category', title: 'Category'},
-              {key: 'docUUID', title: 'Document'},
-              {key: 'comment', title: 'Comment'},
+              {key: 'eventId', title: 'Category'},
+              {key: 'comment', title: 'Document'},
+              {key: 'eventDate', title: 'Event Date'},
               {key: 'docLifeCycle', title: 'State'}
             ]
           }
@@ -58,8 +58,9 @@
       },
       _updateQuery: function (response) {
         this.params.providerName="AUDIT_BROWSER";
-        this.params.namedQueryParams={};
-        this.params.namedQueryParams["bas:targetDocumentPath"]="/default-domain";
+        this.params.pageSize=0;
+        this.params.namedQueryParams = {};
+        this.params.namedQueryParams["bas:eventIds"] = "download";
         this.$.QueryAudit.execute();
       },
       ready: function () {
