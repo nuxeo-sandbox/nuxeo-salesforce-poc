@@ -2,7 +2,9 @@
 
 ## About Nuxeo Salesforce
 
-The nuxeo Salesforce addon allows Salesforce users to attach documents to their Salesforce Objects (such as Opportunities, Contacts, Accounts...) through the Salesforce UI within a Nuxeo server.
+The **Nuxeo** addon _nuxeo-salesforce_ allows Salesforce users to attach documents to their Salesforce Objects (such as Opportunities, Contacts, Accounts...) through the Salesforce UI within a Nuxeo server.
+
+ to invite external user to access Nuxeo platform through basic or Shibboleth authentication.
 
 ## Sub-Modules Organization
 
