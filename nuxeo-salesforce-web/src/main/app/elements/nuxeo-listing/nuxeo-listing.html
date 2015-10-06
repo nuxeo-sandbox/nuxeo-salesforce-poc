@@ -73,7 +73,7 @@
 
     <!-- Nuxeo resources -->
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
-    <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL"></nx-resource>
+    <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL"></nx-resource>
     <nx-operation id="sfobjectchain" op="sfobjectchain" params="{{params}}" response="{{currentParent}}"></nx-operation>
     <nx-operation id="sfobjectdocumentschain" op="sfobjectdocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
     <nx-operation id="CreateFolder" op="Document.Create" input="{{currentParent.path}}" params="{{params}}"></nx-operation>
@@ -114,6 +114,8 @@
               <paper-tooltip for="download_action">Download the document</paper-tooltip>
               <a href="[[_docURL(item)]]" target="_blank"><i id="edit_action" class="material-icons">create</i></a>
               <paper-tooltip for="edit_action">Edit in Nuxeo</paper-tooltip>
+              <a href="[[_driveEdit(item)]]" target="_blank"><i id="insert_drive_file" class="material-icons">insert_drive_file</i></a>
+              <paper-tooltip for="insert_drive_file">Edit in Nuxeo Drive</paper-tooltip>
               <template is="dom-if" if="[[_isLock(item)]]">
                 <i class="material-icons">lock</i>
               </template>
@@ -303,6 +305,12 @@
         _docURL: function(doc) {
           if(doc.contextParameters!==undefined){
             return doc.contextParameters.documentURL;
+          }
+        },
+
+        _driveEdit: function(doc) {
+          if(doc.contextParameters!==undefined){
+            return doc.contextParameters.driveEditURL;
           }
         },
 

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.salesforce.enricher.contrib">
+  <extension target="org.nuxeo.ecm.core.io.MarshallerRegistry"
+             point="marshallers">
+    <register class="org.nuxeo.salesforce.DriveEditEnricher" enable="true"/>
+  </extension>
+</component>
