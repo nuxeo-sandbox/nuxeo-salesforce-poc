@@ -1,8 +1,7 @@
 <dom-module id="nuxeo-contentview" assetpath="nuxeo-contentview/">
-
   <template>
     <nx-connection id="nx"></nx-connection>
-    <nx-operation id="QueryAudit" op="Audit.QueryWithPageProvider" params="{{params}}" response="{{response}}"></nx-operation>
+    <nx-operation id="QueryAudit" op="Salesforce.AuditProvider" params="{{params}}" response="{{response}}" input="[[path]]"></nx-operation>
     <paper-material>
       <sweet-material-table id="table" title="Audit" data="[[response.entries]]" columns="[[columns]]" available-columns="[[availableColumns]]" start="[[response.currentPageIndex]]" per-page="[[response.currentPageSize]]" sort-column="Username" sort-direction="descending" total="[[response.resultsCount]]" actions="[[actions]]" global-actions="[[globalActions]]">
       </sweet-material-table>
@@ -16,15 +15,19 @@
           type: Object,
           value: {}
         },
+        path: {
+          type: String,
+          value: "/default-domain"
+        },
         columns: {
           type: Array,
           value: function () {
             return [
               {key: 'principalName', title: 'Username'},
-              {key: 'eventId', title: 'Category'},
-              {key: 'comment', title: 'Document'},
               {key: 'eventDate', title: 'Event Date'},
-              {key: 'docLifeCycle', title: 'State'}
+              {key: 'eventId', title: 'Category'},
+              {key: 'docPath', title: 'Document'},
+              {key: 'docType', title: 'Document Type'}
             ]
           }
         },
@@ -33,10 +36,10 @@
           value: function () {
             return [
               {key: 'principalName', title: 'Username'},
-              {key: 'eventId', title: 'Category'},
-              {key: 'comment', title: 'Document'},
               {key: 'eventDate', title: 'Event Date'},
-              {key: 'docLifeCycle', title: 'State'}
+              {key: 'eventId', title: 'Category'},
+              {key: 'docPath', title: 'Document'},
+              {key: 'docType', title: 'Document Type'}
             ]
           }
         },
@@ -56,11 +59,11 @@
           notify : true
         }
       },
-      _updateQuery: function (response) {
+      _updateQuery: function () {
         this.params.providerName="AUDIT_BROWSER";
         this.params.pageSize=0;
         this.params.namedQueryParams = {};
-        this.params.namedQueryParams["bas:eventIds"] = "download";
+        this.params.namedQueryParams["bas:eventIds"] = "download,documentCreated,documentModified";
         this.$.QueryAudit.execute();
       },
       ready: function () {

@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.salesforce.automation.contrib">
   <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
+             point="operations">
+    <operation
+            class="org.nuxeo.salesforce.SalesforceAuditProvider" />
+  </extension>
+  <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent"
              point="chains">
     <chain id="sfobjectchain">
       <operation id="javascript.FetchSFObject"/>
@@ -45,5 +50,13 @@
         }}]]>
       </script>
     </scriptedOperation>
+  </extension>
+  <extension target="org.nuxeo.ecm.automation.server.AutomationServer"
+             point="bindings">
+    <!-- Give access to Audit logs -->
+    <binding name="Salesforce.AuditProvider">
+      <secure>true</secure>
+      <groups>administrators,members</groups>
+    </binding>
   </extension>
 </component>
