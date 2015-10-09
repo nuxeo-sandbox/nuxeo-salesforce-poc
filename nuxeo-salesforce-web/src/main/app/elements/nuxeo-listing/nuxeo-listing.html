@@ -333,7 +333,7 @@
         },
 
         _isNotFolder: function(doc) {
-          return doc.facets.some(function(e){ return e !== 'Folderish'; });
+          return doc.facets.indexOf("Folderish") < 0;
         },
 
         _splitPath: function(path) {
