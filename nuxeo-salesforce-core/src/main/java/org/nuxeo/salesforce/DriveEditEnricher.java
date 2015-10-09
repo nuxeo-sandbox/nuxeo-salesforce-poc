@@ -62,13 +62,11 @@ public class DriveEditEnricher extends AbstractJsonEnricher<DocumentModel> {
         CoreSession session = currentDocument.getCoreSession();
         BlobHolder bh = currentDocument.getAdapter(BlobHolder.class);
         if (bh == null) {
-            throw new NuxeoException(String.format("Document %s (%s) is not a BlobHolder, cannot get Drive Edit URL.",
-                    currentDocument.getPathAsString(), currentDocument.getId()));
+            return null;
         }
         Blob blob = bh.getBlob();
         if (blob == null) {
-            throw new NuxeoException(String.format("Document %s (%s) has no blob, cannot get Drive Edit URL.",
-                    currentDocument.getPathAsString(), currentDocument.getId()));
+            return null;
         }
         String fileName = blob.getFilename();
         String baseURL = ctx.getBaseUrl();
