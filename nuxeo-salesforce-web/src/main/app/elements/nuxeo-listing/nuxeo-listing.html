@@ -69,7 +69,11 @@
   <template>
     <!-- Nuxeo and Salesforce connections -->
     <nx-connection id="nx"></nx-connection>
-    <nx-salesforce-connection id="sf" sfobject="{{sfobject}}"></nx-salesforce-connection>
+
+
+    <nx-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto></nx-resource>
+    <nx-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nx-salesforce-connection>
+
 
     <!-- Nuxeo resources -->
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>

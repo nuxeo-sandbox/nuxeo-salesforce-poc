@@ -29,8 +29,6 @@ Note: Elements that depend on a id use `sf` as default.
         display: none;
       }
     </style>
-    <!-- Nuxeo resources for Salesforce connection -->
-    <nx-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}"></nx-resource>
   </template>
 </dom-module>
 <script>
@@ -39,7 +37,7 @@ Note: Elements that depend on a id use `sf` as default.
       is: 'nx-salesforce-connection',
 
       ready: function () {
-        this.$.oauth2directory.execute();
+        this._getCtx();
       },
 
       properties: {
@@ -47,28 +45,20 @@ Note: Elements that depend on a id use `sf` as default.
         id: {type: String, value: 'sf'},
 
         /* The SF client id. */
-        clientid: {type: String, value: ''},
+        clientid: {type: String},
 
         /* The Callback URL of the Nuxeo server for SF OAuth2. */
-        callback: {type: String, value: ''},
+        callback: {type: String},
 
         /* The Salesforce Object */
-        sfobject: {type: Object, value: {}, notify:true},
-
-        /* Result from the oauth2directory response */
-        result: {type: Object, value: {}, notify:true}
+        sfobject: {type: Object, value: {}, notify:true}
       },
 
       observers: [
-        '_getCtx(result)'
+        '_getCtx(clientid, callback)'
       ],
 
-      _getCtx: function (result) {
-        if(Object.keys(result).length===0){
-          return;
-        }
-        this.clientid = result.clientId;
-        this.callback = result.userAuthorizationURL;
+      _getCtx: function () {
         var isLogging = Sfdc.canvas.oauth.loggedin();
         var isLogged = !!sessionStorage.getItem("isLogged");
         if (isLogging || isLogged) {
@@ -76,7 +66,9 @@ Note: Elements that depend on a id use `sf` as default.
             sessionStorage.setItem("client", JSON.stringify(Sfdc.canvas.oauth.client()));
             sessionStorage.setItem("isLogged", true);
           }
-        } else {
+          var callback = this._callbackCtx.bind(this);
+          Sfdc.canvas.client.ctx(callback, JSON.parse(sessionStorage.getItem("client")));
+        } else if(this.clientid && this.callback) {
           var uri = Sfdc.canvas.oauth.loginUrl();
           Sfdc.canvas.oauth.login({
             uri: uri,
@@ -86,10 +78,6 @@ Note: Elements that depend on a id use `sf` as default.
               redirect_uri: encodeURIComponent(this.callback)
             }
           });
-        }
-        if (isLogging || isLogged) {
-          var callback = this._callbackCtx.bind(this);
-          Sfdc.canvas.client.ctx(callback, JSON.parse(sessionStorage.getItem("client")));
         }
       },
 
