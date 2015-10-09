@@ -3,7 +3,7 @@
     <nx-connection id="nx"></nx-connection>
     <nx-operation id="QueryAudit" op="Salesforce.AuditProvider" params="{{params}}" response="{{response}}" input="[[currentParent.path]]"></nx-operation>
     <paper-material>
-      <sweet-material-table id="table" title="Audit" data="[[response.entries]]" columns="[[columns]]" available-columns="[[availableColumns]]" start="[[response.currentPageIndex]]" per-page="[[response.currentPageSize]]" sort-column="Username" sort-direction="descending" total="[[response.resultsCount]]" actions="[[actions]]" global-actions="[[globalActions]]">
+      <sweet-material-table id="table" title="Audit" data="[[_getResult(response)]]" columns="[[columns]]" available-columns="[[availableColumns]]" start="[[response.currentPageIndex]]" per-page="[[response.currentPageSize]]" sort-column="Username" sort-direction="descending" total="[[response.resultsCount]]" actions="[[actions]]" global-actions="[[globalActions]]">
       </sweet-material-table>
     </paper-material>
   </template>
@@ -61,10 +61,19 @@
       observers: [
         '_updateQuery(currentParent)'
       ],
+      _getResult: function(response){
+        if(response){
+          for(entry in response.entries){
+            var date = new Date(response.entries[entry].eventDate);
+            response.entries[entry].eventDate = date.toString();
+          }
+          return response.entries;
+        }
+      },
       _updateQuery: function () {
         if(this.currentParent) {
-          this.params.providerName = "AUDIT_BROWSER";
-          this.params.pageSize = 0;
+          this.params.providerName="AUDIT_BROWSER";
+          this.params.pageSize=0;
           this.params.namedQueryParams = {};
           this.params.namedQueryParams["bas:eventIds"] = "download,documentCreated,documentModified";
           this.$.QueryAudit.execute();
