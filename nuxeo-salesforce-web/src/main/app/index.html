@@ -96,10 +96,10 @@
         </paper-tabs>
         <iron-pages selected="{{selectedTab}}" style="padding:0 0">
           <div>
-            <nuxeo-listing search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-listing>
+            <nuxeo-listing current-parent="{{currentParent}}" search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-listing>
           </div>
           <div>
-            <nuxeo-contentview></nuxeo-contentview>
+            <nuxeo-contentview current-parent="[[currentParent]]"></nuxeo-contentview>
           </div>
         </iron-pages>
 
