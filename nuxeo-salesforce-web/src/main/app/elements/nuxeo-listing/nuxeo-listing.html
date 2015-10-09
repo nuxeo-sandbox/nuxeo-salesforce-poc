@@ -112,14 +112,14 @@
           <img src="[[_iconFor(item)]]"><span>[[item.title]]</span>
           <template is="dom-if" if="[[_isNotFolder(item)]]">
             <div class="row_actions">
-              <a href="[[_preview(item)]]" target="_blank"><i id="preview_action" class="material-icons">visibility</i></a>
-              <paper-tooltip for="preview_action">Preview the document</paper-tooltip>
-              <a href="[[_downloadURL(item)]]" target="_blank"><i id="download_action" class="material-icons">get_app</i></a>
-              <paper-tooltip for="download_action">Download the document</paper-tooltip>
-              <a href="[[_docURL(item)]]" target="_blank"><i id="edit_action" class="material-icons">create</i></a>
-              <paper-tooltip for="edit_action">Edit in Nuxeo</paper-tooltip>
-              <a href="[[_driveEdit(item)]]" target="_blank"><i id="insert_drive_file" class="material-icons">insert_drive_file</i></a>
-              <paper-tooltip for="insert_drive_file">Edit in Nuxeo Drive</paper-tooltip>
+              <a href="[[_preview(item)]]" target="_blank"><paper-tooltip>Preview the document</paper-tooltip>
+                <i class="material-icons">visibility</i></a>
+              <a href="[[_downloadURL(item)]]" target="_blank"><paper-tooltip>Download the document</paper-tooltip>
+                <i class="material-icons">get_app</i></a>
+              <a href="[[_docURL(item)]]" target="_blank"><paper-tooltip>Edit in Nuxeo</paper-tooltip>
+                <i class="material-icons">create</i></a>
+              <a href="[[_driveEdit(item)]]" target="_blank"><paper-tooltip>Edit in Nuxeo Drive</paper-tooltip>
+                <i class="material-icons">insert_drive_file</i></a>
               <template is="dom-if" if="[[_isLock(item)]]">
                 <i class="material-icons">lock</i>
               </template>
