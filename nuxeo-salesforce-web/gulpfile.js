@@ -195,7 +195,7 @@ gulp.task('clean', del.bind(null, ['.tmp', DIST]));
 // Watch Files For Changes & Reload
 gulp.task('serve', ['styles', 'elements', 'images'], function () {
   // setup our local proxy
-  var proxyOptions = require('url').parse('http://localhost:8080/nuxeo');
+  var proxyOptions = require('url').parse('https://localhost:8443/nuxeo');
   proxyOptions.route = '/nuxeo';
   browserSync({
     notify: false,
@@ -211,10 +211,10 @@ gulp.task('serve', ['styles', 'elements', 'images'], function () {
     // Run as an https by uncommenting 'https: true'
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
-    // https: true,
+   https: true,
     server: {
       baseDir: ['.tmp', APP],
-      middleware: [ historyApiFallback() ],
+      middleware: [ require('proxy-middleware')(proxyOptions) ],
       routes: {
         '/bower_components': 'bower_components'
       }
@@ -244,7 +244,7 @@ gulp.task('serve:dist', ['default'], function () {
     // Run as an https by uncommenting 'https: true'
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
-    // https: true,
+    //https: true,
     server: DIST,
     middleware: [ historyApiFallback() ]
   });
