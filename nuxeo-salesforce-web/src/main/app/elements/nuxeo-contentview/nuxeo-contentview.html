@@ -22,10 +22,9 @@
           type: Array,
           value: function () {
             return [
-              {key: 'principalName', title: 'Username'},
-              {key: 'eventDate', title: 'Event Date'},
-              {key: 'eventId', title: 'Category'},
               {key: 'docPath', title: 'Document'},
+              {key: 'principalName', title: 'Username'},
+              {key: 'eventId', title: 'Event'},
               {key: 'docType', title: 'Document Type'}
             ]
           }
@@ -34,10 +33,9 @@
           type: Array,
           value: function () {
             return [
-              {key: 'principalName', title: 'Username'},
-              {key: 'eventDate', title: 'Event Date'},
-              {key: 'eventId', title: 'Category'},
               {key: 'docPath', title: 'Document'},
+              {key: 'principalName', title: 'Username'},
+              {key: 'eventId', title: 'Event'},
               {key: 'docType', title: 'Document Type'}
             ]
           }
@@ -64,8 +62,24 @@
       _getResult: function(response){
         if(response){
           for(entry in response.entries){
+            var stage = response.entries[entry].docPath.replace('/default-domain/workspaces','');
+            response.entries[entry].docPath =  stage;
             var date = new Date(response.entries[entry].eventDate);
             response.entries[entry].eventDate = date.toString();
+            var eventId = response.entries[entry].eventId;
+            switch (eventId) {
+              case "documentCreated":
+                response.entries[entry].eventId = "Creation";
+                break;
+              case "documentModified":
+                response.entries[entry].eventId = "Update";
+                break;
+              case "download":
+                response.entries[entry].eventId = "Download";
+                break;
+              default:
+                break;
+            }
           }
           return response.entries;
         }
