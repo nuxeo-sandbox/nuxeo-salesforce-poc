@@ -52,7 +52,7 @@ import org.nuxeo.ecm.platform.query.nxql.CoreQueryDocumentPageProvider;
  *
  * @since 7.10
  */
-@Operation(id = SalesforceAuditProvider.ID, category = "Salesforce", label = "This operation is restricted to administrators and members groups (can be configured). The document in input is the 'root' of all documents returned in audit listing.", description = "", addToStudio = false)
+@Operation(id = SalesforceAuditProvider.ID, category = "Salesforce", label = "Salesforce AuditProvider", description = "This operation is restricted to administrators and members groups (can be configured). The document in input is the 'root' of all documents returned in audit listing", addToStudio = false)
 public class SalesforceAuditProvider {
 
     public static final String ID = "Salesforce.AuditProvider";
