@@ -78,9 +78,9 @@
     <!-- Nuxeo resources -->
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
     <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL"></nx-resource>
-    <nx-operation id="sfobjectchain" op="sfobjectchain" params="{{params}}" response="{{currentParent}}"></nx-operation>
-    <nx-operation id="sfobjectdocumentschain" op="sfobjectdocumentschain" params="{{params}}" response="{{response}}"></nx-operation>
-    <nx-operation id="CreateFolder" op="Document.Create" input="{{currentParent.path}}" params="{{params}}"></nx-operation>
+    <nx-operation id="fetchSFObject" op="javascript.FetchSFObject" params="[[params]]" response="{{currentParent}}"></nx-operation>
+    <nx-operation id="getChildren" op="Document.GetChildren" input="[[currentParent.path]]" response="{{response}}"></nx-operation>
+    <nx-operation id="CreateFolder" op="Document.Create" input="[[currentParent.path]]" params="[[params]]"></nx-operation>
 
     <div class="breadcumb">
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
@@ -187,7 +187,7 @@
           '_fetch(currentParent.uid, searchTerm, sfobject)',
           '_displayCanvasApp(sfobject)',
           '_executeOp(sfobject)',
-          '_getChildren(sfobject)'
+          '_getChildren(currentParent)'
         ],
 
         listeners: {
@@ -205,12 +205,10 @@
           }
         },
 
-        _executeOp: function(sfobject){
-          if(Object.keys(sfobject).length!==0){
-            this.params.sfobjectId = sfobject.Id;
-            this.params.sfobjectName = sfobject.Name;
-            this.$.sfobjectchain.execute();
-          }
+        _executeOp: function(){
+          this.params.sfobjectId = this.sfobject.Id;
+          this.params.sfobjectName = this.sfobject.Name;
+          this.$.fetchSFObject.execute();
         },
 
         _isEmpty: function(response){
@@ -237,10 +235,9 @@
           }.bind(this));
         },
 
-        _getChildren: function(sfobject){
-          if(Object.keys(sfobject).length!==0){
-            this.params.sfobjectId = sfobject.Id;
-            this.$.sfobjectdocumentschain.execute();
+        _getChildren: function(){
+          if(this.currentParent){
+            this.$.getChildren.execute();
           }
         },
 
