@@ -1,4 +1,4 @@
-</dom-module><dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
+<dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
   <style>
     :host {
       display: block;
@@ -177,9 +177,7 @@
             type: String
           },
           sfobject: {
-            type: Object,
-            value: {},
-            notify: true
+            type: Object
           }
         },
 
@@ -197,10 +195,10 @@
           'list.dragleave': '_onDragLeave'
         },
 
-        _displayCanvasApp: function(sfobject){
-          if(Object.keys(sfobject).length!==0){
+        _displayCanvasApp: function () {
+          if (this.sfobject) {
             $(".fullbleed").show();
-          }	else {
+          } else {
             $(".fullbleed").hide();
           }
         },
@@ -220,7 +218,7 @@
           return this.$.parentResource.get();
         },
 
-        _fetch: function(parentId, searchTerm, sfobject) {
+        _fetch: function(parentId, searchTerm) {
           this.$.query.params = this._getQueryParams(parentId, searchTerm);
           this.$.query.get();
         },

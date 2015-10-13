@@ -51,7 +51,7 @@ Note: Elements that depend on a id use `sf` as default.
         callback: {type: String},
 
         /* The Salesforce Object */
-        sfobject: {type: Object, value: {}, notify:true}
+        sfobject: {type: Object, notify:true}
       },
 
       observers: [
@@ -83,6 +83,10 @@ Note: Elements that depend on a id use `sf` as default.
 
       _callbackCtx: function (ctx) {
         var opId = ctx.payload.environment.record.Id;
+        if (!opId) {
+          this.sfobject = null;
+          return;
+        }
         var queryUrl = ctx.payload.links.queryUrl;
         var sfObject = ctx.payload.environment.record.attributes.type;
         var soqlQuery = "SELECT Name, id from " + sfObject + " where id='" + opId + "'";
@@ -98,7 +102,9 @@ Note: Elements that depend on a id use `sf` as default.
       },
 
       _callbackSFObject: function (response) {
-        this.sfobject = response.payload.records[0];
+        if (!this.sfobject) {
+          this.sfobject = response.payload.records[0];
+        }
       }
 
     });
