@@ -45,7 +45,8 @@
              point="bindings">
     <!-- Give access to Audit logs -->
     <binding name="Salesforce.AuditProvider">
-      <secure>true</secure>
+      <!-- Temporarily removed 'secure' option: TODO: NXP-18150 -->
+      <!--<secure>true</secure>-->
       <groups>administrators,members</groups>
     </binding>
   </extension>
