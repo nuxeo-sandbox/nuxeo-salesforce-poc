@@ -78,7 +78,7 @@
     <!-- Nuxeo resources -->
     <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
     <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL"></nx-resource>
-    <nx-operation id="fetchSFObject" op="javascript.FetchSFObject" params="[[params]]" response="{{currentParent}}"></nx-operation>
+    <nx-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}"></nx-operation>
     <nx-operation id="getChildren" op="Document.GetChildren" input="[[currentParent.path]]" response="{{response}}"></nx-operation>
     <nx-operation id="CreateFolder" op="Document.Create" input="[[currentParent.path]]" params="[[params]]"></nx-operation>
 
@@ -86,6 +86,8 @@
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
         / <span class="path" on-tap="_up">[[item]]</span>
       </template>
+      <a href="[[_docURL(currentParent)]]" target="_blank"><paper-tooltip>Access</paper-tooltip>
+        <i class="material-icons">open_in_new</i></a>
     </div>
 
     <section class="sub_toolbar_actions" onclick="createFolderBox(event)">
@@ -302,7 +304,7 @@
         },
 
         _docURL: function(doc) {
-          if(doc.contextParameters!==undefined){
+          if(doc && doc.contextParameters!==undefined){
             return doc.contextParameters.documentURL;
           }
         },

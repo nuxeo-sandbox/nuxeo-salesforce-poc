@@ -85,6 +85,7 @@
           <!-- Search Action -->
           <paper-input id="search" hidden type="search" bind-value="{{searchTerm}}" on-blur="toggleSearch" autocomplete="off" placeholder="Search"></paper-input>
           <paper-icon-button id="icon" icon="search" on-tap="toggleSearch"></paper-icon-button>
+          <a href="/nuxeo" target="_blank"><img src="images/nuxeo.png" class="smallIcon"/><paper-tooltip>Access Nuxeo</paper-tooltip></a>
           <!-- Toolbar icons -->
           <template is="dom-if" if="[[selected]]">
             <paper-icon-button id="paperToggle" icon="info" paper-drawer-toggle></paper-icon-button>
