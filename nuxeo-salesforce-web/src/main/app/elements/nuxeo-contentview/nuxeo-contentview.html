@@ -1,7 +1,7 @@
 <dom-module id="nuxeo-contentview" assetpath="nuxeo-contentview/">
   <template>
     <nx-connection id="nx"></nx-connection>
-    <nx-operation id="QueryAudit" op="Salesforce.AuditProvider" params="{{params}}" response="{{response}}" input="[[currentParent.path]]"></nx-operation>
+    <nx-operation id="QueryAudit"  op="Salesforce.AuditProvider" params="{{params}}" response="{{response}}" input="[[currentParent.path]]" enrichers="sfLogEntry" enrichers-entity="logEntry"></nx-operation>
     <paper-material>
       <sweet-material-table id="table" title="Audit" data="[[_getResult(response)]]" columns="[[columns]]" available-columns="[[availableColumns]]" start="[[response.currentPageIndex]]" per-page="[[response.currentPageSize]]" sort-column="Username" sort-direction="descending" total="[[response.resultsCount]]" actions="[[actions]]" global-actions="[[globalActions]]">
       </sweet-material-table>
@@ -22,10 +22,13 @@
           type: Array,
           value: function () {
             return [
-              {key: 'docPath', title: 'Document'},
-              {key: 'principalName', title: 'Username'},
+              {key: 'contextParameters.sfLogEntry.contact', title: 'Contact'},
               {key: 'eventId', title: 'Event'},
-              {key: 'docType', title: 'Document Type'}
+              {key: 'contextParameters.sfLogEntry.creation', title: 'Creation date'},
+              {key: 'contextParameters.sfLogEntry.modification', title: 'Modification date'},
+              {key: 'docPath', title: 'Stage'},
+              {key: 'docType', title: 'Document type'},
+              {key: 'modifications', title: 'Modifications'}
             ]
           }
         },
@@ -33,10 +36,13 @@
           type: Array,
           value: function () {
             return [
-              {key: 'docPath', title: 'Document'},
-              {key: 'principalName', title: 'Username'},
+              {key: 'contextParameters.sfLogEntry.contact', title: 'Contact'},
               {key: 'eventId', title: 'Event'},
-              {key: 'docType', title: 'Document Type'}
+              {key: 'contextParameters.sfLogEntry.creation', title: 'Creation date'},
+              {key: 'contextParameters.sfLogEntry.modification', title: 'Modification date'},
+              {key: 'docPath', title: 'Stage'},
+              {key: 'docType', title: 'Document type'},
+              {key: 'modifications', title: 'Modifications'}
             ]
           }
         },
@@ -62,10 +68,8 @@
       _getResult: function(response){
         if(response){
           for(entry in response.entries){
-            var stage = response.entries[entry].docPath.replace('/default-domain/workspaces','');
-            response.entries[entry].docPath =  stage;
-            var date = new Date(response.entries[entry].eventDate);
-            response.entries[entry].eventDate = date.toString();
+            var modifications = 2;
+            response.entries[entry].modifications = modifications;
             var eventId = response.entries[entry].eventId;
             switch (eventId) {
               case "documentCreated":
