@@ -67,15 +67,19 @@
       ],
       _getResult: function(response){
         if(response){
+          var modifications = [];
           for(entry in response.entries){
-            var modifications = 2;
-            response.entries[entry].modifications = modifications;
+            if(!modifications[response.entries[entry].docUUID]){
+              modifications[response.entries[entry].docUUID] = 0;
+              modifications[response.entries[entry].docUUID]++;
+            }
             var eventId = response.entries[entry].eventId;
             switch (eventId) {
               case "documentCreated":
                 response.entries[entry].eventId = "Creation";
                 break;
               case "documentModified":
+                modifications[response.entries[entry].docUUID]++;
                 response.entries[entry].eventId = "Update";
                 break;
               case "download":
@@ -83,6 +87,13 @@
                 break;
               default:
                 break;
+            }
+          }
+          for(entry in response.entries){
+            for(docId in modifications){
+              if(response.entries[entry].docUUID === docId){
+                response.entries[entry].modifications = modifications[response.entries[entry].docUUID];
+              }
             }
           }
           return response.entries;
