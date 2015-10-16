@@ -35,3 +35,14 @@ paper-tabs, core-toolbar {
   width: 22px;
   height: 22px;
 }
+div.sweet-material-table-item {
+  text-overflow: ellipsis;
+  width: 100%;
+  word-wrap: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-right: 1em;
+}
+#table.sweet-material-table .thead.sweet-material-table .tr.sweet-material-table .th.sweet-material-table, #table.sweet-material-table .tbody.sweet-material-table .tr.sweet-material-table .td.sweet-material-table {
+  padding-right: 1em;
+}
