@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.salesforce.headers.contrib">
+
+  <extension
+          target="org.nuxeo.ecm.platform.web.common.requestcontroller.service.RequestControllerService"
+          point="responseHeaders">
+    <header name="Cache-Control">no-cache</header>
+    <header name="Pragma">no-cache</header>
+    <header name="X-Content-Type-Options">nosniff</header>
+    <header name="X-Frame-Options">ALLOW-FROM salesforce.com</header>
+    <header name="X-XSS-Protection">1; mode=block</header>
+  </extension>
+
+</component>
