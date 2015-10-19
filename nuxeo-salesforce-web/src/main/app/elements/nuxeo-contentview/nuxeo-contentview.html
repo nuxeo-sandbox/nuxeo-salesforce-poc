@@ -3,7 +3,7 @@
     <nx-connection id="nx"></nx-connection>
     <nx-operation id="QueryAudit"  op="Salesforce.AuditProvider" params="{{params}}" response="{{response}}" input="[[currentParent.path]]" enrichers="sfLogEntry" enrichers-entity="logEntry"></nx-operation>
     <paper-material>
-      <sweet-material-table id="table" title="Audit" data="[[_getResult(response)]]" columns="[[columns]]" available-columns="[[availableColumns]]" start="[[response.currentPageIndex]]" per-page="[[response.currentPageSize]]" sort-column="Username" sort-direction="descending" total="[[response.resultsCount]]" actions="[[actions]]" global-actions="[[globalActions]]">
+      <sweet-material-table id="table" data="[[_getResult(response)]]" columns="[[columns]]" available-columns="[[availableColumns]]" start="[[response.currentPageIndex]]" per-page="[[response.currentPageSize]]" sort-column="Username" sort-direction="descending" total="[[response.resultsCount]]" actions="[[actions]]" global-actions="[[globalActions]]">
       </sweet-material-table>
     </paper-material>
   </template>
