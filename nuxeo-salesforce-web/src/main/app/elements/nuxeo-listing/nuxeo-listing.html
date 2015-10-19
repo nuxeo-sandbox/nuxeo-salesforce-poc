@@ -208,6 +208,8 @@
         _executeOp: function(){
           this.params.sfobjectId = this.sfobject.Id;
           this.params.sfobjectName = this.sfobject.Name;
+          this.params.sfobjectAccountId = this.sfobject.AccountId;
+          this.params.type = this.sfobject.attributes.type;
           this.$.fetchSFObject.execute();
         },
 

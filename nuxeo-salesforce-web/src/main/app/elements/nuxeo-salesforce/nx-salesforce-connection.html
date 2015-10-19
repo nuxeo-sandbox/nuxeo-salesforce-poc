@@ -51,7 +51,7 @@ Note: Elements that depend on a id use `sf` as default.
         callback: {type: String},
 
         /* The Salesforce Object */
-        sfobject: {type: Object, notify:true}
+        sfobject: {type: Object, notify: true}
       },
 
       observers: [
@@ -68,7 +68,7 @@ Note: Elements that depend on a id use `sf` as default.
           }
           var callback = this._callbackCtx.bind(this);
           Sfdc.canvas.client.ctx(callback, JSON.parse(sessionStorage.getItem("client")));
-        } else if(this.clientid && this.callback) {
+        } else if (this.clientid && this.callback) {
           var uri = Sfdc.canvas.oauth.loginUrl();
           Sfdc.canvas.oauth.login({
             uri: uri,
@@ -89,7 +89,12 @@ Note: Elements that depend on a id use `sf` as default.
         }
         var queryUrl = ctx.payload.links.queryUrl;
         var sfObject = ctx.payload.environment.record.attributes.type;
-        var soqlQuery = "SELECT Name, id from " + sfObject + " where id='" + opId + "'";
+        var soqlQuery;
+        if (sfObject === "Opportunity") {
+          soqlQuery = "SELECT Name, id, AccountId from " + sfObject + " where id='" + opId + "'";
+        } else {
+          soqlQuery = "SELECT Name, id from " + sfObject + " where id='" + opId + "'";
+        }
         var callbackOp = this._callbackSFObject.bind(this);
         var settings = {
           client: JSON.parse(sessionStorage.getItem("client")),
