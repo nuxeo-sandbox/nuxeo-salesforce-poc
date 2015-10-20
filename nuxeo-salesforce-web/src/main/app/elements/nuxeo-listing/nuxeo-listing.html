@@ -68,19 +68,19 @@
   </style>
   <template>
     <!-- Nuxeo and Salesforce connections -->
-    <nx-connection id="nx"></nx-connection>
+    <nuxeo-connection id="nx"></nuxeo-connection>
 
 
-    <nx-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto></nx-resource>
-    <nx-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nx-salesforce-connection>
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
 
 
     <!-- Nuxeo resources -->
-    <nx-resource id="parentResource" response="{{currentParent}}"></nx-resource>
-    <nx-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL"></nx-resource>
-    <nx-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}"></nx-operation>
-    <nx-operation id="getChildren" op="Document.GetChildren" input="[[currentParent.path]]" response="{{response}}"></nx-operation>
-    <nx-operation id="CreateFolder" op="Document.Create" input="[[currentParent.path]]" params="[[params]]"></nx-operation>
+    <nuxeo-resource id="parentResource" response="{{currentParent}}"></nuxeo-resource>
+    <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
+    <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}"></nuxeo-operation>
+    <nuxeo-operation id="getChildren" op="Document.GetChildren" input="[[currentParent.path]]" response="{{response}}"></nuxeo-operation>
+    <nuxeo-operation id="CreateFolder" op="Document.Create" input="[[currentParent.path]]" params="[[params]]"></nuxeo-operation>
 
     <div class="breadcumb">
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">

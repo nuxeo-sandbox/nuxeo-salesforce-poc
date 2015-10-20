@@ -13,16 +13,16 @@ Contributors:
 -->
 
 <!--
-`nx-salesforce-connection` wraps a SDK `sfdc` Salesforce client and returned the related context SF object 'sfobject'.
-    <nx-salesforce-connection
+`nuxeo-salesforce-connection` wraps a SDK `sfdc` Salesforce client and returned the related context SF object 'sfobject'.
+    <nuxeo-salesforce-connection
         id="nx_sf_connection"
         clientid="*********"
         callback="callback.html"
-        sfobject="{{sfobject}}"></nx-salesforce-connection>
+        sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
 Note: Elements that depend on a id use `sf` as default.
 @homepage http://www.nuxeo.org
 -->
-<dom-module id="nx-salesforce-connection" assetpath="nuxeo-salesforce/">
+<dom-module id="nuxeo-salesforce-connection" assetpath="nuxeo-salesforce/">
   <template>
     <style>
       :host {
@@ -34,7 +34,7 @@ Note: Elements that depend on a id use `sf` as default.
 <script>
   (function () {
     Polymer({
-      is: 'nx-salesforce-connection',
+      is: 'nuxeo-salesforce-connection',
 
       ready: function () {
         this._getCtx();
