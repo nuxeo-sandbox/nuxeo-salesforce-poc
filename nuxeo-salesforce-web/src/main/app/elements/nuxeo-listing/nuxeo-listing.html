@@ -23,6 +23,12 @@
       border-left-style: solid;
     }
 
+    paper-toolbar {
+      color: var(--secondary-text-color);
+      background-color: var(--drawer-menu-color);
+      border-bottom: var(--drawer-toolbar-border-color);
+    }
+
     .breadcumb {
       margin: 5px;
     }
@@ -86,12 +92,16 @@
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
         / <span class="path" on-tap="_up">[[item]]</span>
       </template>
-      <a href="[[_docURL(currentParent)]]" target="_blank"><paper-tooltip>Access</paper-tooltip>
-        <i class="material-icons">open_in_new</i></a>
     </div>
 
+    <paper-toolbar id="drawerToolbar">
+      <img src="[[icon]]">&nbsp;<span class="paper-font-title">{{currentParent.title}}</span>
+      <a href="[[_docURL(currentParent)]]" target="_blank"><paper-tooltip>Access</paper-tooltip>
+        <i class="material-icons">open_in_new</i></a>
+    </paper-toolbar>
+
     <section class="sub_toolbar_actions" onclick="createFolderBox(event)">
-      <paper-button tabindex="0" data-dialog="create_folder_box"><iron-icon icon="folder"></iron-icon>add folder</paper-button>
+      <paper-fab icon="folder" title="Add folder" data-dialog="create_folder_box" class="blue floatingRight"></paper-fab>
     </section>
     <paper-dialog id="create_folder_box" class="folder-box">
       <h3>Add folder</h3>
@@ -130,7 +140,6 @@
         </paper-item>
       </template>
     </div>
-
   </template>
 
   <script>
