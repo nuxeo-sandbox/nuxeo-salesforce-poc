@@ -79,7 +79,7 @@
     <nuxeo-resource id="parentResource" response="{{currentParent}}"></nuxeo-resource>
     <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
     <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}"></nuxeo-operation>
-    <nuxeo-operation id="getChildren" op="Document.GetChildren" input="[[currentParent.path]]" response="{{response}}"></nuxeo-operation>
+    <nuxeo-operation id="getChildren" op="Document.GetChildren" input="[[currentParent.path]]" enrichers="documentURL" response="{{response}}"></nuxeo-operation>
     <nuxeo-operation id="CreateFolder" op="Document.Create" input="[[currentParent.path]]" params="[[params]]"></nuxeo-operation>
 
     <div class="breadcumb">

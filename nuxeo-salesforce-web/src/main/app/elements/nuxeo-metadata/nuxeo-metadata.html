@@ -49,6 +49,8 @@
 
     <paper-toolbar id="drawerToolbar">
       <img src="[[icon]]"></img>&nbsp;<span class="paper-font-title">{{doc.title}}</span>
+      <a href="[[_docURL(doc)]]" target="_blank"><paper-tooltip>Access</paper-tooltip>
+        <i class="material-icons">open_in_new</i></a>
     </paper-toolbar>
 
     <template is="dom-if" if="[[thumbnail]]">
@@ -108,6 +110,12 @@
           }
         },
 
+        _docURL: function(doc) {
+          if(doc && doc.contextParameters!==undefined){
+            return doc.contextParameters.documentURL;
+          }
+        },
+
         _thumbnail: function(doc) {
           if (doc && doc.properties['thumb:thumbnail']) {
             return doc.properties['thumb:thumbnail'].data;
@@ -115,14 +123,14 @@
         },
 
         _prop: function(doc, path) {
-          if (!doc.properties) {
+          if (!doc || !doc.properties) {
             return;
           }
           return doc.properties[path];
         },
 
         _date: function(doc, path) {
-          if (!doc.properties) {
+          if (!doc || !doc.properties) {
             return;
           }
           return new Date(doc.properties[path]).toLocaleString();
