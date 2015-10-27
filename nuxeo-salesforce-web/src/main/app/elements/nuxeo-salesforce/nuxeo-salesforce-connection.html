@@ -82,6 +82,9 @@ Note: Elements that depend on a id use `sf` as default.
       },
 
       _callbackCtx: function (ctx) {
+        if(!ctx.payload.environment){
+          console.log("Salesforce Error: " + ctx.payload[0].errorCode);
+        }
         var opId = ctx.payload.environment.record.Id;
         if (!opId) {
           this.sfobject = null;
