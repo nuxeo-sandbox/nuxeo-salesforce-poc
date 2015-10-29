@@ -40,6 +40,16 @@
         }}]]>
       </script>
     </scriptedOperation>
+    <scriptedOperation id="javascript.SFGetChildren">
+      <inputType>document</inputType>
+      <outputType>documents</outputType>
+      <category>javascript</category>
+      <script>
+        <![CDATA[function run(input, params) {
+            return Document.GetChildren(input, {});
+        }}]]>
+      </script>
+    </scriptedOperation>
   </extension>
   <extension target="org.nuxeo.ecm.automation.server.AutomationServer"
              point="bindings">
