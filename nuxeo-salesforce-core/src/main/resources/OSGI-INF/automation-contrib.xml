@@ -47,7 +47,7 @@
       <script>
         <![CDATA[function run(input, params) {
             return Document.GetChildren(input, {});
-        }}]]>
+        }]]>
       </script>
     </scriptedOperation>
   </extension>
