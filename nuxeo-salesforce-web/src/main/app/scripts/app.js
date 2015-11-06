@@ -20,4 +20,11 @@
       });
     }
   };
+  app.hideMetadata = function () {
+    if (app.selectedTab == 0) {
+      $(".nuxeo-metadata").hide();
+    } else {
+      $(".nuxeo-metadata").show();
+    }
+  };
 })(document);

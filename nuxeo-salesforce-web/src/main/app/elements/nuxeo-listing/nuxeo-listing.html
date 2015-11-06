@@ -120,7 +120,7 @@
         There is no related document
       </template>
       <template is="dom-repeat" items="[[response.entries]]">
-        <paper-item class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
+        <paper-item class="item" on-tap="_select" on-up="_hideMetadata" selected$="[[_isSame(item, selected)]]">
           <img src="[[_iconFor(item)]]"><span>[[item.title]]</span>
           <template is="dom-if" if="[[_isNotFolder(item)]]">
             <div class="row_actions">
@@ -282,6 +282,10 @@
             }
             this.selected = item;
           }
+        },
+
+        _hideMetadata: function() {
+          $("#rightPanelMetadata").show();
         },
 
         _up: function(e) {

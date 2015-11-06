@@ -71,7 +71,7 @@
 
           <!-- Drawer Content -->
           <template is="dom-if" if="[[selected]]">
-            <nuxeo-metadata doc="[[selected]]"></nuxeo-metadata>
+            <nuxeo-metadata doc="[[selected]]" id="rightPanelMetadata"></nuxeo-metadata>
           </template>
 
         </paper-header-panel>
@@ -92,17 +92,13 @@
               <paper-icon-button id="paperToggle" icon="info" paper-drawer-toggle></paper-icon-button>
             </template>
           </paper-toolbar>
-          <paper-tabs selected="{{selectedTab}}" noink="">
+          <paper-tabs selected="{{selectedTab}}" on-tap="hideMetadata">
             <paper-tab>Documents</paper-tab>
-            <paper-tab>Summary</paper-tab>
             <paper-tab>Audit</paper-tab>
           </paper-tabs>
           <iron-pages selected="{{selectedTab}}" style="padding:0 0">
             <div>
               <nuxeo-listing current-parent="{{currentParent}}" search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-listing>
-            </div>
-            <div>
-              <nuxeo-metadata style="text-align:center" doc="[[currentParent]]"></nuxeo-metadata>
             </div>
             <div>
               <nuxeo-contentview current-parent="[[currentParent]]"></nuxeo-contentview>
