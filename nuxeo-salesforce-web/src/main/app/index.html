@@ -60,58 +60,64 @@
 </head>
 
 <body unresolved class="fullbleed layout vertical">
-  <span id="browser-sync-binding"></span>
-  <template is="dom-bind" id="app">
+  <div id="authorized" style="display:none">
+    <span id="browser-sync-binding"></span>
+    <template is="dom-bind" id="app">
 
-    <nuxeo-connection id="nx" url="/nuxeo"></nuxeo-connection>
+      <nuxeo-connection id="nx" url="/nuxeo"></nuxeo-connection>
 
-    <paper-drawer-panel id="paperDrawerPanel" drawer-width="300px" right-drawer>
-      <paper-header-panel drawer mode="seam">
+      <paper-drawer-panel id="paperDrawerPanel" drawer-width="300px" right-drawer>
+        <paper-header-panel drawer mode="seam">
 
-        <!-- Drawer Content -->
-        <template is="dom-if" if="[[selected]]">
-          <nuxeo-metadata doc="[[selected]]"></nuxeo-metadata>
-        </template>
-
-      </paper-header-panel>
-      <paper-header-panel main mode="waterfall">
-
-        <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar">
-          <div class="horizontal layout center">
-            Related Documents from Nuxeo
-          </div>
-          <span class="flex"></span>
-          <!-- Search Action -->
-          <paper-input id="search" hidden type="search" bind-value="{{searchTerm}}" on-blur="toggleSearch" autocomplete="off" placeholder="Search"></paper-input>
-          <paper-icon-button id="icon" icon="search" on-tap="toggleSearch"></paper-icon-button>
-          <a href="/nuxeo" target="_blank"><img src="images/nuxeo.png" class="smallIcon"/><paper-tooltip>Access Nuxeo</paper-tooltip></a>
-          <!-- Toolbar icons -->
+          <!-- Drawer Content -->
           <template is="dom-if" if="[[selected]]">
-            <paper-icon-button id="paperToggle" icon="info" paper-drawer-toggle></paper-icon-button>
+            <nuxeo-metadata doc="[[selected]]"></nuxeo-metadata>
           </template>
-        </paper-toolbar>
-        <paper-tabs selected="{{selectedTab}}" noink="">
-          <paper-tab>Documents</paper-tab>
-          <paper-tab>Summary</paper-tab>
-          <paper-tab>Audit</paper-tab>
-        </paper-tabs>
-        <iron-pages selected="{{selectedTab}}" style="padding:0 0">
-          <div>
-            <nuxeo-listing current-parent="{{currentParent}}" search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-listing>
-          </div>
-          <div>
-            <nuxeo-metadata style="text-align:center" doc="[[currentParent]]"></nuxeo-metadata>
-          </div>
-          <div>
-            <nuxeo-contentview current-parent="[[currentParent]]"></nuxeo-contentview>
-          </div>
-        </iron-pages>
 
-      </paper-header-panel>
-    </paper-drawer-panel>
+        </paper-header-panel>
+        <paper-header-panel main mode="waterfall">
 
-  </template>
+          <!-- Main Toolbar -->
+          <paper-toolbar id="mainToolbar">
+            <div class="horizontal layout center">
+              Related Documents from Nuxeo
+            </div>
+            <span class="flex"></span>
+            <!-- Search Action -->
+            <paper-input id="search" hidden type="search" bind-value="{{searchTerm}}" on-blur="toggleSearch" autocomplete="off" placeholder="Search"></paper-input>
+            <paper-icon-button id="icon" icon="search" on-tap="toggleSearch"></paper-icon-button>
+            <a href="/nuxeo" target="_blank"><img src="images/nuxeo.png" class="smallIcon"/><paper-tooltip>Access Nuxeo</paper-tooltip></a>
+            <!-- Toolbar icons -->
+            <template is="dom-if" if="[[selected]]">
+              <paper-icon-button id="paperToggle" icon="info" paper-drawer-toggle></paper-icon-button>
+            </template>
+          </paper-toolbar>
+          <paper-tabs selected="{{selectedTab}}" noink="">
+            <paper-tab>Documents</paper-tab>
+            <paper-tab>Summary</paper-tab>
+            <paper-tab>Audit</paper-tab>
+          </paper-tabs>
+          <iron-pages selected="{{selectedTab}}" style="padding:0 0">
+            <div>
+              <nuxeo-listing current-parent="{{currentParent}}" search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-listing>
+            </div>
+            <div>
+              <nuxeo-metadata style="text-align:center" doc="[[currentParent]]"></nuxeo-metadata>
+            </div>
+            <div>
+              <nuxeo-contentview current-parent="[[currentParent]]"></nuxeo-contentview>
+            </div>
+          </iron-pages>
+
+        </paper-header-panel>
+      </paper-drawer-panel>
+
+    </template>
+  </div>
+  <div id="unauthorized" style="text-align:center; margin:3em; display:none">
+    <img src="images/nuxeo.png" class="smallIcon">
+    <h2>Nuxeo Authentication Failed</h2><h3>Please contact administrator team.</h3>
+  </div>
 </body>
 <!-- build:js scripts/app.js -->
 <script src="scripts/app.js"></script>
