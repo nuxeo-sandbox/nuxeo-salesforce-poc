@@ -77,7 +77,7 @@
     <nuxeo-connection id="nx"></nuxeo-connection>
 
 
-    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto></nuxeo-resource>
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto=""></nuxeo-resource>
     <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
 
 
@@ -193,7 +193,7 @@
         },
 
         observers: [
-          '_fetch(currentParent.uid, searchTerm, sfobject)',
+          '_fetch(searchTerm)',
           '_displayCanvasApp(sfobject)',
           '_executeOp(sfobject)',
           '_getChildren(currentParent)'
@@ -231,9 +231,11 @@
           return this.$.parentResource.get();
         },
 
-        _fetch: function(parentId, searchTerm) {
-          this.$.query.params = this._getQueryParams(parentId, searchTerm);
-          this.$.query.get();
+        _fetch: function(searchTerm) {
+          if(this.currentParent){
+            this.$.query.params = this._getQueryParams(this.currentParent.uid, searchTerm);
+            this.$.query.get();
+          }
         },
 
         _createFolder: function() {
