@@ -7,7 +7,7 @@
     .card {
       padding: 5px;
       margin: 5px;
-      width: 280px;
+      width: 100%;
       background-color: white;
       display: inline-block;
       @apply(--shadow-elevation-2dp);
@@ -54,7 +54,7 @@
     </paper-toolbar>
 
     <template is="dom-if" if="[[thumbnail]]">
-      <div class="card"><img src$="[[thumbnail]]"></img></div>
+      <div class="card"><img src$="[[thumbnail]]" style="width:100%"></img></div>
     </template>
 
     <section id="common" class="card">
