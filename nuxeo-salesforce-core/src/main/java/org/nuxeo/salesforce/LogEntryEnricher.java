@@ -69,7 +69,11 @@ public class LogEntryEnricher extends AbstractJsonEnricher<LogEntry> {
 
     protected String getPrincipalName(LogEntry logEntry) {
         UserManager userManager = Framework.getLocalService(UserManager.class);
-        NuxeoPrincipal principal = userManager.getPrincipal(logEntry.getPrincipalName());
+        String principalName = logEntry.getPrincipalName();
+        NuxeoPrincipal principal = userManager.getPrincipal(principalName);
+        if (principal == null) {
+            return principalName;
+        }
         String firstName = principal.getFirstName();
         String lastName = principal.getLastName();
         if (Strings.isNullOrEmpty(firstName) && Strings.isNullOrEmpty(lastName)) {
