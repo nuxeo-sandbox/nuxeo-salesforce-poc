@@ -279,9 +279,6 @@
             this.searchTerm = ''; // clear search term
             this.currentParent = item;
           } else {
-            if (this._isSame(item, this.selected) && window.opener) {
-              window.opener.postMessage(item, '*');
-            }
             this.selected = item;
           }
         },
