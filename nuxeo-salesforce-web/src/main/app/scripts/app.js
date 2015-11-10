@@ -12,19 +12,7 @@
     // imports are loaded and elements have been registered
   });
 
-  app.toggleSearch = function() {
-    this.$.search.hidden = !this.$.search.hidden;
-    if (!this.$.search.hidden) {
-      this.async(function() {
-        this.$.search.$.input.focus();
-      });
-    }
-  };
-  app.hideMetadata = function () {
-    if (app.selectedTab == 0) {
-      $(".nuxeo-metadata").hide();
-    } else {
-      $(".nuxeo-metadata").show();
-    }
-  };
+  app.hideMetadata = function() {
+    0 == t.selectedTab ? $(".nuxeo-metadata").hide() : $(".nuxeo-metadata").show()
+  }
 })(document);

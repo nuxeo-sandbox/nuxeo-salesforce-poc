@@ -75,22 +75,13 @@
           </template>
 
         </paper-header-panel>
-        <paper-header-panel main mode="waterfall">
-
-          <!-- Main Toolbar -->
+        <paper-header-panel main="" mode="waterfall">
           <paper-toolbar id="mainToolbar">
-            <div class="horizontal layout center">
-              Related Documents from Nuxeo
-            </div>
-            <span class="flex"></span>
-            <!-- Search Action -->
-            <paper-input id="search" hidden type="search" bind-value="{{searchTerm}}" on-blur="toggleSearch" autocomplete="off" placeholder="Search"></paper-input>
-            <paper-icon-button id="icon" icon="search" on-tap="toggleSearch"></paper-icon-button>
-            <a href="/nuxeo" target="_blank"><img src="images/nuxeo.png" class="smallIcon"/><paper-tooltip>Access Nuxeo</paper-tooltip></a>
-            <!-- Toolbar icons -->
-            <template is="dom-if" if="[[selected]]">
-              <paper-icon-button id="paperToggle" icon="info" paper-drawer-toggle></paper-icon-button>
-            </template>
+            <a href="/nuxeo" target="_blank"><img src="images/nuxeo.png" class="smallIcon">
+              <paper-tooltip>Nuxeo</paper-tooltip>
+            </a>
+            <paper-icon-button id="icon" icon="search"></paper-icon-button>
+            <paper-input id="search" type="search" bind-value="{{searchTerm}}" autocomplete="off" placeholder="Search"></paper-input>
           </paper-toolbar>
           <paper-tabs selected="{{selectedTab}}" on-tap="hideMetadata">
             <paper-tab>Documents</paper-tab>
@@ -104,7 +95,6 @@
               <nuxeo-contentview current-parent="[[currentParent]]"></nuxeo-contentview>
             </div>
           </iron-pages>
-
         </paper-header-panel>
       </paper-drawer-panel>
 

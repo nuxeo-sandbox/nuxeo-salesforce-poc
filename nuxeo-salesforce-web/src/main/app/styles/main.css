@@ -53,3 +53,7 @@ paper-fab.floatingRight{
   position: fixed;
   bottom:10px;
 }
+paper-toolbar.paper-toolbar-0 {
+  background: white;
+  color: #000;
+}
