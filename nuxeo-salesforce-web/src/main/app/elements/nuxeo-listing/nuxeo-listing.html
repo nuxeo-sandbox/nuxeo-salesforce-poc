@@ -375,7 +375,9 @@
           e.preventDefault();
         },
         _onDragEnter: function(e) {
-          this.toggleClass('hover', true, e.target);
+          if (e.target.id === "list") {
+            this.toggleClass('hover', true, e.target);
+          }
         },
         _onDrop: function (e) {
           e.preventDefault();
