@@ -13,6 +13,6 @@
   });
 
   app.hideMetadata = function() {
-    0 == t.selectedTab ? $(".nuxeo-metadata").hide() : $(".nuxeo-metadata").show()
+    0 == app.selectedTab ? $(".nuxeo-metadata").hide() : $(".nuxeo-metadata").show()
   }
 })(document);

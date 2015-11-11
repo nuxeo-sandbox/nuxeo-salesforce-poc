@@ -103,19 +103,28 @@
 
     <!-- SF-47 -->
     <!--<section class="sub_toolbar_actions" onclick="createFolderBox(event)">-->
-      <!--<paper-fab icon="folder" title="Add folder" data-dialog="create_folder_box" class="blue floatingRight"></paper-fab>-->
+    <!--<paper-fab icon="folder" title="Add folder" data-dialog="create_folder_box" class="blue floatingRight"></paper-fab>-->
     <!--</section>-->
     <!--<paper-dialog id="create_folder_box" class="folder-box">-->
-      <!--<h3>Add folder</h3>-->
-      <!--<div>-->
-        <!--<paper-input id="folder_name" placeholder="Folder Title" value="{{folderName}}" required="" auto-validate="" error-message="The folder title is required">-->
-        <!--</paper-input>-->
-      <!--</div>-->
-      <!--<div class="buttons">-->
-        <!--<paper-button dialog-dismiss="">Cancel</paper-button>-->
-        <!--<paper-button dialog-confirm="" on-tap="_createFolder">Create</paper-button>-->
-      <!--</div>-->
+    <!--<h3>Add folder</h3>-->
+    <!--<div>-->
+    <!--<paper-input id="folder_name" placeholder="Folder Title" value="{{folderName}}" required="" auto-validate="" error-message="The folder title is required">-->
+    <!--</paper-input>-->
+    <!--</div>-->
+    <!--<div class="buttons">-->
+    <!--<paper-button dialog-dismiss="">Cancel</paper-button>-->
+    <!--<paper-button dialog-confirm="" on-tap="_createFolder">Create</paper-button>-->
+    <!--</div>-->
     <!--</paper-dialog>-->
+
+    <paper-dialog id="modalWarning" class="folder-box">
+      <h3>Warning</h3>
+      <div id="modalWarningContent">
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss="">Close</paper-button>
+      </div>
+    </paper-dialog>
 
     <div id="list" class="list">
       <template is="dom-if" if="[[_isEmpty(response)]]">
@@ -142,7 +151,7 @@
         </paper-item>
       </template>
     </div>
-  </template>
+    </div></paper-dialog></template>
 
   <script>
     function validate() {
@@ -401,11 +410,24 @@
             .uploader();
           var uploads = [];
           for (var i = 0; i < files.length; i++) {
-            uploads.push(new Promise(function (resolve, reject) {
-              uploader.uploadFile(files[i], function (data) {
-                resolve(data);
-              });
-            }));
+            uploads.push(
+              new Promise(function (resolve, reject) {
+                uploader.uploadFile(files[i], function (data) {
+                  resolve(data);
+                });
+              })
+                .catch(function(reason){
+                  console.log(reason);
+                  var content = document.getElementById('modalWarningContent');
+                  if (content) {
+                    content.innerHTML = reason;
+                  }
+                  var dialog = document.getElementById('modalWarning');
+                  if (dialog) {
+                    dialog.open();
+                  }
+                })
+            );
           }
           return Promise.all(uploads)
             .then(function() {
@@ -414,6 +436,17 @@
                   (error) ? reject(error) : resolve(data);
                 });
               });
+            })
+            .catch(function(reason) {
+              console.log(reason);
+              var content = document.getElementById('modalWarningContent');
+              if (content) {
+                content.innerHTML = reason;
+              }
+              var dialog = document.getElementById('modalWarning');
+              if (dialog) {
+                dialog.open();
+              }
             });
         }
       });
