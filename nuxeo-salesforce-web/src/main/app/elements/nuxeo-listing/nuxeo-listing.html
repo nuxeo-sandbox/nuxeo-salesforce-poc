@@ -384,7 +384,7 @@
           this.toggleClass('hover', false, e.target);
           this._upload(e.dataTransfer.files).then(function(docs) {
             // refresh and select last file uploaded
-            return this.$.query.get().then(function() {
+            return this.$.getChildren.execute().then(function() {
               this.selected = docs.entries.pop();
             }.bind(this));
           }.bind(this));
