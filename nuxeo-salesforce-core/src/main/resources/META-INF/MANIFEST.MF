@@ -11,4 +11,5 @@ Nuxeo-WebModule: org.nuxeo.ecm.webengine.app.WebEngineModule;headless=true;name=
 Nuxeo-Component: OSGI-INF/automation-contrib.xml,
  OSGI-INF/schema-contrib.xml,
  OSGI-INF/enricher-contrib.xml,
- OSGI-INF/web-request-controller-contrib.xml
+ OSGI-INF/web-request-controller-contrib.xml,
+ OSGI-INF/theme-contrib.xml

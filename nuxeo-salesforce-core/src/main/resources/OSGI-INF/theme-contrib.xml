@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.salesforce.theme.contrib">
+
+  <extension target="org.nuxeo.ecm.platform.ui.web.auth.service.PluggableAuthenticationService" point="loginScreen">
+    <loginScreenConfig>
+      <fieldAutocomplete>false</fieldAutocomplete>
+    </loginScreenConfig>
+  </extension>
+
+</component>
