@@ -90,14 +90,9 @@ Note: Elements that depend on a id use `sf` as default.
           this.sfobject = null;
           return;
         }
-        var queryUrl = ctx.payload.links.queryUrl;
+        var sobjectUrl = ctx.payload.links.sobjectUrl;
         var sfObject = ctx.payload.environment.record.attributes.type;
-        var soqlQuery;
-        if (sfObject === "Opportunity") {
-          soqlQuery = "SELECT Name, id, AccountId from " + sfObject + " where id='" + opId + "'";
-        } else {
-          soqlQuery = "SELECT Name, id from " + sfObject + " where id='" + opId + "'";
-        }
+        sobjectUrl = sobjectUrl + sfObject + "/" + opId;
         var callbackOp = this._callbackSFObject.bind(this);
         var settings = {
           client: JSON.parse(sessionStorage.getItem("client")),
@@ -106,12 +101,12 @@ Note: Elements that depend on a id use `sf` as default.
           contentType: "application/json",
           success: callbackOp
         }
-        Sfdc.canvas.client.ajax(queryUrl + "?q=" + soqlQuery, settings);
+        Sfdc.canvas.client.ajax(sobjectUrl, settings);
       },
 
       _callbackSFObject: function (response) {
         if (!this.sfobject) {
-          this.sfobject = response.payload.records[0];
+          this.sfobject = response.payload;
         }
       }
 

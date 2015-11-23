@@ -14,11 +14,9 @@
       <category>javascript</category>
       <script>
         <![CDATA[function run(input, params) {
-          var sfobject = {};
-          sfobject.id = params.sfobjectId;
-          sfobject.name = params.sfobjectName;
+          var sfobject = JSON.parse(params.sfObject);
           var docs = Repository.Query(null, {
-            'query': "SELECT * FROM Document WHERE ecm:currentLifeCycleState != 'deleted' AND sf:objectid = '" + sfobject.id + "' AND ecm:isCheckedInVersion = 0 AND ecm:mixinType != 'HiddenInNavigation'",
+            'query': "SELECT * FROM Document WHERE ecm:currentLifeCycleState != 'deleted' AND sf:objectid = '" + sfobject.Id + "' AND ecm:isCheckedInVersion = 0 AND ecm:mixinType != 'HiddenInNavigation'",
           });
           if (docs.length>0) {
             return Repository.GetDocument(null, {
@@ -30,10 +28,10 @@
             });
             var newSFobject = Document.Create(workspaces, {
                   "type" : "Workspace",
-                  "name" : sfobject.name,
+                  "name" : sfobject.Name,
                   "properties" : {
-                      "dc:title" : sfobject.name,
-                       "sf:objectid" : sfobject.id
+                      "dc:title" : sfobject.Name,
+                       "sf:objectid" : sfobject.Id
                   }
             });
             return newSFobject;
