@@ -85,7 +85,7 @@
     <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.path]]" enrichers="documentURL" response="{{response}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.path]]" enrichers="preview, documentURL, driveEditURL" response="{{response}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
     <!-- SF-47 -->
     <!--<nuxeo-operation id="CreateFolder" op="Document.Create" input="[[currentParent.path]]" params="[[params]]" success="{{success}}" error="{{error}}"></nuxeo-operation>-->
 
@@ -212,8 +212,8 @@
         observers: [
           '_fetch(searchTerm)',
           '_displayCanvasApp(sfobject)',
-          '_displayAuthCanvasApp(success, error)',
-          '_displayAuthCanvasApp(success)',
+          '_displayErrorCanvasApp(success, error)',
+          '_displayErrorCanvasApp(success)',
           '_executeOp(sfobject)',
           '_getChildren(currentParent)'
         ],
@@ -233,7 +233,7 @@
           }
         },
 
-        _displayAuthCanvasApp: function () {
+        _displayErrorCanvasApp: function () {
           if (this.success) {
             $("#authorized").show();
             $("#error_content").hide();
@@ -245,9 +245,11 @@
         },
 
 
-        _executeOp: function(){
-          this.params.sfObject = this.sfobject;
-          this.$.fetchSFObject.execute();
+        _executeOp: function() {
+          if (this.sfobject) {
+            this.params.sfObject = this.sfobject;
+            this.$.fetchSFObject.execute();
+          }
         },
 
         _isEmpty: function(response){

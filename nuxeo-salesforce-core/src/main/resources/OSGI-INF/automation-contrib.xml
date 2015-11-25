@@ -28,6 +28,7 @@
             });
             var newSFobject = {};
             if (sfobject.attributes.type === "Opportunity") {
+              var amount = sfobject.Amount ? sfobject.Amount.toString() : null;
               newSFobject = Document.Create(workspaces, {
                     "type" : "Workspace",
                     "name" : sfobject.Name,
@@ -36,7 +37,7 @@
                          "sf:objectId" : sfobject.Id,
                          "sf:objectType" : sfobject.attributes.type,
                          "dc:description" : sfobject.Description,
-                         "sf:objectAmount" : sfobject.Amount.toString()
+                         "sf:objectAmount" : amount
                     }
               });
             } else {
