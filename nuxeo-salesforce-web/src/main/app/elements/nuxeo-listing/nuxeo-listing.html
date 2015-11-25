@@ -77,17 +77,17 @@
     <nuxeo-connection id="nx"></nuxeo-connection>
 
 
-    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}"></nuxeo-resource>
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
 
 
     <!-- Nuxeo resources -->
-    <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}"></nuxeo-resource>
-    <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}"></nuxeo-resource>
-    <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}"></nuxeo-operation>
-    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.path]]" enrichers="documentURL" response="{{response}}" success="{{success}}"></nuxeo-operation>
+    <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.path]]" enrichers="documentURL" response="{{response}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
     <!-- SF-47 -->
-    <!--<nuxeo-operation id="CreateFolder" op="Document.Create" input="[[currentParent.path]]" params="[[params]]" success="{{success}}"></nuxeo-operation>-->
+    <!--<nuxeo-operation id="CreateFolder" op="Document.Create" input="[[currentParent.path]]" params="[[params]]" success="{{success}}" error="{{error}}"></nuxeo-operation>-->
 
     <div class="breadcumb">
       <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
@@ -151,7 +151,7 @@
         </paper-item>
       </template>
     </div>
-    </div></paper-dialog></template>
+  </template>
 
   <script>
     function validate() {
@@ -203,12 +203,16 @@
           },
           success:{
             type: Boolean
+          },
+          error: {
+            type: String
           }
         },
 
         observers: [
           '_fetch(searchTerm)',
           '_displayCanvasApp(sfobject)',
+          '_displayAuthCanvasApp(success, error)',
           '_displayAuthCanvasApp(success)',
           '_executeOp(sfobject)',
           '_getChildren(currentParent)'
@@ -232,10 +236,11 @@
         _displayAuthCanvasApp: function () {
           if (this.success) {
             $("#authorized").show();
-            $("#unauthorized").hide();
+            $("#error_content").hide();
           } else {
             $("#authorized").hide();
-            $("#unauthorized").show();
+            $("#error_content").show();
+            document.getElementById("message_error").innerHTML = this.error;
           }
         },
 
