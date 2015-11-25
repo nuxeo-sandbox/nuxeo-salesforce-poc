@@ -61,9 +61,9 @@ public class LogEntryEnricher extends AbstractJsonEnricher<LogEntry> {
         Date modificationDate = ((GregorianCalendar) targetDocument.getPropertyValue("dc:modified")).getTime();
 
         jsonGenerator.writeObjectFieldStart(NAME);
-        jsonGenerator.writeObjectField("contact", getPrincipalName(logEntry));
-        jsonGenerator.writeObjectField("creation", new SimpleDateFormat("yyyy-MM-dd").format(creationDate));
-        jsonGenerator.writeObjectField("modification", new SimpleDateFormat("yyyy-MM-dd").format(modificationDate));
+        jsonGenerator.writeStringField("contact", getPrincipalName(logEntry));
+        jsonGenerator.writeStringField("creation", new SimpleDateFormat("yyyy-MM-dd").format(creationDate));
+        jsonGenerator.writeStringField("modification", new SimpleDateFormat("yyyy-MM-dd").format(modificationDate));
         jsonGenerator.writeEndObject();
     }
 
