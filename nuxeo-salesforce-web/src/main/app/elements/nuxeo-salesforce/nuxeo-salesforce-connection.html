@@ -83,6 +83,17 @@ Note: Elements that depend on a id use `sf` as default.
 
       _callbackCtx: function (ctx) {
         if(!ctx.payload.environment){
+          if(ctx.payload[0].errorCode === "INVALID_SESSION_ID"){
+            var uri = Sfdc.canvas.oauth.loginUrl();
+            Sfdc.canvas.oauth.login({
+              uri: uri,
+              params: {
+                response_type: "token",
+                client_id: this.clientid,
+                redirect_uri: encodeURIComponent(this.callback)
+              }
+            });
+          }
           console.log("Salesforce Error: " + ctx.payload[0].errorCode);
         }
         var opId = ctx.payload.environment.record.Id;
