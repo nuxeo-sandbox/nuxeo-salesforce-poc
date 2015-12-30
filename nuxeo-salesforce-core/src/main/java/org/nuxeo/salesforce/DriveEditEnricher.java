@@ -28,7 +28,6 @@ import org.nuxeo.common.utils.URIUtils;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.io.download.DownloadService;
 import org.nuxeo.ecm.core.io.marshallers.json.enrichers.AbstractJsonEnricher;
@@ -76,14 +75,17 @@ public class DriveEditEnricher extends AbstractJsonEnricher<DocumentModel> {
         sb.append(NXDRIVE_PROTOCOL).append("://");
         sb.append(PROTOCOL_COMMAND_EDIT).append("/");
         sb.append(baseURL.replaceFirst("://", "/"));
-        if (Boolean.valueOf(Framework.getProperty(NEW_DRIVE_EDIT_URL_PROP_KEY))) {
-            sb.append("user/");
-            sb.append(session.getPrincipal().getName());
-            sb.append("/");
+        //TODO NXP-18682
+        if (session != null) {
+            if (Boolean.valueOf(Framework.getProperty(NEW_DRIVE_EDIT_URL_PROP_KEY))) {
+                sb.append("user/");
+                sb.append(session.getPrincipal().getName());
+                sb.append("/");
+            }
+            sb.append("repo/");
+            sb.append(session.getRepositoryName() + "/");
         }
-        sb.append("repo/");
-        sb.append(session.getRepositoryName());
-        sb.append("/nxdocid/");
+        sb.append("nxdocid/");
         sb.append(currentDocument.getId());
         sb.append("/filename/");
         String escapedFilename = fileName.replaceAll("(/|\\\\|\\*|<|>|\\?|\"|:|\\|)", "-");
