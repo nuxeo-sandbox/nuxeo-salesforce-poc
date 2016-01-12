@@ -64,8 +64,8 @@ public class LogEntryEnricher extends AbstractJsonEnricher<LogEntry> {
 
         jsonGenerator.writeObjectFieldStart(NAME);
         jsonGenerator.writeStringField("contact", getPrincipalName(logEntry));
-        jsonGenerator.writeStringField("creation", new SimpleDateFormat("yyyy-MM-dd").format(creationDate));
-        jsonGenerator.writeStringField("modification", new SimpleDateFormat("yyyy-MM-dd").format(modificationDate));
+        jsonGenerator.writeStringField("creation", new SimpleDateFormat("yyyy-MM-dd HH:mm a").format(creationDate));
+        jsonGenerator.writeStringField("modification", new SimpleDateFormat("yyyy-MM-dd HH:mm a").format(modificationDate));
         jsonGenerator.writeEndObject();
     }
 
