@@ -358,8 +358,10 @@
           }
         },
 
-        _refresh: function() {
-          return this.$.getChildren.execute();
+        _refresh: function () {
+          if (this.$.getChildren) {
+            return this.$.getChildren.execute();
+          }
         },
 
         _docEditURL: function(doc) {
