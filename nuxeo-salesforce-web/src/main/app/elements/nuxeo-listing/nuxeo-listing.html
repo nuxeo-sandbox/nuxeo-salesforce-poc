@@ -72,9 +72,24 @@
       text-decoration: none;
     }
 
+    #spacer {
+      display: table;
+      margin: 0 auto;
+    }
+
     .link {
       cursor: pointer;
       cursor: hand;
+    }
+
+    .iconWithText {
+      padding-right: 5px;
+      vertical-align: text-top;
+    }
+
+    .listIconBox {
+      max-width: 24px;
+      max-height: 24px;
     }
   </style>
   <template>
@@ -101,9 +116,14 @@
     </div>
 
     <paper-toolbar id="drawerToolbar">
-      <img src="[[icon]]">&nbsp;<span class="paper-font-title">{{currentParent.title}}</span>
-      <a href="[[_docURL(currentParent)]]" target="_blank"><paper-tooltip>Access</paper-tooltip>
-        <i class="material-icons">open_in_new</i></a>
+      <div id="folderIcon"><img class="listIconBox iconWithText" src="[[_iconFor(currentParent)]]"></div>
+      <div id="folderTitle"><span class="paper-font-title">{{currentParent.title}}</span></div>
+      <div id="spacer"></div>
+      <div id="folderOpenExternal">
+        <a href="[[_docURL(currentParent)]]" target="_blank">
+          <paper-tooltip>Access</paper-tooltip>
+          <i class="material-icons iconWithText">open_in_new</i></a>
+      </div>
       <div id="folderRefresh" class="link">
         <paper-tooltip>Refresh</paper-tooltip>
         <i on-click="_refresh" class="material-icons">sync</i>
@@ -137,11 +157,12 @@
 
     <div id="list" class="list">
       <template is="dom-if" if="[[_isEmpty(response)]]">
-        There is no related document
+        There are no related documents
       </template>
       <template is="dom-repeat" items="[[response.entries]]">
         <paper-item class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
-          <img src="[[_iconFor(item)]]"><span>[[item.title]]</span>
+          <img class="listIconBox iconWithText" src="[[_iconFor(item)]]">
+          <span>[[item.title]]</span>
           <template is="dom-if" if="[[_isNotFolder(item)]]">
             <div class="row_actions">
               <a href="[[_preview(item)]]" target="_blank"><paper-tooltip>Full Preview</paper-tooltip>
@@ -333,7 +354,7 @@
         },
 
         _iconFor: function(doc) {
-          if (doc.properties['common:icon']) {
+          if(doc && doc.properties['common:icon']) {
             return this.$.nx.client._baseURL + doc.properties['common:icon'];
           }
         },
