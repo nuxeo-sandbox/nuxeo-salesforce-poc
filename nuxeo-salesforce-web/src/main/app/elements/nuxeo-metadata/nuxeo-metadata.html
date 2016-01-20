@@ -120,6 +120,12 @@
           if (doc && doc.properties['thumb:thumbnail']) {
             return doc.properties['thumb:thumbnail'].data;
           }
+
+          if (doc && doc.properties['picture:views']) {
+            return doc.properties['picture:views'].find(function (view) {
+              return view.title === "Small";
+            }).content.data;
+          }
         },
 
         _prop: function(doc, path) {
