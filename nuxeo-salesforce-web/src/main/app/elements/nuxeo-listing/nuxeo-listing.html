@@ -71,6 +71,11 @@
       color:inherit;
       text-decoration: none;
     }
+
+    .link {
+      cursor: pointer;
+      cursor: hand;
+    }
   </style>
   <template>
     <!-- Nuxeo and Salesforce connections -->
@@ -99,6 +104,10 @@
       <img src="[[icon]]">&nbsp;<span class="paper-font-title">{{currentParent.title}}</span>
       <a href="[[_docURL(currentParent)]]" target="_blank"><paper-tooltip>Access</paper-tooltip>
         <i class="material-icons">open_in_new</i></a>
+      <div id="folderRefresh" class="link">
+        <paper-tooltip>Refresh</paper-tooltip>
+        <i on-click="_refresh" class="material-icons">sync</i>
+      </div>
     </paper-toolbar>
 
     <!-- SF-47 -->
@@ -347,6 +356,10 @@
           if(doc && doc.contextParameters!==undefined){
             return doc.contextParameters.documentURL;
           }
+        },
+
+        _refresh: function() {
+          return this.$.getChildren.execute();
         },
 
         _docEditURL: function(doc) {
