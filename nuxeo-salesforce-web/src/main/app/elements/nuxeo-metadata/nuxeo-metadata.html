@@ -43,18 +43,35 @@
         font-size: 24px;
       }
     }
+
+    .documentIcon {
+      padding-right: 5px;
+    }
+
+    .buttonIcon {
+      padding-left: 5px;
+    }
+
+    .iconSize {
+      max-width: 24px;
+      max-height: 24px;
+    }
   </style>
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
 
     <paper-toolbar id="drawerToolbar">
-      <img src="[[icon]]"></img>&nbsp;<span class="paper-font-title">{{doc.title}}</span>
-      <a href="[[_docURL(doc)]]" target="_blank"><paper-tooltip>Access</paper-tooltip>
-        <i class="material-icons">open_in_new</i></a>
+      <img class="documentIcon iconSize" src="[[icon]]"></img>&nbsp;<span class="paper-font-title">{{doc.title}}</span>
+      <a href="[[_docURL(doc)]]" target="_blank">
+        <paper-tooltip>Access</paper-tooltip>
+        <i class="material-icons buttonIcon iconSize">open_in_new</i>
+      </a>
     </paper-toolbar>
 
     <template is="dom-if" if="[[thumbnail]]">
-      <div class="card"><img src$="[[thumbnail]]" style="width:100%"></img></div>
+      <div class="card">
+        <img src$="[[thumbnail]]" style="width:100%"></img>
+      </div>
     </template>
 
     <section id="common" class="card">
