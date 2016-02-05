@@ -1,4 +1,4 @@
-<dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
+</dom-module><dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
   <style>
     :host {
       display: block;
@@ -7,7 +7,6 @@
     .item {
       padding-top: 0.5em;
       margin: 5px;
-      height: 1em;
       background-color: white;
       display: inline-block;
       width: 300px;
@@ -91,6 +90,12 @@
       max-width: 24px;
       max-height: 24px;
     }
+
+    paper-icon-button{
+      padding:4px;
+      width:28px;
+      height:28px;
+    }
   </style>
   <template>
     <!-- Nuxeo and Salesforce connections -->
@@ -165,16 +170,16 @@
           <span>[[item.title]]</span>
           <template is="dom-if" if="[[_isNotFolder(item)]]">
             <div class="row_actions">
-              <a href="[[_preview(item)]]" target="_blank"><paper-tooltip>Full Preview</paper-tooltip>
-                <i class="material-icons">visibility</i></a>
-              <a href="[[_downloadURL(item)]]" target="_blank"><paper-tooltip>Download</paper-tooltip>
-                <i class="material-icons">get_app</i></a>
-              <a href="[[_docEditURL(item)]]" target="_blank"><paper-tooltip>Edit Metadata</paper-tooltip>
-                <i class="material-icons">create</i></a>
-              <a href="[[_driveEdit(item)]]"><paper-tooltip>Edit Document</paper-tooltip>
-                <i class="material-icons">insert_drive_file</i></a>
+              <a href="[[_preview(item)]]" target="_blank">
+                <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button></a>
+              <a href="[[_downloadURL(item)]]" target="_blank">
+                <paper-icon-button icon="file-download" title="Download"></paper-icon-button></a>
+              <a href="[[_docEditURL(item)]]" target="_blank">
+                <paper-icon-button icon="create" title="Edit Metadata"></paper-icon-button></a>
+              <a href="[[_driveEdit(item)]]">
+                <paper-icon-button icon="open-in-browser" title="Edit Document"></paper-icon-button></a>
               <template is="dom-if" if="[[_isLock(item)]]">
-                <i class="material-icons">lock</i>
+                <paper-icon-button icon="lock"></paper-icon-button></a>
               </template>
             </div>
           </template>
