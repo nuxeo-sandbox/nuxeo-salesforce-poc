@@ -56,7 +56,7 @@ Includes a path breadcrumb and features for the folder.
     <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.path]]" enrichers="preview, documentURL, driveEditURL" response="{{response}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
 
-    <nuxeo-listing-breadcrumb path="" [[currentParent.path]] ""></nuxeo-listing-breadcrumb>
+    <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]"></nuxeo-listing-breadcrumb>
     <nuxeo-listing-parent current-parent="[[currentParent]]"></nuxeo-listing-parent>
     <nuxeo-listing response="[[response]]"></nuxeo-listing>
 
