@@ -58,11 +58,13 @@ An element to display a breadcrumb trail based on a Nuxeo path.
 
   <template>
 
-    <div class="breadcumb">
-      <template is="dom-repeat" items="[[_splitPath(breadcrumbPath)]]">
-        / <span class="path" on-tap="_up">[[item]]</span>
-      </template>
-    </div>
+    <template is="dom-if" if="[[breadcrumbPath]]">
+      <div class="breadcumb">
+        <template is="dom-repeat" items="[[_splitPath(breadcrumbPath)]]">
+          / <span class="path" on-tap="_up">[[item]]</span>
+        </template>
+      </div>
+    </template>
 
   </template>
 
