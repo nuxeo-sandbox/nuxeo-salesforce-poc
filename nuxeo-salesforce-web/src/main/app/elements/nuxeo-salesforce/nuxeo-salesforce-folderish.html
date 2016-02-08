@@ -53,12 +53,12 @@ Includes a path breadcrumb and features for the folder.
     <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.path]]" enrichers="preview, documentURL, driveEditURL" response="{{response}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.path]]" enrichers="preview, documentURL, driveEditURL" response="{{documentList}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
 
-    <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]"></nuxeo-listing-breadcrumb>
+    <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{newParentPath}}"></nuxeo-listing-breadcrumb>
     <nuxeo-listing-parent current-parent="[[currentParent]]"></nuxeo-listing-parent>
-    <nuxeo-listing response="[[response]]"></nuxeo-listing>
+    <nuxeo-listing document-list="[[documentList]]"></nuxeo-listing>
 
 
     <paper-dialog id="modalWarning" class="folder-box">
@@ -77,7 +77,7 @@ Includes a path breadcrumb and features for the folder.
       Polymer({
         is: 'nuxeo-salesforce-folderish',
         properties: {
-          path: {
+          newParentPath: {
             type: String,
             value: '/default-domain'
           },
@@ -113,7 +113,7 @@ Includes a path breadcrumb and features for the folder.
 
         observers: [
           '_fetch(searchTerm)',
-          '_fetchParent(path)',
+          '_fetchParent(newParentPath)',
           '_displayCanvasApp(sfobject)',
           '_displayErrorCanvasApp(success, error)',
           '_displayErrorCanvasApp(success)',
