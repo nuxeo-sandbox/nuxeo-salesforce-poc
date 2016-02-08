@@ -75,7 +75,12 @@ An element to display a breadcrumb trail based on a Nuxeo path.
       properties: {
         breadcrumbPath: {
           type: String,
-          value: '/default-domain'
+          value: '/default-domain',
+          notify: true
+        },
+        newParentPath: {
+          type: String,
+          notify: true
         }
       },
 
@@ -83,7 +88,7 @@ An element to display a breadcrumb trail based on a Nuxeo path.
       _up: function (e) {
         var pathParts = this._splitPath(this.breadcrumbPath);
         var parentPath = '/' + pathParts.splice(0, e.model.index + 1).join('/');
-        this.breadcrumbPath = parentPath;
+        this.newParentPath = parentPath;
       },
 
 
