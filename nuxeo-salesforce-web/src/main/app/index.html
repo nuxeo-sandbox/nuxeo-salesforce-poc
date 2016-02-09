@@ -97,16 +97,16 @@ Contributors:
 
         .mainTabs paper-tab {
           --paper-tab-ink: var(--accent-color);
-          width: 100px;
+          width: 90px;
         }
 
         .logoButton {
           height: 100%;
         }
 
-        .embeddedToolbar {
-          background: white;
-          color: #000;
+        .embedded-toolbar {
+          background: var(--primary-background-color);
+          color: var(--secondary-text-color);
         }
       </style>
 
@@ -144,24 +144,21 @@ Contributors:
 
           <iron-pages selected="{{selectedTab}}" style="padding:0 0">
             <div id="searchPublicPage">
-              <paper-toolbar id="searchPublicToolbar" class="embeddedToolbar">
+              <paper-toolbar id="searchPublicToolbar" class="embedded-toolbar">
                 <paper-input id="searchPublicInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
               </paper-toolbar>
             </div>
             <div id="searchInternalPage">
-              <paper-toolbar id="searchInternalToolbar" class="embeddedToolbar">
+              <paper-toolbar id="searchInternalToolbar" class="embedded-toolbar">
                 <paper-input id="searchInternalInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
               </paper-toolbar>
             </div>
             <div id="searchTemplatesPage">
-              <paper-toolbar id="searchTemplatesToolbar" class="embeddedToolbar">
+              <paper-toolbar id="searchTemplatesToolbar" class="embedded-toolbar">
                 <paper-input id="searchTemplatesInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
               </paper-toolbar>
             </div>
             <div id="docsPage">
-              <paper-toolbar id="currentParentToolbar" class="embeddedToolbar">
-                <paper-input id="searchDocsInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
-              </paper-toolbar>
               <nuxeo-salesforce-folderish search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-salesforce-folderish>
             </div>
 
