@@ -35,7 +35,8 @@ import java.io.Serializable;
         "org.nuxeo.template.manager.api",
         "org.nuxeo.template.manager",
         "org.nuxeo.template.manager.xdocreport",
-        "nuxeo-salesforce-core"
+        "nuxeo-salesforce-core",
+        "studio.extensions.aws-sfdc"
 })
 public class TestCreateSowOp {
 
@@ -65,11 +66,29 @@ public class TestCreateSowOp {
         ctx.setInput(template);
         ctx.setCoreSession(session);
         OperationChain chain = new OperationChain("TestCreateSowOp");
+
         Properties opportunityProps = new Properties();
         opportunityProps.put("objectId","123");
+        opportunityProps.put("Name","My opportunity");
+
+        Properties accountProps = new Properties();
+        accountProps.put("Name","Nuxeo");
+        accountProps.put("Name","My opportunity");
+        accountProps.put("BillingStreet","46 Rene Clair");
+        accountProps.put("BillingCity","Paris");
+        accountProps.put("BillingPostalCode","75018");
+        accountProps.put("BillingCountry","France");
+
+        Properties userProps = new Properties();
+        userProps.put("Name","Michael Vachette");
+        userProps.put("Title","Solution Architect");
+        userProps.put("Phone","+33 0 01 02 03 04");
+        userProps.put("MobilePhone","+33 0 01 02 03 04");
+        userProps.put("Email","mvachette@nuxeo.com");
+
         chain.add(CreateSowOp.ID).
-                set("owner",new Properties()).
-                set("account",new Properties()).
+                set("owner",userProps).
+                set("account",accountProps).
                 set("opportunity",opportunityProps);
 
         DocumentModel rendered = (DocumentModel) as.run(ctx, chain);

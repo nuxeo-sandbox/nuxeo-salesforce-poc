@@ -60,21 +60,24 @@ public class CreateSowOp {
     @OperationMethod
     public DocumentModel run(DocumentModel template) {
         DocumentModel source = session.createDocumentModel("File");
-        source.setPropertyValue("dc:title","myTitle");
         source.addFacet("TemplateBased");
         TemplateBasedDocument templateBasedDocument = source.getAdapter(TemplateBasedDocument.class);
         templateBasedDocument.setTemplate(template,false);
 
         //Map properties
+        source.addFacet("salesforceTemplate");
 
         //opportunity
+        source.setPropertyValue("dc:title",opportunity.get("Name"));
 
         //Account
+        source.setPropertyValue("sfa:name",account.get("Name"));
 
         //Owner
-
-        //sections
-
+        source.setPropertyValue("sfu:name",account.get("Name"));
+        source.setPropertyValue("sfu:title",account.get("Title"));
+        source.setPropertyValue("sfu:phone",account.get("Phone"));
+        source.setPropertyValue("sfu:email",account.get("Email"));
 
         Blob rendered = templateBasedDocument.renderWithTemplate(template.getName());
 
