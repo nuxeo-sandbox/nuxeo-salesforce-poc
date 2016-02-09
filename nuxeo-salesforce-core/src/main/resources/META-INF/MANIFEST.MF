@@ -12,4 +12,5 @@ Nuxeo-Component: OSGI-INF/automation-contrib.xml,
  OSGI-INF/schema-contrib.xml,
  OSGI-INF/enricher-contrib.xml,
  OSGI-INF/web-request-controller-contrib.xml,
- OSGI-INF/theme-contrib.xml
+ OSGI-INF/theme-contrib.xml,
+ OSGI-INF/operations-contrib.xml
