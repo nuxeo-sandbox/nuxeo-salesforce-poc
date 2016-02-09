@@ -79,6 +79,7 @@ Contributors:
 </head>
 
 <body unresolved class="fullbleed layout vertical">
+
   <div id="authorized" style="display:none">
     <span id="browser-sync-binding"></span>
     <template is="dom-bind" id="app">
@@ -88,6 +89,7 @@ Contributors:
 
     </template>
   </div>
+
   <div id="error_content" style="text-align:center; margin:3em; display:none">
     <img src="images/nuxeo.png" class="smallIcon">
     <h2>We're sorry.</h2>
@@ -95,17 +97,5 @@ Contributors:
     <h3>Please contact administrator team.</h3>
   </div>
 </body>
-<!-- build:js scripts/app.js -->
-<script src="scripts/app.js"></script>
-<!-- endbuild-->
-<script>
-  document.addEventListener('WebComponentsReady', function () {
-    var template = document.querySelector('template[is="dom-bind"]');
-    template.selectedTab = 0;
-
-  });
-</script>
-
-
 
 </html>
