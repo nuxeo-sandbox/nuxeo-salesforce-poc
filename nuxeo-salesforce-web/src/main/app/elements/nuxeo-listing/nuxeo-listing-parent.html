@@ -46,8 +46,23 @@ For example the name of the folder and a link to access it in Nuxeo.
     }
 
     .listIconBox {
-      max-width: 24px;
-      max-height: 24px;
+      padding: 5px;
+      --iron-icon-width: 24px;
+      --iron-icon-height: 24px;
+    }
+
+    .docTitle {
+      color: var(--secondary-text-color);
+      font-size: 180%;
+    }
+
+    .docContainer {
+      display: table;
+    }
+
+    .docTitleContainer {
+      display: table-cell;
+      vertical-align: middle;
     }
   </style>
   <template>
@@ -55,8 +70,12 @@ For example the name of the folder and a link to access it in Nuxeo.
     <nuxeo-operation id="getChildren"></nuxeo-operation>
 
     <paper-toolbar class="drawerToolbar">
-      <div id="folderIcon"><img class="listIconBox iconWithText" src="[[_iconFor(currentParent)]]"></div>
-      <div id="folderTitle"><span class="paper-font-title">{{currentParent.title}}</span></div>
+      <div class="docContainer">
+        <iron-icon src="../../images/nuxeo.png" class="listIconBox iconWithText"></iron-icon>
+        <div class="docTitleContainer">
+          <span class="paper-font-title docTitle">This is some text.</span>
+        </div>
+      </div>
       <div id="spacer">
         <!--This pushes the action buttons to the right edge. -->
       </div>
