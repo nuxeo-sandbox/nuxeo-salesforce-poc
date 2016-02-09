@@ -39,6 +39,11 @@ Includes a path breadcrumb and features for the folder.
         font-size: 24px;
       }
     }
+
+    .embedded-toolbar {
+      background: var(--primary-background-color);
+      color: var(--secondary-text-color);
+    }
   </style>
 
   <template>
@@ -57,7 +62,10 @@ Includes a path breadcrumb and features for the folder.
 
 
     <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{newParentPath}}"></nuxeo-listing-breadcrumb>
-    <nuxeo-listing-parent current-parent="[[currentParent]]"></nuxeo-listing-parent>
+    <nuxeo-listing-parent current-parent="[[currentParent]]" class="embedded-toolbar"></nuxeo-listing-parent>
+    <paper-toolbar class="embedded-toolbar">
+      <paper-input id="searchDocsInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
+    </paper-toolbar>
     <nuxeo-listing document-list="[[documentList]]"></nuxeo-listing>
 
 
