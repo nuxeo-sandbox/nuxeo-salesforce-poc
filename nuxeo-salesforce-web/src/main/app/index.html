@@ -1,5 +1,24 @@
 <!doctype html>
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Vladimir Pasquier <vpasquier@nuxeo.com>
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
 <html lang="">
 
 <head>
@@ -60,96 +79,17 @@
 </head>
 
 <body unresolved class="fullbleed layout vertical">
+
   <div id="authorized" style="display:none">
     <span id="browser-sync-binding"></span>
     <template is="dom-bind" id="app">
 
-      <style is="custom-style">
-        .mainTabs {
-          font-size: 130%;
-          color: var(--light-primary-color);
-          font-weight: normal;
-          --paper-tabs-selection-bar-color: var(--accent-color);
-        }
-
-        .mainTabs paper-tab {
-          --paper-tab-ink: var(--accent-color);
-          width: 100px;
-        }
-
-        .logoButton {
-          height: 100%;
-        }
-
-        .embeddedToolbar {
-          background: white;
-          color: #000;
-        }
-      </style>
-
       <nuxeo-connection id="nx" url="/nuxeo"></nuxeo-connection>
-
-      <paper-drawer-panel id="paperDrawerPanel" drawer-width="30%" right-drawer>
-
-
-        <paper-header-panel drawer mode="seam">
-          <!-- Drawer Content -->
-          <template is="dom-if" if="[[selected]]">
-            <nuxeo-metadata doc="[[selected]]" id="rightPanelMetadata"></nuxeo-metadata>
-          </template>
-        </paper-header-panel>
-
-
-        <paper-header-panel main mode="waterfall">
-
-          <paper-toolbar class="tabsToolbar paper-header">
-            <div class="logoButton">
-              <a href="/nuxeo" target="_blank">
-                <paper-icon-button class=" verticalCenterAnything" src="images/aws_icon_24.png"></paper-icon-button>
-                <paper-tooltip>Nuxeo</paper-tooltip>
-              </a>
-            </div>
-            <!-- This paper-tabs should be scrollable but it fails when used inside paper-toolbar.
-               See https://github.com/PolymerElements/paper-tabs/issues/130 -->
-            <paper-tabs class="mainTabs" selected="{{selectedTab}}" on-tap="hideMetadata">
-              <paper-tab>Public</paper-tab>
-              <paper-tab>Internal</paper-tab>
-              <paper-tab>Templates</paper-tab>
-              <paper-tab>Docs</paper-tab>
-            </paper-tabs>
-          </paper-toolbar>
-
-          <iron-pages selected="{{selectedTab}}" style="padding:0 0">
-            <div id="searchPublicPage">
-              <paper-toolbar id="searchPublicToolbar" class="embeddedToolbar">
-                <paper-input id="searchPublicInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
-              </paper-toolbar>
-            </div>
-            <div id="searchInternalPage">
-              <paper-toolbar id="searchInternalToolbar" class="embeddedToolbar">
-                <paper-input id="searchInternalInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
-              </paper-toolbar>
-            </div>
-            <div id="searchTemplatesPage">
-              <paper-toolbar id="searchTemplatesToolbar" class="embeddedToolbar">
-                <paper-input id="searchTemplatesInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
-              </paper-toolbar>
-            </div>
-            <div id="docsPage">
-              <paper-toolbar id="currentParentToolbar" class="embeddedToolbar">
-                <paper-input id="searchDocsInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
-              </paper-toolbar>
-              <nuxeo-listing current-parent="{{currentParent}}" search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-listing>
-            </div>
-
-          </iron-pages>
-        </paper-header-panel>
-
-
-      </paper-drawer-panel>
+      <nuxeo-salesforce-app></nuxeo-salesforce-app>
 
     </template>
   </div>
+
   <div id="error_content" style="text-align:center; margin:3em; display:none">
     <img src="images/nuxeo.png" class="smallIcon">
     <h2>We're sorry.</h2>
@@ -157,17 +97,5 @@
     <h3>Please contact administrator team.</h3>
   </div>
 </body>
-<!-- build:js scripts/app.js -->
-<script src="scripts/app.js"></script>
-<!-- endbuild-->
-<script>
-  document.addEventListener('WebComponentsReady', function () {
-    var template = document.querySelector('template[is="dom-bind"]');
-    template.selectedTab = 0;
-
-  });
-</script>
-
-
 
 </html>

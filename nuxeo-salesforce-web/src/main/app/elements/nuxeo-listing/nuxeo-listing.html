@@ -1,19 +1,38 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Vladimir Pasquier <vpasquier@nuxeo.com>
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<!--
+An element to display a list of Nuxeo documents.
+
+Requires <nuxeo-connection> in order to get icons.
+-->
 <dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
   <style>
-    :host {
-      display: block;
-    }
-
     .item {
-      padding-top: 0.5em;
       margin: 5px;
-      background-color: white;
-      display: inline-block;
-      width: 300px;
+      background: var(--paper-card-light-primary-color);
+      display: inherit;
       overflow: hidden;
-      cursor: pointer;
       user-select: none;
-    @apply(--shadow-elevation-2dp);
+      @apply(--shadow-elevation-3dp);
+      float: left;
     }
 
     .item[selected] {
@@ -22,63 +41,10 @@
       border-left-style: solid;
     }
 
-    paper-toolbar {
-      color: var(--secondary-text-color);
-      background-color: var(--drawer-menu-color);
-      border-bottom: var(--drawer-toolbar-border-color);
-    }
-
-    .breadcumb {
-      margin: 5px;
-    }
-
-    .path {
-      display: inline-block;
-      vertical-align: middle;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .path {
-      padding: 5px;
-      text-decoration: none;
-      color: black;
-      display: inline-block;
-    }
-
-    .path:last-of-type {
-      color: #aaa;
-      pointer-events: none;
-    }
-
     @media (max-width: 600px) {
       h1.paper-font-display1 {
         font-size: 24px;
       }
-    }
-
-    .hover {
-      background: var(--light-primary-color);
-    }
-
-    .list {
-      height: 200px;
-    }
-
-    a {
-      color:inherit;
-      text-decoration: none;
-    }
-
-    #spacer {
-      display: table;
-      margin: 0 auto;
-    }
-
-    .link {
-      cursor: pointer;
-      cursor: hand;
     }
 
     .iconWithText {
@@ -87,414 +53,176 @@
     }
 
     .listIconBox {
-      max-width: 24px;
-      max-height: 24px;
+      padding: 4px;
+      --iron-icon-width: 20px;
+      --iron-icon-height: 20px;
     }
 
-    paper-icon-button{
-      padding:4px;
-      width:28px;
-      height:28px;
+    paper-card {
+      padding: 10px;
+    }
+
+    paper-icon-button {
+      padding: 4px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .horizontal {
+      @apply(--layout-horizontal);
+    }
+
+    .justified {
+      @apply(--layout-justified);
+    }
+
+    .docContainer {
+      display: table;
+    }
+
+    .docTitleContainer {
+      display: table-cell;
+      vertical-align: middle;
     }
   </style>
+
   <template>
-    <!-- Nuxeo and Salesforce connections -->
     <nuxeo-connection id="nx"></nuxeo-connection>
 
+    <div>
 
-    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
-
-
-    <!-- Nuxeo resources -->
-    <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.path]]" enrichers="preview, documentURL, driveEditURL" response="{{response}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-    <!-- SF-47 -->
-    <!--<nuxeo-operation id="CreateFolder" op="Document.Create" input="[[currentParent.path]]" params="[[params]]" success="{{success}}" error="{{error}}"></nuxeo-operation>-->
-
-    <div class="breadcumb">
-      <template is="dom-repeat" items="[[_splitPath(currentParent.path)]]">
-        / <span class="path" on-tap="_up">[[item]]</span>
+      <template is="dom-if" if="[[_isEmpty(documentList)]]">
+        <paper-card class="item">
+          <div class="card-content docContainer">
+            <iron-icon icon="warning" class="listIconBox iconWithText"></iron-icon>
+            <div class="docTitleContainer">
+              <span>There are no related documents</span>
+            </div>
+          </div>
+        </paper-card>
       </template>
-    </div>
 
-    <paper-toolbar id="drawerToolbar">
-      <div id="folderIcon"><img class="listIconBox iconWithText" src="[[_iconFor(currentParent)]]"></div>
-      <div id="folderTitle"><span class="paper-font-title">{{currentParent.title}}</span></div>
-      <div id="spacer"></div>
-      <div id="folderOpenExternal">
-        <a href="[[_docURL(currentParent)]]" target="_blank">
-          <paper-tooltip>Access</paper-tooltip>
-          <i class="material-icons iconWithText">open_in_new</i></a>
-      </div>
-      <div id="folderRefresh" class="link">
-        <paper-tooltip>Refresh</paper-tooltip>
-        <i on-click="_refresh" class="material-icons">sync</i>
-      </div>
-    </paper-toolbar>
-
-    <!-- SF-47 -->
-    <!--<section class="sub_toolbar_actions" onclick="createFolderBox(event)">-->
-    <!--<paper-fab icon="folder" title="Add folder" data-dialog="create_folder_box" class="blue floatingRight"></paper-fab>-->
-    <!--</section>-->
-    <!--<paper-dialog id="create_folder_box" class="folder-box">-->
-    <!--<h3>Add folder</h3>-->
-    <!--<div>-->
-    <!--<paper-input id="folder_name" placeholder="Folder Title" value="{{folderName}}" required="" auto-validate="" error-message="The folder title is required">-->
-    <!--</paper-input>-->
-    <!--</div>-->
-    <!--<div class="buttons">-->
-    <!--<paper-button dialog-dismiss="">Cancel</paper-button>-->
-    <!--<paper-button dialog-confirm="" on-tap="_createFolder">Create</paper-button>-->
-    <!--</div>-->
-    <!--</paper-dialog>-->
-
-    <paper-dialog id="modalWarning" class="folder-box">
-      <h3>Warning</h3>
-      <div id="modalWarningContent">
-      </div>
-      <div class="buttons">
-        <paper-button dialog-dismiss="">Close</paper-button>
-      </div>
-    </paper-dialog>
-
-    <div id="list" class="list">
-      <template is="dom-if" if="[[_isEmpty(response)]]">
-        There are no related documents
-      </template>
-      <template is="dom-repeat" items="[[response.entries]]">
-        <paper-item class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
-          <img class="listIconBox iconWithText" src="[[_iconFor(item)]]">
-          <span>[[item.title]]</span>
+      <template is="dom-repeat" items="[[documentList.entries]]">
+        <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
+          <div class="card-content docContainer">
+            <iron-icon src="[[_iconFor(item)]]" class="listIconBox iconWithText"></iron-icon>
+            <div class="docTitleContainer">
+              <span>[[item.title]]</span>
+            </div>
+          </div>
           <template is="dom-if" if="[[_isNotFolder(item)]]">
-            <div class="row_actions">
+            <div class="card-actions horizontal justified">
               <a href="[[_preview(item)]]" target="_blank">
-                <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button></a>
+                <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+              </a>
               <a href="[[_downloadURL(item)]]" target="_blank">
-                <paper-icon-button icon="file-download" title="Download"></paper-icon-button></a>
+                <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+              </a>
               <a href="[[_docEditURL(item)]]" target="_blank">
-                <paper-icon-button icon="create" title="Edit Metadata"></paper-icon-button></a>
+                <paper-icon-button icon="create" title="Edit Metadata"></paper-icon-button>
+              </a>
               <a href="[[_driveEdit(item)]]">
-                <paper-icon-button icon="open-in-browser" title="Edit Document"></paper-icon-button></a>
+                <paper-icon-button icon="open-in-browser" title="Edit Document"></paper-icon-button>
+              </a>
               <template is="dom-if" if="[[_isLock(item)]]">
-                <paper-icon-button icon="lock"></paper-icon-button></a>
+                <paper-icon-button icon="lock"></paper-icon-button>
               </template>
             </div>
           </template>
-        </paper-item>
+        </paper-card>
       </template>
+
     </div>
+
   </template>
 
   <script>
-    function validate() {
-      document.getElementById('folder_name').validate();
-    }
-    function createFolderBox(e) {
-      var button = e.target;
-      while (!button.hasAttribute('data-dialog') && button !== document.body) {
-        button = button.parentElement;
-      }
-      if (!button.hasAttribute('data-dialog')) {
-        return;
-      }
-      var id = button.getAttribute('data-dialog');
-      var dialog = document.getElementById(id);
-      if (dialog) {
-        dialog.open();
-      }
-    }
-    (function() {
-      Polymer({
-        is: 'nuxeo-listing',
-        properties: {
-          path: {
-            type: String,
-            value: '/default-domain'
-          },
-          searchTerm: {
-            type: String,
-            notify: true
-          },
-          currentParent: {
-            type: Object,
-            notify: true
-          },
-          selected: {
-            type: Object,
-            notify: true
-          },
-          params: {
-            type:Object,
-            value: {}
-          },
-          folderName: {
-            type: String
-          },
-          sfobject: {
-            type: Object
-          },
-          success:{
-            type: Boolean
-          },
-          error: {
-            type: String
-          }
+    Polymer({
+      is: 'nuxeo-listing',
+
+      properties: {
+        documentList: {
+          type: Object,
+          notify: true
         },
+        selected: {
+          type: Object,
+          notify: true
+        }
+      },
 
-        observers: [
-          '_fetch(searchTerm)',
-          '_displayCanvasApp(sfobject)',
-          '_displayErrorCanvasApp(success, error)',
-          '_displayErrorCanvasApp(success)',
-          '_executeOp(sfobject)',
-          '_getChildren(currentParent)'
-        ],
+      _isEmpty: function (data) {
+        return data === null || data.resultsCount === 0;
+      },
 
-        listeners: {
-          'list.dragover': '_onDragOver',
-          'list.dragenter': '_onDragEnter',
-          'list.drop': '_onDrop',
-          'list.dragleave': '_onDragLeave'
-        },
+      _select: function (e) {
+        var item = e.model.item;
+        // if folder and already selected navigate to it (dbl click)
+        if (this._isFolder(item)) {
+          this.selected = undefined; // clear selection
+          this.searchTerm = ''; // clear search term
+          this.currentParent = item;
+        } else {
+          this.selected = item;
+        }
+      },
 
-        _displayCanvasApp: function () {
-          if (this.sfobject) {
-            $(".fullbleed").show();
+      _isSame: function (item, selected) {
+        return selected && selected.uid === item.uid;
+      },
+
+      _iconFor: function (doc) {
+        if (doc && doc.properties['common:icon']) {
+          return this.$.nx.client._baseURL + doc.properties['common:icon'];
+        }
+      },
+
+      _preview: function (doc) {
+        if (doc.contextParameters !== undefined) {
+          if (doc.contextParameters.preview !== undefined) {
+            return doc.contextParameters.preview.url;
           } else {
-            $(".fullbleed").hide();
-          }
-        },
-
-        _displayErrorCanvasApp: function () {
-          if (this.success) {
-            $("#authorized").show();
-            $("#error_content").hide();
-          } else {
-            $("#authorized").hide();
-            $("#error_content").show();
-            document.getElementById("message_error").innerHTML = this.error;
-          }
-        },
-
-
-        _executeOp: function() {
-          if (this.sfobject) {
-            this.params.sfObject = this.sfobject;
-            this.$.fetchSFObject.execute();
-          }
-        },
-
-        _isEmpty: function(response){
-          return response===null || response.resultsCount === 0;
-        },
-
-        _fetchParent: function(path) {
-          this.$.parentResource.path = '/path' + path;
-          return this.$.parentResource.get();
-        },
-
-        _fetch: function(searchTerm) {
-          if(this.currentParent){
-            this.$.query.params = this._getQueryParams(this.currentParent.uid, searchTerm);
-            this.$.query.get();
-          }
-        },
-// SF-47
-//        _createFolder: function() {
-//          this.params.name=this.folderName;
-//          this.params.type="Folder";
-//          this.params.properties = {};
-//          this.params.properties["dc:title"]=this.folderName;
-//          this.$.CreateFolder.execute().then(function() {
-//            return this.$.query.get();
-//          }.bind(this));
-//        },
-
-        _getChildren: function(){
-          if(this.currentParent){
-            this.$.getChildren.execute();
-          }
-        },
-
-        _select: function(e) {
-          var item = e.model.item;
-          // if folder and already selected navigate to it (dbl click)
-          if (this._isFolder(item)) {
-            this.selected = undefined; // clear selection
-            this.searchTerm = ''; // clear search term
-            this.currentParent = item;
-          } else {
-            this.selected = item;
-          }
-        },
-
-        _up: function(e) {
-          var pathParts = this._splitPath(this.currentParent.path);
-          var parentPath = '/' + pathParts.splice(0, e.model.index + 1).join('/');
-          this._fetchParent(parentPath);
-        },
-
-        _isSame: function(item, selected) {
-          return selected && selected.uid === item.uid;
-        },
-
-        _getQueryParams: function(parentId, searchTerm) {
-          var query = 'SELECT * FROM Document WHERE ecm:currentLifeCycleState != \'deleted\' ' +
-            ' AND ecm:isCheckedInVersion = 0 ' +
-            ' AND ecm:mixinType != \'HiddenInNavigation\' ';
-
-          if (searchTerm) {
-            return {
-              query: query + ' AND ecm:parentId = ?' + ' AND ecm:fulltext=\'' + searchTerm + '*\'',
-              queryParams: parentId
-            };
-          }
-          return {
-            query: query + ' AND ecm:parentId = ?',
-            queryParams: parentId
-          };
-        },
-
-        _iconFor: function(doc) {
-          if(doc && doc.properties['common:icon']) {
-            return this.$.nx.client._baseURL + doc.properties['common:icon'];
-          }
-        },
-
-        _preview: function(doc) {
-          if(doc.contextParameters!==undefined){
-            if(doc.contextParameters.preview!==undefined) {
-              return doc.contextParameters.preview.url;
-            } else {
-              return doc.contextParameters.documentURL;
-            }
-          }
-        },
-
-        _isLock: function(doc) {
-          return doc.lockOwner!==undefined;
-        },
-
-        _docURL: function(doc) {
-          if(doc && doc.contextParameters!==undefined){
             return doc.contextParameters.documentURL;
           }
-        },
-
-        _refresh: function () {
-          if (this.$.getChildren) {
-            return this.$.getChildren.execute();
-          }
-        },
-
-        _docEditURL: function(doc) {
-          if(doc && doc.contextParameters!==undefined){
-            return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
-          }
-        },
-
-        _driveEdit: function(doc) {
-          if(doc.contextParameters!==undefined){
-            return doc.contextParameters.driveEditURL;
-          }
-        },
-
-        _downloadURL: function(doc) {
-          if(doc.properties["file:content"]!==undefined && doc.properties["file:content"]!==null){
-            return doc.properties["file:content"].data;
-          }else{
-            if(doc.contextParameters!==undefined){
-              return doc.contextParameters.documentURL;
-            }
-          }
-        },
-
-        _isFolder: function(doc) {
-          return doc.facets.some(function(e){ return e === 'Folderish'; });
-        },
-
-        _isNotFolder: function(doc) {
-          return doc.facets.indexOf("Folderish") < 0;
-        },
-
-        _splitPath: function(path) {
-          return (path) ? path.split('/').splice(1) : [];
-        },
-
-        _onDragOver: function(e) {
-          // prevent default to allow drop
-          e.preventDefault();
-        },
-        _onDragEnter: function(e) {
-          if (e.target.id === "list") {
-            this.toggleClass('hover', true, e.target);
-          }
-        },
-        _onDrop: function (e) {
-          e.preventDefault();
-          this.toggleClass('hover', false, e.target);
-          this._upload(e.dataTransfer.files).then(function(docs) {
-            // refresh and select last file uploaded
-            return this.$.getChildren.execute().then(function() {
-              this.selected = docs.entries.pop();
-            }.bind(this));
-          }.bind(this));
-          return false;
-        },
-        _onDragLeave: function(e) {
-          this.toggleClass('hover', false, e.target);
-        },
-
-        _upload: function(files) {
-          var uploader = this.$.nx.client
-            .operation('FileManager.Import')
-            .context({ currentDocument: this.currentParent.path })
-            .uploader();
-          var uploads = [];
-          for (var i = 0; i < files.length; i++) {
-            uploads.push(
-              new Promise(function (resolve, reject) {
-                uploader.uploadFile(files[i], function (data) {
-                  resolve(data);
-                });
-              })
-                .catch(function(reason){
-                  console.log(reason);
-                  var content = document.getElementById('modalWarningContent');
-                  if (content) {
-                    content.innerHTML = reason;
-                  }
-                  var dialog = document.getElementById('modalWarning');
-                  if (dialog) {
-                    dialog.open();
-                  }
-                })
-            );
-          }
-          return Promise.all(uploads)
-            .then(function() {
-              return new Promise(function (resolve, reject) {
-                uploader.execute(function (error, data) {
-                  (error) ? reject(error) : resolve(data);
-                });
-              });
-            })
-            .catch(function(reason) {
-              console.log(reason);
-              var content = document.getElementById('modalWarningContent');
-              if (content) {
-                content.innerHTML = reason;
-              }
-              var dialog = document.getElementById('modalWarning');
-              if (dialog) {
-                dialog.open();
-              }
-            });
         }
-      });
-    })();
+      },
+
+      _isLock: function (doc) {
+        return doc.lockOwner !== undefined;
+      },
+
+      _docEditURL: function (doc) {
+        if (doc && doc.contextParameters !== undefined) {
+          return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
+        }
+      },
+
+      _driveEdit: function (doc) {
+        if (doc.contextParameters !== undefined) {
+          return doc.contextParameters.driveEditURL;
+        }
+      },
+
+      _downloadURL: function (doc) {
+        if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
+          return doc.properties["file:content"].data;
+        } else {
+          if (doc.contextParameters !== undefined) {
+            return doc.contextParameters.documentURL;
+          }
+        }
+      },
+
+      _isFolder: function (doc) {
+        return doc.facets.some(function (e) {
+          return e === 'Folderish';
+        });
+      },
+
+      _isNotFolder: function (doc) {
+        return doc.facets.indexOf("Folderish") < 0;
+      }
+
+    });
   </script>
 </dom-module>

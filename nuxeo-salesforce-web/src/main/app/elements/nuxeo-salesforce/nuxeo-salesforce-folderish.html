@@ -1,0 +1,301 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Vladimir Pasquier <vpasquier@nuxeo.com>
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+
+<link rel="import" href="../nuxeo-listing/nuxeo-listing.html">
+<link rel="import" href="../nuxeo-listing/nuxeo-listing-breadcrumb.html">
+<link rel="import" href="../nuxeo-listing/nuxeo-listing-parent.html">
+
+<!--
+An element to list the contents of a Nuxeo folder within SFDC.
+
+Includes a path breadcrumb and features for the folder.
+
+Includes the ability to upload a file to Nuxeo from the "Docs" tab.
+-->
+<dom-module id="nuxeo-salesforce-folderish" assetpath="nuxeo-salesforce-folderish/">
+  <style>
+    :host {
+      display: block;
+      --paper-icon-button: {
+        color: var(--secondary-text-color)
+      }
+      --paper-icon-button-ink-color: var(--placeholder-text-color);
+    }
+
+    :host::content a {
+      color: var(--secondary-text-color);
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      h1.paper-font-display1 {
+        font-size: 24px;
+      }
+    }
+
+    .embedded-toolbar {
+      background: var(--default-primary-color);
+      color: var(--primary-text-color);
+    }
+
+    .documentListContainer {
+      margin: 5px;
+      float: left;
+      /* This is hard coded bacause I couldn't find a way to get the div to fill the remaining space.
+      This is an appropriate height for the size of our SFDC app. */
+      height: 362px;
+      width: 100%;
+    }
+
+    .hover {
+      background: var(--divider-color);
+    }
+
+    .searchBox {
+      width: 25em;
+    }
+  </style>
+
+  <template>
+
+    <!-- Nuxeo and Salesforce connections -->
+    <nuxeo-connection id="nx"></nuxeo-connection>
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfobject.AccountId}}" sfobject="{{sfAccount}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfobject.OwnerId}}" sfobject="{{sfUser}}"></nuxeo-salesforce-object>
+
+
+    <!-- Nuxeo resources -->
+    <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.path]]" enrichers="preview, documentURL, driveEditURL" response="{{documentList}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+
+
+    <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{newParentPath}}"></nuxeo-listing-breadcrumb>
+    <nuxeo-listing-parent current-parent="[[currentParent]]" class="embedded-toolbar"></nuxeo-listing-parent>
+    <paper-toolbar class="embedded-toolbar">
+      <paper-input id="searchDocsInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
+    </paper-toolbar>
+    <nuxeo-listing id="dropZone" document-list="[[documentList]]" class="documentListContainer"></nuxeo-listing>
+
+
+    <paper-dialog id="modalWarning" class="folder-box">
+      <h3>Warning</h3>
+      <div id="modalWarningContent">
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss="">Close</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-salesforce-folderish',
+      properties: {
+        newParentPath: {
+          type: String,
+          value: '/default-domain'
+        },
+        searchTerm: {
+          type: String,
+          notify: true
+        },
+        currentParent: {
+          type: Object,
+          notify: true
+        },
+        selected: {
+          type: Object,
+          notify: true
+        },
+        params: {
+          type: Object,
+          value: {}
+        },
+        sfobject: {
+          type: Object
+        },
+        success: {
+          type: Boolean
+        },
+        error: {
+          type: String
+        }
+      },
+
+      observers: [
+          '_fetch(searchTerm)',
+          '_fetchParent(newParentPath)',
+          '_displayCanvasApp(sfobject)',
+          '_displayErrorCanvasApp(success, error)',
+          '_displayErrorCanvasApp(success)',
+          '_executeOp(sfobject)',
+          '_getChildren(currentParent)'
+        ],
+
+      listeners: {
+        'dropZone.dragover': '_onDragOver',
+        'dropZone.dragenter': '_onDragEnter',
+        'dropZone.drop': '_onDrop',
+        'dropZone.dragleave': '_onDragLeave'
+      },
+
+      _displayCanvasApp: function () {
+        if (this.sfobject) {
+          $(".fullbleed").show();
+        } else {
+          $(".fullbleed").hide();
+        }
+      },
+
+      _displayErrorCanvasApp: function () {
+        if (this.success) {
+          $("#authorized").show();
+          $("#error_content").hide();
+        } else {
+          $("#authorized").hide();
+          $("#error_content").show();
+          document.getElementById("message_error").innerHTML = this.error;
+        }
+      },
+
+
+      _executeOp: function () {
+        if (this.sfobject) {
+          this.params.sfObject = this.sfobject;
+          this.$.fetchSFObject.execute();
+        }
+      },
+
+      _fetchParent: function () {
+        this.$.parentResource.path = '/path' + this.newParentPath;
+        return this.$.parentResource.get();
+      },
+
+      _fetch: function (searchTerm) {
+        if (this.currentParent) {
+          this.$.query.params = this._getQueryParams(this.currentParent.uid, searchTerm);
+          this.$.query.get();
+        }
+      },
+
+      _getChildren: function () {
+        if (this.currentParent) {
+          this.$.getChildren.execute();
+        }
+      },
+
+      _getQueryParams: function (parentId, searchTerm) {
+        var query = 'SELECT * FROM Document WHERE ecm:currentLifeCycleState != \'deleted\' ' +
+          ' AND ecm:isCheckedInVersion = 0 ' +
+          ' AND ecm:mixinType != \'HiddenInNavigation\' ';
+
+        if (searchTerm) {
+          return {
+            query: query + ' AND ecm:parentId = ?' + ' AND ecm:fulltext=\'' + searchTerm + '*\'',
+            queryParams: parentId
+          };
+        }
+        return {
+          query: query + ' AND ecm:parentId = ?',
+          queryParams: parentId
+        };
+      },
+
+      _onDragOver: function (e) {
+        // prevent default to allow drop
+        e.preventDefault();
+      },
+      _onDragEnter: function (e) {
+        if (e.target.id === "dropZone") {
+          this.toggleClass('hover', true, e.target);
+        }
+      },
+      _onDrop: function (e) {
+        e.preventDefault();
+        this.toggleClass('hover', false, e.target);
+        this._upload(e.dataTransfer.files).then(function (docs) {
+          // refresh and select last file uploaded
+          return this.$.getChildren.execute().then(function () {
+            this.selected = docs.entries.pop();
+          }.bind(this));
+        }.bind(this));
+        return false;
+      },
+      _onDragLeave: function (e) {
+        this.toggleClass('hover', false, e.target);
+      },
+
+      _upload: function (files) {
+        var uploader = this.$.nx.client
+          .operation('FileManager.Import')
+          .context({
+            currentDocument: this.currentParent.path
+          })
+          .uploader();
+        var uploads = [];
+        for (var i = 0; i < files.length; i++) {
+          uploads.push(
+            new Promise(function (resolve, reject) {
+              uploader.uploadFile(files[i], function (data) {
+                resolve(data);
+              });
+            })
+            .catch(function (reason) {
+              console.log(reason);
+              var content = document.getElementById('modalWarningContent');
+              if (content) {
+                content.innerHTML = reason;
+              }
+              var dialog = document.getElementById('modalWarning');
+              if (dialog) {
+                dialog.open();
+              }
+            })
+          );
+        }
+        return Promise.all(uploads)
+          .then(function () {
+            return new Promise(function (resolve, reject) {
+              uploader.execute(function (error, data) {
+                (error) ? reject(error): resolve(data);
+              });
+            });
+          })
+          .catch(function (reason) {
+            console.log(reason);
+            var content = document.getElementById('modalWarningContent');
+            if (content) {
+              content.innerHTML = reason;
+            }
+            var dialog = document.getElementById('modalWarning');
+            if (dialog) {
+              dialog.open();
+            }
+          });
+      }
+    });
+  </script>
+</dom-module>
