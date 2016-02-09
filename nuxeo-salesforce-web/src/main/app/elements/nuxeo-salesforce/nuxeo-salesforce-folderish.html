@@ -299,11 +299,15 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       },
 
       _refresh: function () {
-        if (this.$.getChildren) {
-          return this.$.getChildren.execute();
+        if (this.refreshList == true) {
+          this.refreshList = false;
+
+          if (this.$.getChildren) {
+            return this.$.getChildren.execute();
+          }
         }
-        this.refreshList = false;
       }
+
     });
   </script>
 </dom-module>
