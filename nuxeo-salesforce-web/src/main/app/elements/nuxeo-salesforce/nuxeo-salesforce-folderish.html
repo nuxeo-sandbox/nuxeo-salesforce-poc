@@ -47,6 +47,15 @@ Includes a path breadcrumb and features for the folder.
 
     .documentListContainer {
       margin: 5px;
+      float: left;
+      /* This is hard coded bacause I couldn't find a way to get the div to fill the remaining space.
+      This is an appropriate height for the size of our SFDC app. */
+      height: 370px;
+      width: 100%;
+    }
+
+    .hover {
+      background: var(--divider-color);
     }
   </style>
 
@@ -72,7 +81,7 @@ Includes a path breadcrumb and features for the folder.
     <paper-toolbar class="embedded-toolbar">
       <paper-input id="searchDocsInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
     </paper-toolbar>
-    <nuxeo-listing document-list="[[documentList]]" class="documentListContainer"></nuxeo-listing>
+    <nuxeo-listing id="dropZone" document-list="[[documentList]]" class="documentListContainer"></nuxeo-listing>
 
 
     <paper-dialog id="modalWarning" class="folder-box">
@@ -136,10 +145,10 @@ Includes a path breadcrumb and features for the folder.
         ],
 
         listeners: {
-          'list.dragover': '_onDragOver',
-          'list.dragenter': '_onDragEnter',
-          'list.drop': '_onDrop',
-          'list.dragleave': '_onDragLeave'
+          'dropZone.dragover': '_onDragOver',
+          'dropZone.dragenter': '_onDragEnter',
+          'dropZone.drop': '_onDrop',
+          'dropZone.dragleave': '_onDragLeave'
         },
 
         _displayCanvasApp: function () {
@@ -313,7 +322,7 @@ Includes a path breadcrumb and features for the folder.
           e.preventDefault();
         },
         _onDragEnter: function (e) {
-          if (e.target.id === "list") {
+          if (e.target.id === "dropZone") {
             this.toggleClass('hover', true, e.target);
           }
         },
