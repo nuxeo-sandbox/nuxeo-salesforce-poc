@@ -44,6 +44,10 @@ Includes a path breadcrumb and features for the folder.
       background: var(--primary-background-color);
       color: var(--secondary-text-color);
     }
+
+    .documentListContainer {
+      margin: 5px;
+    }
   </style>
 
   <template>
@@ -66,7 +70,7 @@ Includes a path breadcrumb and features for the folder.
     <paper-toolbar class="embedded-toolbar">
       <paper-input id="searchDocsInput" type="search" label="Search" bind-value="{{searchTerm}}" autocomplete="off"></paper-input>
     </paper-toolbar>
-    <nuxeo-listing document-list="[[documentList]]"></nuxeo-listing>
+    <nuxeo-listing document-list="[[documentList]]" class="documentListContainer"></nuxeo-listing>
 
 
     <paper-dialog id="modalWarning" class="folder-box">
