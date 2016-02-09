@@ -67,7 +67,6 @@ For example the name of the folder and a link to access it in Nuxeo.
   </style>
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-operation id="getChildren"></nuxeo-operation>
 
     <paper-toolbar class="drawerToolbar">
       <div class="docContainer">
@@ -77,7 +76,7 @@ For example the name of the folder and a link to access it in Nuxeo.
         </div>
       </div>
       <div id="spacer">
-        <!--This pushes the action buttons to the right edge. -->
+        <!--This div pushes the action buttons to the right edge. -->
       </div>
       <div id="folderOpenExternal">
         <a href="[[_docURL(currentParent)]]" target="_blank">
@@ -98,6 +97,10 @@ For example the name of the folder and a link to access it in Nuxeo.
         currentParent: {
           type: Object,
           notify: true
+        },
+        refresh: {
+          type: Boolean,
+          notify: true
         }
       },
 
@@ -117,11 +120,7 @@ For example the name of the folder and a link to access it in Nuxeo.
 
 
       _refresh: function () {
-        if (this.$.getChildren) {
-          return this.$.getChildren.execute();
-        } else {
-          alert("This won't work");
-        }
+        this.refresh = true;
       }
 
 

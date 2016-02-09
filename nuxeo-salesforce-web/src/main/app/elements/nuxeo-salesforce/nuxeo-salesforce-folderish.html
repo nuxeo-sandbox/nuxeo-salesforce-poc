@@ -92,7 +92,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
 
 
     <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{newParentPath}}"></nuxeo-listing-breadcrumb>
-    <nuxeo-listing-parent current-parent="[[currentParent]]" class="embedded-toolbar"></nuxeo-listing-parent>
+    <nuxeo-listing-parent current-parent="[[currentParent]]" refresh="{{refreshList}}" class="embedded-toolbar"></nuxeo-listing-parent>
     <paper-toolbar class="embedded-toolbar">
       <paper-input id="searchDocsInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
     </paper-toolbar>
@@ -152,7 +152,8 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
           '_displayErrorCanvasApp(success, error)',
           '_displayErrorCanvasApp(success)',
           '_executeOp(sfobject)',
-          '_getChildren(currentParent)'
+          '_getChildren(currentParent)',
+          '_refresh(refreshList)'
         ],
 
       listeners: {
@@ -295,6 +296,13 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
               dialog.open();
             }
           });
+      },
+
+      _refresh: function () {
+        if (this.$.getChildren) {
+          return this.$.getChildren.execute();
+        }
+        this.refreshList = false;
       }
     });
   </script>
