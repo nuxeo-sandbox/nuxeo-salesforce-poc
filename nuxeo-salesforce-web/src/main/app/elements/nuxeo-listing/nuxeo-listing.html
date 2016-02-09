@@ -105,15 +105,17 @@ An element to display a list of Nuxeo documents.
   <template>
 
     <div id="list" class="list">
-      <template is="dom-if" if="[[_isEmpty(response)]]">
+      <template is="dom-if" if="[[_isEmpty(documentList)]]">
         There are no related documents
       </template>
-      <template is="dom-repeat" items="[[response.entries]]">
-        <paper-item class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
-          <img class="listIconBox iconWithText" src="[[_iconFor(item)]]">
-          <span>[[item.title]]</span>
+      <template is="dom-repeat" items="[[documentList.entries]]">
+        <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
+          <div class="card-content">
+            <img class="listIconBox iconWithText" src="[[_iconFor(item)]]">
+            <span>[[item.title]]</span>
+          </div>
           <template is="dom-if" if="[[_isNotFolder(item)]]">
-            <div class="row_actions">
+            <div class="card-actions">
               <a href="[[_preview(item)]]" target="_blank">
                 <paper-tooltip>Full Preview</paper-tooltip>
                 <i class="material-icons">visibility</i></a>
@@ -131,7 +133,7 @@ An element to display a list of Nuxeo documents.
               </template>
             </div>
           </template>
-        </paper-item>
+        </paper-card>
       </template>
     </div>
 
