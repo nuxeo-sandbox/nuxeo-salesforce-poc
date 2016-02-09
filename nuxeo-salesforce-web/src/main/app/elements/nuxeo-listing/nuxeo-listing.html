@@ -147,104 +147,14 @@ An element to display a list of Nuxeo documents.
           type: {},
           notify: true
         },
-        searchTerm: {
-          type: String,
-          notify: true
-        },
-        currentParent: {
-          type: Object,
-          notify: true
-        },
         selected: {
           type: Object,
           notify: true
-        },
-        params: {
-          type: Object,
-          value: {}
-        },
-        folderName: {
-          type: String
-        },
-        sfobject: {
-          type: Object
-        },
-        success: {
-          type: Boolean
-        },
-        error: {
-          type: String
         }
       },
 
-      observers: [
-          '_fetch(searchTerm)',
-          '_displayCanvasApp(sfobject)',
-          '_displayErrorCanvasApp(success, error)',
-          '_displayErrorCanvasApp(success)',
-          '_executeOp(sfobject)',
-          '_getChildren(currentParent)'
-        ],
-
-
-
-      _displayCanvasApp: function () {
-        if (this.sfobject) {
-          $(".fullbleed").show();
-        } else {
-          $(".fullbleed").hide();
-        }
-      },
-
-      _displayErrorCanvasApp: function () {
-        if (this.success) {
-          $("#authorized").show();
-          $("#error_content").hide();
-        } else {
-          $("#authorized").hide();
-          $("#error_content").show();
-          document.getElementById("message_error").innerHTML = this.error;
-        }
-      },
-
-
-      _executeOp: function () {
-        if (this.sfobject) {
-          this.params.sfObject = this.sfobject;
-          this.$.fetchSFObject.execute();
-        }
-      },
-
-      _isEmpty: function (response) {
-        return response === null || response.resultsCount === 0;
-      },
-
-      _fetchParent: function (path) {
-        this.$.parentResource.path = '/path' + path;
-        return this.$.parentResource.get();
-      },
-
-      _fetch: function (searchTerm) {
-        if (this.currentParent) {
-          this.$.query.params = this._getQueryParams(this.currentParent.uid, searchTerm);
-          this.$.query.get();
-        }
-      },
-      // SF-47
-      //        _createFolder: function() {
-      //          this.params.name=this.folderName;
-      //          this.params.type="Folder";
-      //          this.params.properties = {};
-      //          this.params.properties["dc:title"]=this.folderName;
-      //          this.$.CreateFolder.execute().then(function() {
-      //            return this.$.query.get();
-      //          }.bind(this));
-      //        },
-
-      _getChildren: function () {
-        if (this.currentParent) {
-          this.$.getChildren.execute();
-        }
+      _isEmpty: function (data) {
+        return data === null || data.resultsCount === 0;
       },
 
       _select: function (e) {
@@ -259,31 +169,8 @@ An element to display a list of Nuxeo documents.
         }
       },
 
-      _up: function (e) {
-        var pathParts = this._splitPath(this.currentParent.path);
-        var parentPath = '/' + pathParts.splice(0, e.model.index + 1).join('/');
-        this._fetchParent(parentPath);
-      },
-
       _isSame: function (item, selected) {
         return selected && selected.uid === item.uid;
-      },
-
-      _getQueryParams: function (parentId, searchTerm) {
-        var query = 'SELECT * FROM Document WHERE ecm:currentLifeCycleState != \'deleted\' ' +
-          ' AND ecm:isCheckedInVersion = 0 ' +
-          ' AND ecm:mixinType != \'HiddenInNavigation\' ';
-
-        if (searchTerm) {
-          return {
-            query: query + ' AND ecm:parentId = ?' + ' AND ecm:fulltext=\'' + searchTerm + '*\'',
-            queryParams: parentId
-          };
-        }
-        return {
-          query: query + ' AND ecm:parentId = ?',
-          queryParams: parentId
-        };
       },
 
       _iconFor: function (doc) {
@@ -304,18 +191,6 @@ An element to display a list of Nuxeo documents.
 
       _isLock: function (doc) {
         return doc.lockOwner !== undefined;
-      },
-
-      _docURL: function (doc) {
-        if (doc && doc.contextParameters !== undefined) {
-          return doc.contextParameters.documentURL;
-        }
-      },
-
-      _refresh: function () {
-        if (this.$.getChildren) {
-          return this.$.getChildren.execute();
-        }
       },
 
       _docEditURL: function (doc) {
@@ -348,11 +223,8 @@ An element to display a list of Nuxeo documents.
 
       _isNotFolder: function (doc) {
         return doc.facets.indexOf("Folderish") < 0;
-      },
-
-      _splitPath: function (path) {
-        return (path) ? path.split('/').splice(1) : [];
       }
+
     });
   </script>
 </dom-module>
