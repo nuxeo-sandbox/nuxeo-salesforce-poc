@@ -20,6 +20,8 @@ Contributors:
 -->
 <!--
 An element to display a list of Nuxeo documents.
+
+Requires <nuxeo-connection> in order to get icons.
 -->
 <dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
   <style>
@@ -85,6 +87,7 @@ An element to display a list of Nuxeo documents.
   </style>
 
   <template>
+    <nuxeo-connection id="nx"></nuxeo-connection>
 
     <div>
 
