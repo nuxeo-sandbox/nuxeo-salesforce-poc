@@ -1,0 +1,109 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Vladimir Pasquier <vpasquier@nuxeo.com>
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<!--
+An element to display information and features for a Nuxeo folder.
+For example the name of the folder and a link to access it in Nuxeo.
+-->
+<dom-module id="nuxeo-listing-parent" assetpath="nuxeo-listing-parent/">
+  <style>
+    .drawerToolbar {
+      color: inherit;
+      background-color: inherit;
+    }
+
+    @media (max-width: 600px) {
+      h1.paper-font-display1 {
+        font-size: 24px;
+      }
+    }
+
+    #spacer {
+      display: table;
+      margin: 0 auto;
+    }
+
+    .iconWithText {
+      padding-right: 5px;
+      vertical-align: text-top;
+    }
+
+    .listIconBox {
+      max-width: 24px;
+      max-height: 24px;
+    }
+  </style>
+  <template>
+
+    <paper-toolbar class="drawerToolbar">
+      <div id="folderIcon"><img class="listIconBox iconWithText" src="[[_iconFor(currentParent)]]"></div>
+      <div id="folderTitle"><span class="paper-font-title">{{currentParent.title}}</span></div>
+      <div id="spacer">
+        <!--This pushes the action buttons to the right edge. -->
+      </div>
+      <div id="folderOpenExternal">
+        <a href="[[_docURL(currentParent)]]" target="_blank">
+          <paper-icon-button icon="icons:open-in-new" title="Access"></paper-icon-button>
+        </a>
+      </div>
+      <div id="folderRefresh">
+        <paper-icon-button icon="notification:sync" title="Refresh" on-tap="_refresh"></paper-icon-button>
+      </div>
+    </paper-toolbar>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-listing-parent',
+      properties: {
+        currentParent: {
+          type: Object,
+          notify: true
+        }
+      },
+
+
+      _iconFor: function (doc) {
+        if (doc && doc.properties['common:icon']) {
+          return this.$.nx.client._baseURL + doc.properties['common:icon'];
+        }
+      },
+
+
+      _docURL: function (doc) {
+        if (doc && doc.contextParameters !== undefined) {
+          return doc.contextParameters.documentURL;
+        }
+      },
+
+
+      _refresh: function () {
+        if (this.$.getChildren) {
+          return this.$.getChildren.execute();
+        } else {
+          alert("This won't work");
+        }
+      },
+
+
+    });
+  </script>
+</dom-module>
