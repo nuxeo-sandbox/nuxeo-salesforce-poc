@@ -79,100 +79,17 @@ Contributors:
 </head>
 
 <body unresolved class="fullbleed layout vertical">
+
   <div id="authorized" style="display:none">
     <span id="browser-sync-binding"></span>
     <template is="dom-bind" id="app">
 
-      <style is="custom-style">
-        .tabsToolbar {
-          background: var(--dark-primary-color);
-        }
-
-        .mainTabs {
-          font-size: 130%;
-          color: var(--primary-text-color);
-          font-weight: normal;
-          --paper-tabs-selection-bar-color: var(--accent-color);
-        }
-
-        .mainTabs paper-tab {
-          --paper-tab-ink: var(--accent-color);
-          width: 90px;
-        }
-
-        .logoButton {
-          height: 100%;
-        }
-
-        .embedded-toolbar {
-          background: var(--default-primary-color);
-          color: var(--secondary-text-color);
-        }
-
-        .searchBox {
-          width: 25em;
-        }
-      </style>
-
       <nuxeo-connection id="nx" url="/nuxeo"></nuxeo-connection>
-
-      <paper-drawer-panel id="paperDrawerPanel" drawer-width="30%" right-drawer>
-
-
-        <paper-header-panel drawer mode="seam">
-          <!-- Drawer Content -->
-          <template is="dom-if" if="[[selected]]">
-            <nuxeo-metadata doc="[[selected]]" id="rightPanelMetadata"></nuxeo-metadata>
-          </template>
-        </paper-header-panel>
-
-
-        <paper-header-panel main mode="waterfall">
-
-          <paper-toolbar class="tabsToolbar paper-header">
-            <div class="logoButton">
-              <a href="/nuxeo" target="_blank">
-                <paper-icon-button class="verticalCenterAnything" src="images/aws_icon_24.png" title="Nuxeo"></paper-icon-button>
-              </a>
-            </div>
-            <!-- This paper-tabs should be scrollable but it fails when used inside paper-toolbar.
-               See https://github.com/PolymerElements/paper-tabs/issues/130 -->
-            <paper-tabs class="mainTabs" selected="{{selectedTab}}" on-tap="hideMetadata">
-              <paper-tab>Public</paper-tab>
-              <paper-tab>Internal</paper-tab>
-              <paper-tab>Templates</paper-tab>
-              <paper-tab>Docs</paper-tab>
-            </paper-tabs>
-          </paper-toolbar>
-
-          <iron-pages selected="{{selectedTab}}" style="padding:0 0">
-            <div id="searchPublicPage">
-              <paper-toolbar id="searchPublicToolbar" class="embedded-toolbar">
-                <paper-input id="searchPublicInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
-              </paper-toolbar>
-            </div>
-            <div id="searchInternalPage">
-              <paper-toolbar id="searchInternalToolbar" class="embedded-toolbar">
-                <paper-input id="searchInternalInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
-              </paper-toolbar>
-            </div>
-            <div id="searchTemplatesPage">
-              <paper-toolbar id="searchTemplatesToolbar" class="embedded-toolbar">
-                <paper-input id="searchTemplatesInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
-              </paper-toolbar>
-            </div>
-            <div id="docsPage">
-              <nuxeo-salesforce-folderish search-term="{{searchTerm}}" selected="{{selected}}"></nuxeo-salesforce-folderish>
-            </div>
-
-          </iron-pages>
-        </paper-header-panel>
-
-
-      </paper-drawer-panel>
+      <nuxeo-salesforce-app></nuxeo-salesforce-app>
 
     </template>
   </div>
+
   <div id="error_content" style="text-align:center; margin:3em; display:none">
     <img src="images/nuxeo.png" class="smallIcon">
     <h2>We're sorry.</h2>
@@ -180,17 +97,5 @@ Contributors:
     <h3>Please contact administrator team.</h3>
   </div>
 </body>
-<!-- build:js scripts/app.js -->
-<script src="scripts/app.js"></script>
-<!-- endbuild-->
-<script>
-  document.addEventListener('WebComponentsReady', function () {
-    var template = document.querySelector('template[is="dom-bind"]');
-    template.selectedTab = 0;
-
-  });
-</script>
-
-
 
 </html>
