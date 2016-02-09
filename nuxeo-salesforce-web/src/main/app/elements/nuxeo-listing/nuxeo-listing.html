@@ -104,7 +104,8 @@
 
     <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
-
+    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfobject.AccountId}}" sfobject="{{sfAccount}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfobject.OwnerId}}" sfobject="{{sfUser}}"></nuxeo-salesforce-object>
 
     <!-- Nuxeo resources -->
     <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>

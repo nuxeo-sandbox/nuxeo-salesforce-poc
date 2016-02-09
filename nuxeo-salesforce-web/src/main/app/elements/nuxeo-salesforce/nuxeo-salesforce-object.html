@@ -22,7 +22,7 @@ Contributors:
 Note: Elements that depend on a id use `sf` as default.
 @homepage http://www.nuxeo.org
 -->
-<dom-module id="nuxeo-salesforce-connection" assetpath="nuxeo-salesforce/">
+<dom-module id="nuxeo-salesforce-object" assetpath="nuxeo-salesforce/">
   <template>
     <style>
       :host {
@@ -33,7 +33,7 @@ Note: Elements that depend on a id use `sf` as default.
 </dom-module>
 <script>
    Polymer({
-   is: 'nuxeo-salesforce-connection',
+   is: 'nuxeo-salesforce-object',
 
    ready: function () {
      this._getCtx();
@@ -48,6 +48,12 @@ Note: Elements that depend on a id use `sf` as default.
 
      /* The Callback URL of the Nuxeo server for SF OAuth2. */
      callback: {type: String},
+
+     /* The Salesforce Object */
+     objectType: {type: String, notify: true},
+
+     /* The Salesforce Object */
+     objectId: {type: String, notify: true},
 
      /* The Salesforce Object */
      sfobject: {type: Object, notify: true}
@@ -95,14 +101,12 @@ Note: Elements that depend on a id use `sf` as default.
        }
        console.log("Salesforce Error: " + ctx.payload[0].errorCode);
      }
-     var opId = ctx.payload.environment.record.Id;
-     if (!opId) {
+     if (!this.objectId) {
        this.sfobject = null;
        return;
      }
      var sobjectUrl = ctx.payload.links.sobjectUrl;
-     var sfObject = ctx.payload.environment.record.attributes.type;
-     sobjectUrl = sobjectUrl + sfObject + "/" + opId;
+     sobjectUrl = sobjectUrl + this.objectType + "/" + this.objectId;
      var callbackOp = this._callbackSFObject.bind(this);
      var settings = {
        client: JSON.parse(sessionStorage.getItem("client")),
