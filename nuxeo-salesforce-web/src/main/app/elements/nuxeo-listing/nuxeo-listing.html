@@ -88,6 +88,15 @@ An element to display a list of Nuxeo documents.
     .justified {
       @apply(--layout-justified);
     }
+
+    .docContainer {
+      display: table;
+    }
+
+    .docTitleContainer {
+      display: table-cell;
+      vertical-align: middle;
+    }
   </style>
 
   <template>
@@ -96,33 +105,22 @@ An element to display a list of Nuxeo documents.
 
       <template is="dom-if" if="[[_isEmpty(documentList)]]">
         <paper-card class="item">
-          <div class="card-content">
-            <iron-icon icon="warning" class="listIconBox"></iron-icon>
-            <div>There are no related documents</div>
-          </div>
-          <div class="card-actions horizontal justified">
-            <a href="#">
-              <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
-            </a>
-            <a href="#">
-              <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
-            </a>
-            <a href="#">
-              <paper-icon-button icon="create" title="Edit Metadata"></paper-icon-button>
-            </a>
-            <a href="#">
-              <paper-icon-button icon="open-in-browser" title="Edit Document"></paper-icon-button>
-            </a>
-            <paper-icon-button icon="lock"></paper-icon-button>
+          <div class="card-content docContainer">
+            <iron-icon icon="warning" class="listIconBox iconWithText"></iron-icon>
+            <div class="docTitleContainer">
+              <span>There are no related documents</span>
+            </div>
           </div>
         </paper-card>
       </template>
 
       <template is="dom-repeat" items="[[documentList.entries]]">
         <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
-          <div class="card-content">
-            <img class="listIconBox iconWithText" src="[[_iconFor(item)]]">
-            <span>[[item.title]]</span>
+          <div class="card-content docContainer">
+            <iron-icon src="[[_iconFor(item)]]" class="listIconBox iconWithText"></iron-icon>
+            <div class="docTitleContainer">
+              <span>[[item.title]]</span>
+            </div>
           </div>
           <template is="dom-if" if="[[_isNotFolder(item)]]">
             <div class="card-actions horizontal justified">
