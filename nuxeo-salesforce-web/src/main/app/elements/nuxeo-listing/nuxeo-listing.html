@@ -28,47 +28,19 @@ An element to display a list of Nuxeo documents.
     }
 
     .item {
-      padding-top: 0.5em;
       margin: 5px;
-      background-color: white;
-      display: inline-block;
-      width: 300px;
+      background: var(--paper-card-light-primary-color);
+      display: inherit;
       overflow: hidden;
-      cursor: pointer;
       user-select: none;
-      @apply(--shadow-elevation-2dp);
+      @apply(--shadow-elevation-3dp);
+      float: left;
     }
 
     .item[selected] {
       font-weight: bold;
       border-left-color: var(--default-primary-color);
       border-left-style: solid;
-    }
-
-    paper-toolbar {
-      color: var(--secondary-text-color);
-      background-color: var(--drawer-menu-color);
-      border-bottom: var(--drawer-toolbar-border-color);
-    }
-
-    .path {
-      display: inline-block;
-      vertical-align: middle;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .path {
-      padding: 5px;
-      text-decoration: none;
-      color: black;
-      display: inline-block;
-    }
-
-    .path:last-of-type {
-      color: #aaa;
-      pointer-events: none;
     }
 
     @media (max-width: 600px) {
@@ -78,11 +50,13 @@ An element to display a list of Nuxeo documents.
     }
 
     .hover {
-      background: var(--light-primary-color);
+      background: var(--divider-color);
     }
 
     .list {
-      height: 200px;
+      /* This is hard coded bacause I couldn't find a way to get the div to fill the remaining space.
+      This is an appropriate height for the size of our SFDC app. */
+      height: 370px;
     }
 
     a {
@@ -96,23 +70,58 @@ An element to display a list of Nuxeo documents.
     }
 
     .listIconBox {
-      max-width: 24px;
-      max-height: 24px;
+      padding: 4px;
+      --iron-icon-width: 20px;
+      --iron-icon-height: 20px;
     }
 
-    paper-icon-button{
-      padding:4px;
-      width:28px;
-      height:28px;
+    paper-card {
+      padding: 10px;
+    }
+
+    paper-icon-button {
+      padding: 4px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .horizontal {
+      @apply(--layout-horizontal);
+    }
+
+    .justified {
+      @apply(--layout-justified);
     }
   </style>
 
   <template>
 
     <div id="list" class="list">
+
       <template is="dom-if" if="[[_isEmpty(documentList)]]">
-        There are no related documents
+        <paper-card class="item">
+          <div class="card-content">
+            <iron-icon icon="warning" class="listIconBox"></iron-icon>
+            <div>There are no related documents</div>
+          </div>
+          <div class="card-actions horizontal justified">
+            <a href="#">
+              <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+            </a>
+            <a href="#">
+              <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+            </a>
+            <a href="#">
+              <paper-icon-button icon="create" title="Edit Metadata"></paper-icon-button>
+            </a>
+            <a href="#">
+              <paper-icon-button icon="open-in-browser" title="Edit Document"></paper-icon-button>
+            </a>
+            <paper-icon-button icon="lock"></paper-icon-button>
+          </div>
+        </paper-card>
       </template>
+
       <template is="dom-repeat" items="[[documentList.entries]]">
         <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
           <div class="card-content">
@@ -120,22 +129,27 @@ An element to display a list of Nuxeo documents.
             <span>[[item.title]]</span>
           </div>
           <template is="dom-if" if="[[_isNotFolder(item)]]">
-            <div class="card-actions">
+            <div class="card-actions horizontal justified">
               <a href="[[_preview(item)]]" target="_blank">
-                <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button></a>
+                <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+              </a>
               <a href="[[_downloadURL(item)]]" target="_blank">
-                <paper-icon-button icon="file-download" title="Download"></paper-icon-button></a>
+                <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+              </a>
               <a href="[[_docEditURL(item)]]" target="_blank">
-                <paper-icon-button icon="create" title="Edit Metadata"></paper-icon-button></a>
+                <paper-icon-button icon="create" title="Edit Metadata"></paper-icon-button>
+              </a>
               <a href="[[_driveEdit(item)]]">
-                <paper-icon-button icon="open-in-browser" title="Edit Document"></paper-icon-button></a>
+                <paper-icon-button icon="open-in-browser" title="Edit Document"></paper-icon-button>
+              </a>
               <template is="dom-if" if="[[_isLock(item)]]">
-                <paper-icon-button icon="lock"></paper-icon-button></a>
+                <paper-icon-button icon="lock"></paper-icon-button>
               </template>
             </div>
           </template>
         </paper-card>
       </template>
+
     </div>
 
   </template>
