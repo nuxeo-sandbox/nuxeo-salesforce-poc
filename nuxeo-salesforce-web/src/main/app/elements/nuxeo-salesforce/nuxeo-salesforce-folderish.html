@@ -189,8 +189,8 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         }
       },
 
-      _fetchParent: function (path) {
-        this.$.parentResource.path = '/path' + path;
+      _fetchParent: function () {
+        this.$.parentResource.path = '/path' + this.newParentPath;
         return this.$.parentResource.get();
       },
 
@@ -223,14 +223,6 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
           queryParams: parentId
         };
       },
-
-
-
-
-
-
-
-
 
       _onDragOver: function (e) {
         // prevent default to allow drop
