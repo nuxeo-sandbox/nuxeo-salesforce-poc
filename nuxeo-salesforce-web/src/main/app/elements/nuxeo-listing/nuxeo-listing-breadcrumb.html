@@ -23,8 +23,10 @@ An element to display a breadcrumb trail based on a Nuxeo path.
 -->
 <dom-module id="nuxeo-listing-breadcrumb" assetpath="nuxeo-listing-breadcrumb/">
   <style>
-    .breadcumb {
+    .breadcrumb {
       margin: 5px;
+      padding-left: 16px;
+      background: var(--default-primary-color);
     }
 
     .path {
@@ -59,7 +61,7 @@ An element to display a breadcrumb trail based on a Nuxeo path.
   <template>
 
     <template is="dom-if" if="[[breadcrumbPath]]">
-      <div class="breadcumb">
+      <div class="breadcrumb">
         <template is="dom-repeat" items="[[_splitPath(breadcrumbPath)]]">
           / <span class="path" on-tap="_up">[[item]]</span>
         </template>
