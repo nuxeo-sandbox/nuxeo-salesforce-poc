@@ -71,9 +71,9 @@ For example the name of the folder and a link to access it in Nuxeo.
 
     <paper-toolbar class="drawerToolbar">
       <div class="docContainer">
-        <iron-icon src="../../images/nuxeo.png" class="listIconBox iconWithText"></iron-icon>
+        <iron-icon src="[[_iconFor(currentParent)]]" class="listIconBox iconWithText"></iron-icon>
         <div class="docTitleContainer">
-          <span class="paper-font-title docTitle">This is some text.</span>
+          <span class="paper-font-title docTitle">{{currentParent.title}}</span>
         </div>
       </div>
       <div id="spacer">
