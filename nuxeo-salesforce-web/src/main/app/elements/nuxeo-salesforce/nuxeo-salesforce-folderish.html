@@ -34,6 +34,15 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
   <style>
     :host {
       display: block;
+      --paper-icon-button: {
+        color: var(--secondary-text-color)
+      }
+      --paper-icon-button-ink-color: var(--placeholder-text-color);
+    }
+
+    :host::content a {
+      color: var(--secondary-text-color);
+      text-decoration: none;
     }
 
     @media (max-width: 600px) {
