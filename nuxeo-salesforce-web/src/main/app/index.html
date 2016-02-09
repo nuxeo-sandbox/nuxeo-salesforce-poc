@@ -108,6 +108,10 @@ Contributors:
           background: var(--default-primary-color);
           color: var(--secondary-text-color);
         }
+
+        .searchBox {
+          width: 25em;
+        }
       </style>
 
       <nuxeo-connection id="nx" url="/nuxeo"></nuxeo-connection>
@@ -144,17 +148,17 @@ Contributors:
           <iron-pages selected="{{selectedTab}}" style="padding:0 0">
             <div id="searchPublicPage">
               <paper-toolbar id="searchPublicToolbar" class="embedded-toolbar">
-                <paper-input id="searchPublicInput" label="Search" bind-value="{{searchTerm}}"></paper-input>
+                <paper-input id="searchPublicInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
               </paper-toolbar>
             </div>
             <div id="searchInternalPage">
               <paper-toolbar id="searchInternalToolbar" class="embedded-toolbar">
-                <paper-input id="searchInternalInput" label="Search" bind-value="{{searchTerm}}"></paper-input>
+                <paper-input id="searchInternalInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
               </paper-toolbar>
             </div>
             <div id="searchTemplatesPage">
               <paper-toolbar id="searchTemplatesToolbar" class="embedded-toolbar">
-                <paper-input id="searchTemplatesInput" label="Search" bind-value="{{searchTerm}}"></paper-input>
+                <paper-input id="searchTemplatesInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
               </paper-toolbar>
             </div>
             <div id="docsPage">
