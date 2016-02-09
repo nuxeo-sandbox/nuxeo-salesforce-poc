@@ -111,45 +111,41 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
   </template>
 
   <script>
-    (function () {
-      Polymer({
-        is: 'nuxeo-salesforce-folderish',
-        properties: {
-          newParentPath: {
-            type: String,
-            value: '/default-domain'
-          },
-          searchTerm: {
-            type: String,
-            notify: true
-          },
-          currentParent: {
-            type: Object,
-            notify: true
-          },
-          selected: {
-            type: Object,
-            notify: true
-          },
-          params: {
-            type: Object,
-            value: {}
-          },
-          folderName: {
-            type: String
-          },
-          sfobject: {
-            type: Object
-          },
-          success: {
-            type: Boolean
-          },
-          error: {
-            type: String
-          }
+    Polymer({
+      is: 'nuxeo-salesforce-folderish',
+      properties: {
+        newParentPath: {
+          type: String,
+          value: '/default-domain'
         },
+        searchTerm: {
+          type: String,
+          notify: true
+        },
+        currentParent: {
+          type: Object,
+          notify: true
+        },
+        selected: {
+          type: Object,
+          notify: true
+        },
+        params: {
+          type: Object,
+          value: {}
+        },
+        sfobject: {
+          type: Object
+        },
+        success: {
+          type: Boolean
+        },
+        error: {
+          type: String
+        }
+      },
 
-        observers: [
+      observers: [
           '_fetch(searchTerm)',
           '_fetchParent(newParentPath)',
           '_displayCanvasApp(sfobject)',
@@ -159,237 +155,120 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
           '_getChildren(currentParent)'
         ],
 
-        listeners: {
-          'dropZone.dragover': '_onDragOver',
-          'dropZone.dragenter': '_onDragEnter',
-          'dropZone.drop': '_onDrop',
-          'dropZone.dragleave': '_onDragLeave'
-        },
+      listeners: {
+        'dropZone.dragover': '_onDragOver',
+        'dropZone.dragenter': '_onDragEnter',
+        'dropZone.drop': '_onDrop',
+        'dropZone.dragleave': '_onDragLeave'
+      },
 
-        _displayCanvasApp: function () {
-          if (this.sfobject) {
-            $(".fullbleed").show();
-          } else {
-            $(".fullbleed").hide();
-          }
-        },
+      _displayCanvasApp: function () {
+        if (this.sfobject) {
+          $(".fullbleed").show();
+        } else {
+          $(".fullbleed").hide();
+        }
+      },
 
-        _displayErrorCanvasApp: function () {
-          if (this.success) {
-            $("#authorized").show();
-            $("#error_content").hide();
-          } else {
-            $("#authorized").hide();
-            $("#error_content").show();
-            document.getElementById("message_error").innerHTML = this.error;
-          }
-        },
+      _displayErrorCanvasApp: function () {
+        if (this.success) {
+          $("#authorized").show();
+          $("#error_content").hide();
+        } else {
+          $("#authorized").hide();
+          $("#error_content").show();
+          document.getElementById("message_error").innerHTML = this.error;
+        }
+      },
 
 
-        _executeOp: function () {
-          if (this.sfobject) {
-            this.params.sfObject = this.sfobject;
-            this.$.fetchSFObject.execute();
-          }
-        },
+      _executeOp: function () {
+        if (this.sfobject) {
+          this.params.sfObject = this.sfobject;
+          this.$.fetchSFObject.execute();
+        }
+      },
 
-        _isEmpty: function (response) {
-          return response === null || response.resultsCount === 0;
-        },
+      _fetchParent: function (path) {
+        this.$.parentResource.path = '/path' + path;
+        return this.$.parentResource.get();
+      },
 
-        _fetchParent: function (path) {
-          this.$.parentResource.path = '/path' + path;
-          return this.$.parentResource.get();
-        },
+      _fetch: function (searchTerm) {
+        if (this.currentParent) {
+          this.$.query.params = this._getQueryParams(this.currentParent.uid, searchTerm);
+          this.$.query.get();
+        }
+      },
 
-        _fetch: function (searchTerm) {
-          if (this.currentParent) {
-            this.$.query.params = this._getQueryParams(this.currentParent.uid, searchTerm);
-            this.$.query.get();
-          }
-        },
-        // SF-47
-        //        _createFolder: function() {
-        //          this.params.name=this.folderName;
-        //          this.params.type="Folder";
-        //          this.params.properties = {};
-        //          this.params.properties["dc:title"]=this.folderName;
-        //          this.$.CreateFolder.execute().then(function() {
-        //            return this.$.query.get();
-        //          }.bind(this));
-        //        },
+      _getChildren: function () {
+        if (this.currentParent) {
+          this.$.getChildren.execute();
+        }
+      },
 
-        _getChildren: function () {
-          if (this.currentParent) {
-            this.$.getChildren.execute();
-          }
-        },
+      _getQueryParams: function (parentId, searchTerm) {
+        var query = 'SELECT * FROM Document WHERE ecm:currentLifeCycleState != \'deleted\' ' +
+          ' AND ecm:isCheckedInVersion = 0 ' +
+          ' AND ecm:mixinType != \'HiddenInNavigation\' ';
 
-        _select: function (e) {
-          var item = e.model.item;
-          // if folder and already selected navigate to it (dbl click)
-          if (this._isFolder(item)) {
-            this.selected = undefined; // clear selection
-            this.searchTerm = ''; // clear search term
-            this.currentParent = item;
-          } else {
-            this.selected = item;
-          }
-        },
-
-        _up: function (e) {
-          var pathParts = this._splitPath(this.currentParent.path);
-          var parentPath = '/' + pathParts.splice(0, e.model.index + 1).join('/');
-          this._fetchParent(parentPath);
-        },
-
-        _isSame: function (item, selected) {
-          return selected && selected.uid === item.uid;
-        },
-
-        _getQueryParams: function (parentId, searchTerm) {
-          var query = 'SELECT * FROM Document WHERE ecm:currentLifeCycleState != \'deleted\' ' +
-            ' AND ecm:isCheckedInVersion = 0 ' +
-            ' AND ecm:mixinType != \'HiddenInNavigation\' ';
-
-          if (searchTerm) {
-            return {
-              query: query + ' AND ecm:parentId = ?' + ' AND ecm:fulltext=\'' + searchTerm + '*\'',
-              queryParams: parentId
-            };
-          }
+        if (searchTerm) {
           return {
-            query: query + ' AND ecm:parentId = ?',
+            query: query + ' AND ecm:parentId = ?' + ' AND ecm:fulltext=\'' + searchTerm + '*\'',
             queryParams: parentId
           };
-        },
+        }
+        return {
+          query: query + ' AND ecm:parentId = ?',
+          queryParams: parentId
+        };
+      },
 
-        _iconFor: function (doc) {
-          if (doc && doc.properties['common:icon']) {
-            return this.$.nx.client._baseURL + doc.properties['common:icon'];
-          }
-        },
 
-        _preview: function (doc) {
-          if (doc.contextParameters !== undefined) {
-            if (doc.contextParameters.preview !== undefined) {
-              return doc.contextParameters.preview.url;
-            } else {
-              return doc.contextParameters.documentURL;
-            }
-          }
-        },
 
-        _isLock: function (doc) {
-          return doc.lockOwner !== undefined;
-        },
 
-        _docURL: function (doc) {
-          if (doc && doc.contextParameters !== undefined) {
-            return doc.contextParameters.documentURL;
-          }
-        },
 
-        _refresh: function () {
-          if (this.$.getChildren) {
-            return this.$.getChildren.execute();
-          }
-        },
 
-        _docEditURL: function (doc) {
-          if (doc && doc.contextParameters !== undefined) {
-            return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
-          }
-        },
 
-        _driveEdit: function (doc) {
-          if (doc.contextParameters !== undefined) {
-            return doc.contextParameters.driveEditURL;
-          }
-        },
 
-        _downloadURL: function (doc) {
-          if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
-            return doc.properties["file:content"].data;
-          } else {
-            if (doc.contextParameters !== undefined) {
-              return doc.contextParameters.documentURL;
-            }
-          }
-        },
 
-        _isFolder: function (doc) {
-          return doc.facets.some(function (e) {
-            return e === 'Folderish';
-          });
-        },
-
-        _isNotFolder: function (doc) {
-          return doc.facets.indexOf("Folderish") < 0;
-        },
-
-        _splitPath: function (path) {
-          return (path) ? path.split('/').splice(1) : [];
-        },
-
-        _onDragOver: function (e) {
-          // prevent default to allow drop
-          e.preventDefault();
-        },
-        _onDragEnter: function (e) {
-          if (e.target.id === "dropZone") {
-            this.toggleClass('hover', true, e.target);
-          }
-        },
-        _onDrop: function (e) {
-          e.preventDefault();
-          this.toggleClass('hover', false, e.target);
-          this._upload(e.dataTransfer.files).then(function (docs) {
-            // refresh and select last file uploaded
-            return this.$.getChildren.execute().then(function () {
-              this.selected = docs.entries.pop();
-            }.bind(this));
+      _onDragOver: function (e) {
+        // prevent default to allow drop
+        e.preventDefault();
+      },
+      _onDragEnter: function (e) {
+        if (e.target.id === "dropZone") {
+          this.toggleClass('hover', true, e.target);
+        }
+      },
+      _onDrop: function (e) {
+        e.preventDefault();
+        this.toggleClass('hover', false, e.target);
+        this._upload(e.dataTransfer.files).then(function (docs) {
+          // refresh and select last file uploaded
+          return this.$.getChildren.execute().then(function () {
+            this.selected = docs.entries.pop();
           }.bind(this));
-          return false;
-        },
-        _onDragLeave: function (e) {
-          this.toggleClass('hover', false, e.target);
-        },
+        }.bind(this));
+        return false;
+      },
+      _onDragLeave: function (e) {
+        this.toggleClass('hover', false, e.target);
+      },
 
-        _upload: function (files) {
-          var uploader = this.$.nx.client
-            .operation('FileManager.Import')
-            .context({
-              currentDocument: this.currentParent.path
-            })
-            .uploader();
-          var uploads = [];
-          for (var i = 0; i < files.length; i++) {
-            uploads.push(
-              new Promise(function (resolve, reject) {
-                uploader.uploadFile(files[i], function (data) {
-                  resolve(data);
-                });
-              })
-              .catch(function (reason) {
-                console.log(reason);
-                var content = document.getElementById('modalWarningContent');
-                if (content) {
-                  content.innerHTML = reason;
-                }
-                var dialog = document.getElementById('modalWarning');
-                if (dialog) {
-                  dialog.open();
-                }
-              })
-            );
-          }
-          return Promise.all(uploads)
-            .then(function () {
-              return new Promise(function (resolve, reject) {
-                uploader.execute(function (error, data) {
-                  (error) ? reject(error): resolve(data);
-                });
+      _upload: function (files) {
+        var uploader = this.$.nx.client
+          .operation('FileManager.Import')
+          .context({
+            currentDocument: this.currentParent.path
+          })
+          .uploader();
+        var uploads = [];
+        for (var i = 0; i < files.length; i++) {
+          uploads.push(
+            new Promise(function (resolve, reject) {
+              uploader.uploadFile(files[i], function (data) {
+                resolve(data);
               });
             })
             .catch(function (reason) {
@@ -402,9 +281,29 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
               if (dialog) {
                 dialog.open();
               }
-            });
+            })
+          );
         }
-      });
-    })();
+        return Promise.all(uploads)
+          .then(function () {
+            return new Promise(function (resolve, reject) {
+              uploader.execute(function (error, data) {
+                (error) ? reject(error): resolve(data);
+              });
+            });
+          })
+          .catch(function (reason) {
+            console.log(reason);
+            var content = document.getElementById('modalWarningContent');
+            if (content) {
+              content.innerHTML = reason;
+            }
+            var dialog = document.getElementById('modalWarning');
+            if (dialog) {
+              dialog.open();
+            }
+          });
+      }
+    });
   </script>
 </dom-module>
