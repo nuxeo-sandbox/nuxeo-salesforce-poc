@@ -24,6 +24,14 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 <dom-module id="nuxeo-salesforce-app" assetpath="nuxeo-salesforce/">
 
   <style>
+    :host {
+      display: block;
+      --paper-icon-button: {
+        color: var(--accent-color);
+      }
+      --paper-icon-button-ink-color: var(--placeholder-text-color);
+    }
+
     .tabsToolbar {
       background: var(--dark-primary-color);
     }
