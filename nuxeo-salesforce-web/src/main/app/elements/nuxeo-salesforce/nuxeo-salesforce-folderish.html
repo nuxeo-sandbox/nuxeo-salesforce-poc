@@ -86,7 +86,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
 
     <!-- Nuxeo resources -->
     <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-resource id="query" path="/query" response="{{documentList}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
     <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.uid]]" enrichers="preview, documentURL, driveEditURL" response="{{documentList}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
