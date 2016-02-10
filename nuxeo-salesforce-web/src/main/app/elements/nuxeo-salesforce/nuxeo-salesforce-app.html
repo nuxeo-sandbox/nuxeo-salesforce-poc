@@ -45,7 +45,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     .mainTabs paper-tab {
       --paper-tab-ink: var(--accent-color);
-      width: 90px;
+      width: 110px;
     }
 
     .logoButton {
@@ -97,32 +97,39 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           <!-- This paper-tabs should be scrollable but it fails when used inside paper-toolbar.
                See https://github.com/PolymerElements/paper-tabs/issues/130 -->
           <paper-tabs class="mainTabs" selected="{{selectedTab}}" on-tap="hideMetadata">
-            <paper-tab>Public</paper-tab>
-            <paper-tab>Internal</paper-tab>
+            <paper-tab>Public Docs</paper-tab>
+            <paper-tab>Internal Docs</paper-tab>
             <paper-tab>Templates</paper-tab>
-            <paper-tab>Docs</paper-tab>
+            <paper-tab>My Docs</paper-tab>
           </paper-tabs>
         </paper-toolbar>
 
         <iron-pages selected="{{selectedTab}}" style="padding:0 0">
+
           <div id="searchPublicPage">
             <paper-toolbar id="searchPublicToolbar" class="embedded-toolbar">
-              <paper-input id="searchPublicInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
+              <paper-input id="searchPublicInput" type=search class="searchBox" label="Search" bind-value="{{publicSearchTerms}}"></paper-input>
             </paper-toolbar>
+            <nuxeo-page-provider id="publicPageProvider" page-size="[[searchPageSize]]" current-page="{{publicDocs}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
+            <nuxeo-listing document-list="[[publicDocs]]" class="documentListContainer"></nuxeo-listing>
           </div>
+
           <div id="searchInternalPage">
             <paper-toolbar id="searchInternalToolbar" class="embedded-toolbar">
-              <paper-input id="searchInternalInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
+              <paper-input id="searchInternalInput" type=search class="searchBox" label="Search" bind-value="{{internalSearchTerms}}"></paper-input>
             </paper-toolbar>
+            <nuxeo-page-provider id="internalPageProvider" page-size="[[searchPageSize]]" current-page="{{internalDocs}}"></nuxeo-page-provider>
+            <nuxeo-listing document-list="[[internalDocs]]" class="documentListContainer"></nuxeo-listing>
           </div>
+
           <div id="searchTemplatesPage">
             <paper-toolbar id="searchTemplatesToolbar" class="embedded-toolbar">
-              <paper-input id="searchTemplatesInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
+              <paper-input id="searchTemplatesInput" type=search class="searchBox" label="Search" bind-value="{{templateSearchTerms}}"></paper-input>
             </paper-toolbar>
-            <nuxeo-page-provider auto query="select * from TemplateSource" page-size="10" current-page="{{templates}}"></nuxeo-page-provider>
+            <nuxeo-page-provider id="templatePageProvider" enrichers="preview, documentURL, driveEditURL" page-size="20" current-page="{{templates}}"></nuxeo-page-provider>
             <nuxeo-listing document-list="[[templates]]" class="documentListContainer"></nuxeo-listing>
-
           </div>
+
           <div id="docsPage">
             <nuxeo-salesforce-folderish selected="{{selected}}"></nuxeo-salesforce-folderish>
           </div>
@@ -139,9 +146,16 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     Polymer({
       is: 'nuxeo-salesforce-app',
 
+      observers: [
+        '_fetchPublic(publicSearchTerms)',
+        '_fetchInternal(internalSearchTerms)',
+        '_fetchTemplates(templateSearchTerms)'
+      ],
+
       ready: function () {
         this.searchTerm = '';
         this.selectedTab = 0;
+        this.searchPageSize = 20;
       },
 
       hideMetadata: function () {
@@ -151,6 +165,51 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       _iconForApp: function () {
         /* TODO: figure out how to load this icon from app-theme.html */
         return "images/aws_icon_24.png";
+      },
+
+      _fetchPublic: function () {
+        if (this.publicSearchTerms) {
+          this.$.publicPageProvider.query = this._genericFilter("Document", this.publicSearchTerms) + " AND ecm:primaryType IN('File', 'Picture', 'Video')";
+          this.debounce('publicPageProviderQuery', function () {
+            this.$.publicPageProvider.fetch();
+          }.bind(this), 300);
+        } else {
+          this.publicDocs = null;
+        }
+      },
+
+      _fetchInternal: function () {
+        if (this.internalSearchTerms) {
+          this.$.internalPageProvider.query = this._genericFilter("Document", this.internalSearchTerms) + " AND ecm:primaryType IN('File', 'Picture', 'Video')";
+          this.debounce('internalPageProviderQuery', function () {
+            this.$.internalPageProvider.fetch();
+          }.bind(this), 300);
+        } else {
+          this.internalDocs = null;
+        }
+      },
+
+      _fetchTemplates: function () {
+        if (this.templateSearchTerms) {
+          this.$.templatePageProvider.query = this._genericFilter("TemplateSource", this.templateSearchTerms);
+          this.debounce('templatePageProviderQuery', function () {
+            this.$.templatePageProvider.fetch();
+          }.bind(this), 300);
+        } else {
+          this.templates = null;
+        }
+      },
+
+      _genericFilter: function (type, terms) {
+        var query = "SELECT * FROM " + type +
+          " WHERE ecm:currentLifeCycleState != 'deleted' " +
+          " AND ecm:isCheckedInVersion = 0 " +
+          " AND ecm:mixinType != 'HiddenInNavigation' ";
+        if (terms) {
+          query = query + " AND ecm:fulltext = '" + terms + "*'";
+        }
+
+        return query;
       }
     });
   </script>
