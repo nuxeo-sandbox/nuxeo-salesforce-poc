@@ -96,7 +96,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     <paper-toolbar class="embedded-toolbar">
       <paper-input id="searchDocsInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
     </paper-toolbar>
-    <nuxeo-listing id="dropZone" document-list="[[documentList]]" class="documentListContainer"></nuxeo-listing>
+    <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" class="documentListContainer"></nuxeo-listing>
 
 
     <paper-dialog id="modalWarning" class="folder-box">
