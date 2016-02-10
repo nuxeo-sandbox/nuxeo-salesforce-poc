@@ -102,7 +102,7 @@ Requires <nuxeo-connection> in order to get icons.
         </paper-card>
       </template>
 
-      <template is="dom-repeat" items="[[documentList.entries]]">
+      <template is="dom-repeat" items="[[documentList]]">
         <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
           <div class="card-content docContainer">
             <iron-icon src="[[_iconFor(item)]]" class="listIconBox iconWithText"></iron-icon>
