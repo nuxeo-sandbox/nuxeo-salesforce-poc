@@ -88,7 +88,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-resource id="query" path="/query" response="{{response}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.id]]" enrichers="preview, documentURL, driveEditURL" response="{{documentList}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.uid]]" enrichers="preview, documentURL, driveEditURL" response="{{documentList}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
 
     <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{newParentPath}}"></nuxeo-listing-breadcrumb>
@@ -96,7 +96,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     <paper-toolbar class="embedded-toolbar">
       <paper-input id="searchDocsInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
     </paper-toolbar>
-    <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" class="documentListContainer"></nuxeo-listing>
+    <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" current-parent="{{currentParent}}" class=" documentListContainer"></nuxeo-listing>
 
 
     <paper-dialog id="modalWarning" class="folder-box">
