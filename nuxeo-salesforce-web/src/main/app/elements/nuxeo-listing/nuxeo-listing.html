@@ -33,6 +33,7 @@ Requires <nuxeo-connection> in order to get icons.
       user-select: none;
       @apply(--shadow-elevation-3dp);
       float: left;
+      width : 25%;
     }
 
     .item[selected] {
@@ -88,9 +89,12 @@ Requires <nuxeo-connection> in order to get icons.
 
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
-
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
+    <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{document}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
     <div>
-
       <template is="dom-if" if="[[_isEmpty(documentList)]]">
         <paper-card class="item">
           <div class="card-content docContainer">
@@ -127,6 +131,7 @@ Requires <nuxeo-connection> in order to get icons.
               <template is="dom-if" if="[[_isLock(item)]]">
                 <paper-icon-button icon="lock"></paper-icon-button>
               </template>
+                <paper-icon-button icon="open-in-browser" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
             </div>
           </template>
         </paper-card>
@@ -215,6 +220,18 @@ Requires <nuxeo-connection> in order to get icons.
             return doc.contextParameters.documentURL;
           }
         }
+      },
+
+      _render: function (e) {
+         var id = e.currentTarget.id;
+         this.$.render.input = id;
+         this.$.render.params =  {
+            opportunity : this.sfopportunity,
+            account:  this.sfaccount,
+            owner:  this.sfowner
+         };
+         this.$.render.execute();
+
       },
 
       _isFolder: function (doc) {
