@@ -91,12 +91,12 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.uid]]" enrichers="preview, documentURL, driveEditURL" response="{{documentList}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
 
-    <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{newParentPath}}"></nuxeo-listing-breadcrumb>
+    <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
     <nuxeo-listing-parent current-parent="[[currentParent]]" refresh="{{refreshList}}" class="embedded-toolbar"></nuxeo-listing-parent>
     <paper-toolbar class="embedded-toolbar">
       <paper-input id="searchDocsInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
     </paper-toolbar>
-    <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" current-parent="{{currentParent}}" class=" documentListContainer"></nuxeo-listing>
+    <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" parent-path="{{parentPath}}" class=" documentListContainer"></nuxeo-listing>
 
 
     <paper-dialog id="modalWarning" class="folder-box">
@@ -114,7 +114,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     Polymer({
       is: 'nuxeo-salesforce-folderish',
       properties: {
-        newParentPath: {
+        parentPath: {
           type: String,
           value: '/default-domain'
         },
@@ -147,7 +147,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
 
       observers: [
           '_fetch(searchTerm)',
-          '_fetchParent(newParentPath)',
+          '_fetchParent(parentPath)',
           '_displayCanvasApp(sfobject)',
           '_displayErrorCanvasApp(success, error)',
           '_displayErrorCanvasApp(success)',
@@ -190,8 +190,9 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         }
       },
 
+
       _fetchParent: function () {
-        this.$.parentResource.path = '/path' + this.newParentPath;
+        this.$.parentResource.path = '/path' + this.parentPath;
         return this.$.parentResource.get();
       },
 

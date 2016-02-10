@@ -149,7 +149,7 @@ Requires <nuxeo-connection> in order to get icons.
           type: Object,
           notify: true
         },
-        currentParent: {
+        parentPath: {
           type: String,
           notify: true
         }
@@ -165,7 +165,7 @@ Requires <nuxeo-connection> in order to get icons.
         if (this._isFolder(item)) {
           this.selected = undefined; // clear selection
           this.searchTerm = ''; // clear search term
-          this.currentParent = item;
+          this.parentPath = item.path;
         } else {
           this.selected = item;
         }
