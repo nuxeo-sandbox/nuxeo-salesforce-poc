@@ -100,8 +100,7 @@ public class CreateSowOp {
         sow.setPropertyValue("sfu:email",account.get("Email"));
 
         //sections
-        List<String> sections = new ArrayList<>();
-        sections.addAll(sections);
+        sow.setPropertyValue("sections:sections", (Serializable) sections);
 
         sow = session.createDocument(sow);
         TemplateBasedDocument templateBasedDocument = sow.getAdapter(TemplateBasedDocument.class);
