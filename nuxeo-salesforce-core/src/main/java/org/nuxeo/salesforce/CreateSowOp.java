@@ -31,6 +31,8 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.template.api.adapters.TemplateBasedDocument;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Operation(
@@ -57,43 +59,58 @@ public class CreateSowOp {
     @Param(name = "owner", required = true)
     protected Properties owner;
 
+    @Param(name = "sections", required = true)
+    protected List<String> sections;
+
     @OperationMethod
     public DocumentModel run(DocumentModel template) {
-        DocumentModel source = session.createDocumentModel("File");
-        source.addFacet("TemplateBased");
-        TemplateBasedDocument templateBasedDocument = source.getAdapter(TemplateBasedDocument.class);
-        templateBasedDocument.setTemplate(template,false);
-
-        //Map properties
-        source.addFacet("salesforceTemplate");
-
-        //opportunity
-        source.setPropertyValue("dc:title",opportunity.get("Name"));
-
-        //Account
-        source.setPropertyValue("sfa:name",account.get("Name"));
-
-        //Owner
-        source.setPropertyValue("sfu:name",account.get("Name"));
-        source.setPropertyValue("sfu:title",account.get("Title"));
-        source.setPropertyValue("sfu:phone",account.get("Phone"));
-        source.setPropertyValue("sfu:email",account.get("Email"));
-
-        Blob rendered = templateBasedDocument.renderWithTemplate(template.getName());
 
         // get opportunity folder
         DocumentModelList list =
                 session.query(
                         "Select * From Document WHERE sf:objectId = '"+
-                                opportunity.get("objectId")+"'");
+                                opportunity.get("Id")+"'");
 
         if (list.size()==0) return null;
 
-        DocumentModel opportunity = list.get(0);
+        DocumentModel opportunityDoc = list.get(0);
 
-        DocumentModel sow = session.createDocumentModel(opportunity.getPathAsString(),"SOW","File");
+        // create Doc
+
+        DocumentModel sow = session.createDocumentModel(opportunityDoc.getPathAsString(),"SOW","File");
+        sow.addFacet("TemplateBased");
+        sow.addFacet("salesforceTemplate");
+
+        //Map properties
+        //opportunity
+        sow.setPropertyValue("dc:title","SOW - "+opportunity.get("Name"));
+
+        //Account
+        sow.setPropertyValue("sfa:name",account.get("Name"));
+        sow.setPropertyValue("sfa:street",account.get("BillingStreet"));
+        sow.setPropertyValue("sfa:city",account.get("BillingCity"));
+        sow.setPropertyValue("sfa:country",account.get("BillingCountry"));
+        sow.setPropertyValue("sfa:postalcode",account.get("BillingPostalCode"));
+
+
+        //Owner
+        sow.setPropertyValue("sfu:name",account.get("Name"));
+        sow.setPropertyValue("sfu:title",account.get("Title"));
+        sow.setPropertyValue("sfu:phone",account.get("Phone"));
+        sow.setPropertyValue("sfu:email",account.get("Email"));
+
+        //sections
+        List<String> sections = new ArrayList<>();
+        sections.addAll(sections);
+
+        sow = session.createDocument(sow);
+        TemplateBasedDocument templateBasedDocument = sow.getAdapter(TemplateBasedDocument.class);
+        templateBasedDocument.setTemplate(template,false);
+
+        Blob rendered = templateBasedDocument.renderWithTemplate(template.getName());
+
         sow.setPropertyValue("file:content", (Serializable) rendered);
-        session.createDocument(sow);
+        session.saveDocument(sow);
         return sow;
     }
 }
