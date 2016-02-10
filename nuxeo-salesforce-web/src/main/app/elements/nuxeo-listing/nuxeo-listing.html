@@ -105,6 +105,7 @@ Requires <nuxeo-connection> in order to get icons.
     <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
     <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{document}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+
     <div>
       <template is="dom-if" if="[[_isEmpty(documentList)]]">
         <paper-card class="item">
@@ -142,7 +143,9 @@ Requires <nuxeo-connection> in order to get icons.
               <template is="dom-if" if="[[_isLock(item)]]">
                 <paper-icon-button icon="lock"></paper-icon-button>
               </template>
-              <paper-icon-button icon="open-in-browser" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
+              <template is="dom-if" if="[[_isTemplate(item)]]">
+                <paper-icon-button icon="open-in-browser" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
+              </template>
             </div>
           </template>
         </paper-card>
@@ -253,6 +256,15 @@ Requires <nuxeo-connection> in order to get icons.
 
       _isNotFolder: function (doc) {
         return doc.facets.indexOf("Folderish") < 0;
+      },
+
+      _isTemplate: function (doc) {
+        if (doc) {
+          if (doc.type == "TemplateSource") {
+            return true;
+          }
+        }
+        return false;
       }
 
     });
