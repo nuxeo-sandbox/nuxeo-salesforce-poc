@@ -193,8 +193,11 @@ Requires <nuxeo-connection> in order to get icons.
 
       _preview: function (doc) {
         if (doc.contextParameters !== undefined) {
+          /* Note that doc.contextParameters.preview is the old previewer. My
+             assumption is that if the document can use the old previwer, it
+             can also use the new one. */
           if (doc.contextParameters.preview !== undefined) {
-            return doc.contextParameters.preview.url;
+            return "//" + window.location.hostname + ":" + window.location.port + "/nuxeo/viewer/web/viewer.html?file=" + doc.properties["file:content"].data;
           } else {
             return doc.contextParameters.documentURL;
           }
