@@ -142,7 +142,7 @@ Requires <nuxeo-connection> in order to get icons.
               <template is="dom-if" if="[[_isLock(item)]]">
                 <paper-icon-button icon="lock"></paper-icon-button>
               </template>
-                <paper-icon-button icon="open-in-browser" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
+              <paper-icon-button icon="open-in-browser" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
             </div>
           </template>
         </paper-card>
@@ -234,14 +234,14 @@ Requires <nuxeo-connection> in order to get icons.
       },
 
       _render: function (e) {
-         var id = e.currentTarget.id;
-         this.$.render.input = id;
-         this.$.render.params =  {
-            opportunity : this.sfopportunity,
-            account:  this.sfaccount,
-            owner:  this.sfowner
-         };
-         this.$.render.execute();
+        var id = e.currentTarget.id;
+        this.$.render.input = id;
+        this.$.render.params = {
+          opportunity: this.sfopportunity,
+          account: this.sfaccount,
+          owner: this.sfowner
+        };
+        this.$.render.execute();
 
       },
 
