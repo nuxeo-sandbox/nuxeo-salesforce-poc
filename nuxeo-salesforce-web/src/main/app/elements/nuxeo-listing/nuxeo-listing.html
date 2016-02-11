@@ -24,15 +24,145 @@ An element to display a list of Nuxeo documents.
 Requires <nuxeo-connection> in order to get icons.
 -->
 <dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
-  <style></style>
+  <style>
+    .item {
+      margin: 5px;
+      background: var(--paper-card-light-primary-color);
+      display: inherit;
+      overflow: hidden;
+      user-select: none;
+      @apply(--shadow-elevation-3dp);
+      float: left;
+      border-color: var(--paper-card-light-primary-color);
+      border-style: solid;
+      border-width: thin;
+      min-height: 56px;
+      width: 300px;
+      --paper-card-content: {}
+    }
+
+    .item[selected] {
+      font-weight: bold;
+      border-color: var(--paper-card-selected-primary-color);
+    }
+
+    @media (max-width: 600px) {
+      h1.paper-font-display1 {
+        font-size: 24px;
+      }
+    }
+
+    .iconWithText {
+      padding-right: 5px;
+      vertical-align: text-top;
+    }
+
+    .listIconBox {
+      padding: 4px;
+      --iron-icon-width: 20px;
+      --iron-icon-height: 20px;
+    }
+
+    paper-card {
+      padding: 10px;
+    }
+
+    paper-icon-button {
+      padding: 4px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .horizontal {
+      @apply(--layout-horizontal);
+    }
+
+    .justified {
+      @apply(--layout-justified);
+    }
+
+    .docContainer {
+      display: table;
+    }
+
+    .docTitleContainer {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    .docTitle {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 280px;
+      white-space: nowrap;
+    }
+
+    paper-drawer-panel {
+      --paper-drawer-panel-right-drawer-container: {
+        background-color: var(--light-primary-color);
+      }
+      ;
+    }
+  </style>
 
   <template>
+
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <div>
-      <template is="dom-repeat" items="[[documentList]]">
-         <nuxeo-doc-listview doc=[[item]]></nuxeo-doc-listview>
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
+    <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{document}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+
+
+    <paper-drawer-panel drawer-width="300px" right-drawer>
+
+      <!-- Drawer Content -->
+      <template is="dom-if" if="[[selected]]">
+        <nuxeo-metadata doc="{{selected}}" drawer></nuxeo-metadata>
       </template>
-    </div>
+
+      <paper-header-panel main mode="waterfall">
+
+        <div>
+
+          <template is="dom-repeat" items="[[documentList]]">
+            <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
+              <div class="card-content docContainer">
+                <iron-icon src="[[_iconFor(item)]]" class="listIconBox iconWithText"></iron-icon>
+                <div class="docTitleContainer">
+                  <div class="docTitle">[[item.title]]</div>
+                </div>
+              </div>
+              <template is="dom-if" if="[[_isNotFolder(item)]]">
+                <div class="card-actions horizontal justified">
+                  <a href="[[_previewUrl(item)]]" target="_blank">
+                    <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+                  </a>
+                  <a href="[[_downloadURL(item)]]" target="_blank">
+                    <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+                  </a>
+                  <a href="[[_docEditURL(item)]]" target="_blank">
+                    <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
+                  </a>
+                  <a href="[[_driveEdit(item)]]">
+                    <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
+                  </a>
+                  <template is="dom-if" if="[[_isLock(item)]]">
+                    <paper-icon-button icon="lock"></paper-icon-button>
+                  </template>
+                  <template is="dom-if" if="[[_isTemplate(item)]]">
+                    <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
+                  </template>
+                </div>
+              </template>
+            </paper-card>
+          </template>
+
+        </div>
+      </paper-header-panel>
+
+    </paper-drawer-panel>
 
   </template>
 
@@ -45,7 +175,113 @@ Requires <nuxeo-connection> in order to get icons.
           type: Object,
           notify: true
         },
+        selected: {
+          type: Object,
+          notify: true
+        },
+        parentPath: {
+          type: String,
+          notify: true
+        }
       },
+
+      _isEmpty: function (data) {
+        return data === null || data.resultsCount === 0;
+      },
+
+      _select: function (e) {
+        var item = e.model.item;
+        // if folder and already selected navigate to it (dbl click)
+        if (this._isFolder(item)) {
+          this.selected = undefined; // clear selection
+          this.searchTerm = ''; // clear search term
+          this.parentPath = item.path;
+        } else {
+          this.selected = item;
+        }
+      },
+
+      _isSame: function (item, selected) {
+        return selected && selected.uid === item.uid;
+      },
+
+      _iconFor: function (doc) {
+        if (doc && doc.properties['common:icon']) {
+          return this.$.nx.client._baseURL + doc.properties['common:icon'];
+        }
+      },
+
+      _previewUrl: function (doc) {
+        if (doc.contextParameters !== undefined) {
+          /* Note that doc.contextParameters.preview is the old previewer. My
+             assumption is that if the document can use the old previwer, it
+             can also use the new one. */
+          if (doc.contextParameters.preview !== undefined) {
+            return "//" + window.location.hostname + ":" + window.location.port + "/nuxeo/viewer/web/viewer.html?file=" + doc.properties["file:content"].data;
+          } else {
+            return doc.contextParameters.documentURL;
+          }
+        }
+      },
+
+      _isLock: function (doc) {
+        return doc.lockOwner !== undefined;
+      },
+
+      _docEditURL: function (doc) {
+        if (doc && doc.contextParameters !== undefined) {
+          return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
+        }
+      },
+
+      _driveEdit: function (doc) {
+        if (doc.contextParameters !== undefined) {
+          return doc.contextParameters.driveEditURL;
+        }
+      },
+
+      _downloadURL: function (doc) {
+        if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
+          return doc.properties["file:content"].data;
+        } else {
+          if (doc.contextParameters !== undefined) {
+            return doc.contextParameters.documentURL;
+          }
+        }
+      },
+
+      _render: function (e) {
+        var id = e.currentTarget.id;
+        this.$.render.input = id;
+        this.$.render.params = {
+          opportunity: this.sfopportunity,
+          account: this.sfaccount,
+          owner: this.sfowner,
+          sections: ["advise"]
+        };
+        this.$.render.execute();
+
+      },
+
+      _isFolder: function (doc) {
+        return doc.facets.some(function (e) {
+          return e === 'Folderish';
+        });
+      },
+
+      _isNotFolder: function (doc) {
+        return doc.facets.indexOf("Folderish") < 0;
+      },
+
+      _isTemplate: function (doc) {
+        if (doc) {
+          if (doc.type == "TemplateSource") {
+            return true;
+          }
+        }
+        return false;
+      }
+
     });
   </script>
 </dom-module>

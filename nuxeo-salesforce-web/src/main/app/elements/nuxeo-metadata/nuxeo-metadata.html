@@ -1,16 +1,19 @@
 <dom-module id="nuxeo-metadata">
   <style>
-    :host {
-      display: block;
+    .mainToolbar {
+      color: inherit;
+      background-color: var(--primary-background-color);
     }
 
     .card {
-      padding: 5px;
       margin: 5px;
       width: 100%;
-      background-color: white;
       display: inline-block;
-      @apply(--shadow-elevation-2dp);
+      @apply(--shadow-elevation-3dp);
+    }
+
+    .metaData {
+      padding: 5px;
     }
 
     .property {
@@ -32,12 +35,6 @@
       flex: 1;
     }
 
-    paper-toolbar {
-      color: var(--secondary-text-color);
-      background-color: var(--drawer-menu-color);
-      border-bottom: var(--drawer-toolbar-border-color);
-    }
-
     @media (max-width: 600px) {
       h1.paper-font-display1 {
         font-size: 24px;
@@ -46,66 +43,98 @@
 
     .documentIcon {
       padding-right: 5px;
-    }
-
-    .buttonIcon {
-      padding-left: 5px;
+      vertical-align: text-top;
     }
 
     .iconSize {
       max-width: 24px;
       max-height: 24px;
     }
+
+    #spacer {
+      display: table;
+      margin: 0 auto;
+    }
+
+    .docTitle {
+      color: var(--secondary-text-color);
+    }
+
+    .docContainer {
+      display: table;
+    }
+
+    .docTitleContainer {
+      display: table-cell;
+      vertical-align: middle;
+    }
   </style>
+
   <template>
+
     <nuxeo-connection id="nx"></nuxeo-connection>
 
-    <paper-toolbar id="drawerToolbar">
-      <img class="documentIcon iconSize" src="[[icon]]"></img>&nbsp;<span class="paper-font-title">{{doc.title}}</span>
-      <a href="[[_docURL(doc)]]" target="_blank">
-        <paper-tooltip>Access</paper-tooltip>
-        <i class="material-icons buttonIcon iconSize">open_in_new</i>
-      </a>
-    </paper-toolbar>
+    <paper-header-panel mode="waterfall">
 
-    <template is="dom-if" if="[[thumbnail]]">
-      <div class="card">
-        <img src$="[[thumbnail]]" style="width:100%"></img>
+      <paper-toolbar class="mainToolbar">
+        <div class="docContainer">
+          <iron-icon src="[[icon]]" class="documentIcon iconSize"></iron-icon>
+          <div class="docTitleContainer">
+            <span class="paper-font-title docTitle">{{doc.title}}</span>
+          </div>
+        </div>
+        <div id="spacer">
+          <!--This div pushes the action buttons to the right edge. -->
+        </div>
+        <div id="folderOpenExternal">
+          <a href="[[_docURL(doc)]]" target="_blank">
+            <paper-icon-button icon="icons:open-in-new" title="Access"></paper-icon-button>
+          </a>
+        </div>
+      </paper-toolbar>
+
+      <div>
+        <template is="dom-if" if="[[thumbnail]]">
+          <div class="card">
+            <img src$="[[thumbnail]]" style="width:100%"></img>
+          </div>
+        </template>
+
+        <section id="common" class="card metaData">
+          <div class="property">
+            <span class="label">Created at</span>
+            <span class="value">[[_date(doc, 'dc:created')]]</span>
+          </div>
+
+          <div class="property">
+            <span class="label">Last modified</span>
+            <span class="value">[[_date(doc, 'dc:modified')]]</span>
+          </div>
+
+          <div class="property">
+            <span class="label">Author</span>
+            <span class="value">[[_prop(doc, 'dc:creator')]]</span>
+          </div>
+
+          <div class="property">
+            <span class="label">Contributors</span>
+            <span class="value">[[_prop(doc, 'dc:creator')]]</span>
+          </div>
+
+          <div class="property">
+            <span class="label">Last contributor</span>
+            <span class="value">[[_prop(doc, 'dc:creator')]]</span>
+          </div>
+
+        </section>
       </div>
-    </template>
+    </paper-header-panel>
 
-    <section id="common" class="card">
-      <div class="property">
-        <span class="label">Created at</span>
-        <span class="value">[[_date(doc, 'dc:created')]]</span>
-      </div>
-
-      <div class="property">
-        <span class="label">Last modified</span>
-        <span class="value">[[_date(doc, 'dc:modified')]]</span>
-      </div>
-
-      <div class="property">
-        <span class="label">Author</span>
-        <span class="value">[[_prop(doc, 'dc:creator')]]</span>
-      </div>
-
-      <div class="property">
-        <span class="label">Contributors</span>
-        <span class="value">[[_prop(doc, 'dc:creator')]]</span>
-      </div>
-
-      <div class="property">
-        <span class="label">Last contributor</span>
-        <span class="value">[[_prop(doc, 'dc:creator')]]</span>
-      </div>
-
-    </section>
 
   </template>
 
   <script>
-    (function() {
+    (function () {
       Polymer({
         is: 'nuxeo-metadata',
 
@@ -121,19 +150,19 @@
           }
         },
 
-        _icon: function(doc) {
+        _icon: function (doc) {
           if (doc && doc.properties['common:icon']) {
             return this.$.nx.client._baseURL + doc.properties['common:icon'];
           }
         },
 
-        _docURL: function(doc) {
-          if(doc && doc.contextParameters!==undefined){
+        _docURL: function (doc) {
+          if (doc && doc.contextParameters !== undefined) {
             return doc.contextParameters.documentURL;
           }
         },
 
-        _thumbnail: function(doc) {
+        _thumbnail: function (doc) {
           if (doc && doc.properties['thumb:thumbnail']) {
             return doc.properties['thumb:thumbnail'].data;
           }
@@ -145,14 +174,14 @@
           }
         },
 
-        _prop: function(doc, path) {
+        _prop: function (doc, path) {
           if (!doc || !doc.properties) {
             return;
           }
           return doc.properties[path];
         },
 
-        _date: function(doc, path) {
+        _date: function (doc, path) {
           if (!doc || !doc.properties) {
             return;
           }

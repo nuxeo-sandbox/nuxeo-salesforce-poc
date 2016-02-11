@@ -24,7 +24,7 @@ For example the name of the folder and a link to access it in Nuxeo.
 -->
 <dom-module id="nuxeo-listing-parent" assetpath="nuxeo-listing/">
   <style>
-    .drawerToolbar {
+    .mainToolbar {
       color: inherit;
       background-color: inherit;
     }
@@ -68,7 +68,7 @@ For example the name of the folder and a link to access it in Nuxeo.
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
 
-    <paper-toolbar class="drawerToolbar">
+    <paper-toolbar class="mainToolbar">
       <div class="docContainer">
         <iron-icon src="[[_iconFor(currentParent)]]" class="listIconBox iconWithText"></iron-icon>
         <div class="docTitleContainer">
