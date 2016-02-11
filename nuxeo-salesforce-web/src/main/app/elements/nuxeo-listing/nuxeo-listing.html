@@ -108,14 +108,12 @@ Requires <nuxeo-connection> in order to get icons.
     <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{document}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
 
-    <paper-drawer-panel drawer-width="30%" right-drawer>
+    <paper-drawer-panel drawer-width="300px" right-drawer>
 
-      <paper-header-panel drawer mode="waterfall">
-        <!-- Drawer Content -->
-        <template is="dom-if" if="[[selected]]">
-          <nuxeo-metadata doc="{{selected}}" id="rightPanelMetadata"></nuxeo-metadata>
-        </template>
-      </paper-header-panel>
+      <!-- Drawer Content -->
+      <template is="dom-if" if="[[selected]]">
+        <nuxeo-metadata doc="{{selected}}" drawer></nuxeo-metadata>
+      </template>
 
       <paper-header-panel main mode="waterfall">
 
