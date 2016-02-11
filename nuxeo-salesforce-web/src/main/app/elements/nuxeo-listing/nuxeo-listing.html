@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Contributors:
-  Vladimir Pasquier <vpasquier@nuxeo.com>
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
 <!--
@@ -107,6 +106,11 @@ Requires <nuxeo-connection> in order to get icons.
       }
       ;
     }
+
+    nuxeo-template-sections-selector {
+      --paper-dialog-button-color: var(--primary-text-color);
+      border-radius: 3px;
+    }
   </style>
 
   <template>
@@ -156,11 +160,9 @@ Requires <nuxeo-connection> in order to get icons.
                     <paper-icon-button icon="lock"></paper-icon-button>
                   </template>
                   <template is="dom-if" if="[[_isTemplate(item)]]">
-                    <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" on-click="_open"></paper-icon-button>
-                    <paper-dialog id="dialog[[item.uid]]">
-                      <nuxeo-template-sections-selector doc=[[item]]></nuxeo-template-sections-selector>
-                    </paper-dialog>
-                 </template>
+                    <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" onclick="templateDialog.open()"></paper-icon-button>
+                    <nuxeo-template-sections-selector id="templateDialog" doc=[[item]] modal></nuxeo-template-sections-selector>
+                  </template>
                 </div>
               </template>
             </paper-card>
@@ -275,13 +277,6 @@ Requires <nuxeo-connection> in order to get icons.
           }
         }
         return false;
-      },
-
-      _open: function (e) {
-        var dialog = document.getElementById("dialog"+e.currentTarget.id);
-        if (dialog) {
-          dialog.open();
-        }
       }
 
     });

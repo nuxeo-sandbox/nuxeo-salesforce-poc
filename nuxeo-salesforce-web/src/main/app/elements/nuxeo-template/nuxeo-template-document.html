@@ -133,7 +133,7 @@ Requires <nuxeo-connection> in order to get icons and urls.
       },
 
       _previewUrl: function (doc) {
-        if (doc.contextParameters !== undefined) {
+        if (doc && doc.contextParameters !== undefined) {
           /* Note that doc.contextParameters.preview is the old previewer. My
              assumption is that if the document can use the old previwer, it
              can also use the new one. */
@@ -152,16 +152,16 @@ Requires <nuxeo-connection> in order to get icons and urls.
       },
 
       _driveEdit: function (doc) {
-        if (doc.contextParameters !== undefined) {
+        if (doc && doc.contextParameters !== undefined) {
           return doc.contextParameters.driveEditURL;
         }
       },
 
       _downloadURL: function (doc) {
-        if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
+        if (doc && doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
           return doc.properties["file:content"].data;
         } else {
-          if (doc.contextParameters !== undefined) {
+          if (doc && doc.contextParameters !== undefined) {
             return doc.contextParameters.documentURL;
           }
         }
