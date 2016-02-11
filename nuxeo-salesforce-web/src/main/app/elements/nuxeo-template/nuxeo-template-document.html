@@ -1,0 +1,172 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<!--
+An element to display a single item that is a Document.
+
+Requires <nuxeo-connection> in order to get icons and urls.
+-->
+<dom-module id="nuxeo-template-document" assetpath="nuxeo-template/">
+
+  <style>
+    .item {
+      margin: 5px;
+      background: var(--paper-card-light-primary-color);
+      display: inherit;
+      overflow: hidden;
+      user-select: none;
+      @apply(--shadow-elevation-3dp);
+      float: left;
+      border-color: var(--paper-card-light-primary-color);
+      border-style: solid;
+      border-width: thin;
+      min-height: 56px;
+      width: 300px;
+      --paper-card-content: {}
+    }
+
+    .iconWithText {
+      padding-right: 5px;
+      vertical-align: text-top;
+    }
+
+    .listIconBox {
+      padding: 4px;
+      --iron-icon-width: 20px;
+      --iron-icon-height: 20px;
+    }
+
+    paper-card {
+      padding: 10px;
+    }
+
+    paper-icon-button {
+      padding: 4px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .horizontal {
+      @apply(--layout-horizontal);
+    }
+
+    .justified {
+      @apply(--layout-justified);
+    }
+
+    .docContainer {
+      display: table;
+    }
+
+    .docTitleContainer {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    .docTitle {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      white-space: nowrap;
+    }
+  </style>
+
+  <template>
+
+    <nuxeo-connection id="nx"></nuxeo-connection>
+
+    <paper-card class="item">
+      <div class="card-content docContainer">
+        <iron-icon src="[[_iconFor(doc)]]" class="listIconBox iconWithText"></iron-icon>
+        <div class="docTitleContainer">
+          <div class="docTitle">[[doc.title]]</div>
+        </div>
+      </div>
+      <div class="card-actions horizontal justified">
+        <a href="[[_previewUrl(doc)]]" target="_blank">
+          <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+        </a>
+        <a href="[[_downloadURL(doc)]]" target="_blank">
+          <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+        </a>
+        <a href="[[_docEditURL(doc)]]" target="_blank">
+          <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
+        </a>
+        <a href="[[_driveEdit(doc)]]">
+          <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
+        </a>
+      </div>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-template-document',
+
+      properties: {
+        doc: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      _iconFor: function (doc) {
+        if (doc && doc.properties['common:icon']) {
+          return this.$.nx.client._baseURL + doc.properties['common:icon'];
+        }
+      },
+
+      _previewUrl: function (doc) {
+        if (doc.contextParameters !== undefined) {
+          /* Note that doc.contextParameters.preview is the old previewer. My
+             assumption is that if the document can use the old previwer, it
+             can also use the new one. */
+          if (doc.contextParameters.preview !== undefined) {
+            return "//" + window.location.hostname + ":" + window.location.port + "/nuxeo/viewer/web/viewer.html?file=" + doc.properties["file:content"].data;
+          } else {
+            return doc.contextParameters.documentURL;
+          }
+        }
+      },
+
+      _docEditURL: function (doc) {
+        if (doc && doc.contextParameters !== undefined) {
+          return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
+        }
+      },
+
+      _driveEdit: function (doc) {
+        if (doc.contextParameters !== undefined) {
+          return doc.contextParameters.driveEditURL;
+        }
+      },
+
+      _downloadURL: function (doc) {
+        if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
+          return doc.properties["file:content"].data;
+        } else {
+          if (doc.contextParameters !== undefined) {
+            return doc.contextParameters.documentURL;
+          }
+        }
+      }
+
+    });
+  </script>
+</dom-module>
