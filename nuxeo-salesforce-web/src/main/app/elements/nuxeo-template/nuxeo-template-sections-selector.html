@@ -96,15 +96,13 @@
       },
 
       observers: [
-        '_updateSections(doc)',
-        '_updateResult(_result)',
-        '_displayError(error)'
+        '_updateSections(doc)', '_updateResult(_result)', '_displayError(error)'
       ],
 
       ready: function() {},
 
       _updateSections() {
-        var sectionNames = ["Assistance", "Advise"];
+        var sectionNames = this.doc.properties['sections:sections'];
         var sectionsTmp = [];
         for (var i = 0; i < sectionNames.length; i++) {
           sectionsTmp.push({name: sectionNames[i], checked: false});
@@ -120,10 +118,10 @@
       },
 
       _displayError: function() {
-         this._show_selection = false;
-         this._show_spinner = false;
-         this._show_result = false;
-         this._show_error = true;
+        this._show_selection = false;
+        this._show_spinner = false;
+        this._show_result = false;
+        this._show_error = true;
       },
 
       _render: function(e) {
@@ -133,7 +131,7 @@
           opportunity: this.sfopportunity,
           account: this.sfaccount,
           owner: this.sfowner,
-          sections: ["advise"]
+          sections: this.sections
         };
         this.$.render.execute();
         this._show_spinner = true;
