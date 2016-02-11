@@ -107,42 +107,57 @@ Requires <nuxeo-connection> in order to get icons.
     <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
     <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{document}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
-    <div>
 
-      <template is="dom-repeat" items="[[documentList]]">
-        <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
-          <div class="card-content docContainer">
-            <iron-icon src="[[_iconFor(item)]]" class="listIconBox iconWithText"></iron-icon>
-            <div class="docTitleContainer">
-              <div class="docTitle">[[item.title]]</div>
-            </div>
-          </div>
-          <template is="dom-if" if="[[_isNotFolder(item)]]">
-            <div class="card-actions horizontal justified">
-              <a href="[[_preview(item)]]" target="_blank">
-                <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
-              </a>
-              <a href="[[_downloadURL(item)]]" target="_blank">
-                <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
-              </a>
-              <a href="[[_docEditURL(item)]]" target="_blank">
-                <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
-              </a>
-              <a href="[[_driveEdit(item)]]">
-                <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
-              </a>
-              <template is="dom-if" if="[[_isLock(item)]]">
-                <paper-icon-button icon="lock"></paper-icon-button>
+    <paper-drawer-panel drawer-width="30%" right-drawer>
+
+      <paper-header-panel drawer mode="seam">
+        <!-- Drawer Content -->
+        <template is="dom-if" if="[[selected]]">
+          <nuxeo-metadata doc="[[selected]]" id="rightPanelMetadata"></nuxeo-metadata>
+        </template>
+      </paper-header-panel>
+
+      <paper-header-panel main mode="waterfall">
+
+        <div>
+
+          <template is="dom-repeat" items="[[documentList]]">
+            <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
+              <div class="card-content docContainer">
+                <iron-icon src="[[_iconFor(item)]]" class="listIconBox iconWithText"></iron-icon>
+                <div class="docTitleContainer">
+                  <div class="docTitle">[[item.title]]</div>
+                </div>
+              </div>
+              <template is="dom-if" if="[[_isNotFolder(item)]]">
+                <div class="card-actions horizontal justified">
+                  <a href="[[_preview(item)]]" target="_blank">
+                    <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+                  </a>
+                  <a href="[[_downloadURL(item)]]" target="_blank">
+                    <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+                  </a>
+                  <a href="[[_docEditURL(item)]]" target="_blank">
+                    <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
+                  </a>
+                  <a href="[[_driveEdit(item)]]">
+                    <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
+                  </a>
+                  <template is="dom-if" if="[[_isLock(item)]]">
+                    <paper-icon-button icon="lock"></paper-icon-button>
+                  </template>
+                  <template is="dom-if" if="[[_isTemplate(item)]]">
+                    <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
+                  </template>
+                </div>
               </template>
-              <template is="dom-if" if="[[_isTemplate(item)]]">
-                <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
-              </template>
-            </div>
+            </paper-card>
           </template>
-        </paper-card>
-      </template>
 
-    </div>
+        </div>
+      </paper-header-panel>
+
+    </paper-drawer-panel>
 
   </template>
 

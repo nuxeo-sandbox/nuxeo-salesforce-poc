@@ -90,13 +90,16 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
     <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.uid]]" enrichers="preview, documentURL, driveEditURL" response="{{documentList}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
-
-    <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
-    <nuxeo-listing-parent current-parent="[[currentParent]]" refresh="{{refreshList}}" class="embedded-toolbar"></nuxeo-listing-parent>
-    <paper-toolbar class="embedded-toolbar">
-      <paper-input id="searchDocsInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
-    </paper-toolbar>
-    <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" parent-path="{{parentPath}}" class=" documentListContainer"></nuxeo-listing>
+    <paper-header-panel mode="waterfall">
+      <div class="paper-header">
+        <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
+        <nuxeo-listing-parent current-parent="[[currentParent]]" refresh="{{refreshList}}" class="embedded-toolbar"></nuxeo-listing-parent>
+        <paper-toolbar class="embedded-toolbar">
+          <paper-input id="searchDocsInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
+        </paper-toolbar>
+      </div>
+      <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" parent-path="{{parentPath}}" class=" documentListContainer"></nuxeo-listing>
+    </paper-header-panel>
 
 
     <paper-dialog id="modalWarning" class="folder-box">
