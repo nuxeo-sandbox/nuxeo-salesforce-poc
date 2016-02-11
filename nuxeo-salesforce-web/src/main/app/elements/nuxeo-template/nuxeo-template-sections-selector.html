@@ -14,11 +14,11 @@
     p {
       color: black;
     }
+
     .centered {
       display: block;
       margin: auto;
     }
-
   </style>
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
@@ -101,13 +101,16 @@
         '_displayError(error)'
       ],
 
-      ready: function() {},
+      ready: function () {},
 
       _updateSections() {
         var sectionNames = ["Assistance", "Advise"];
         var sectionsTmp = [];
         for (var i = 0; i < sectionNames.length; i++) {
-          sectionsTmp.push({name: sectionNames[i], checked: false});
+          sectionsTmp.push({
+            name: sectionNames[i],
+            checked: false
+          });
         }
         this.sections = sectionsTmp;
       },
@@ -119,14 +122,14 @@
         }
       },
 
-      _displayError: function() {
-         this._show_selection = false;
-         this._show_spinner = false;
-         this._show_result = false;
-         this._show_error = true;
+      _displayError: function () {
+        this._show_selection = false;
+        this._show_spinner = false;
+        this._show_result = false;
+        this._show_error = true;
       },
 
-      _render: function(e) {
+      _render: function (e) {
         var id = e.currentTarget.id;
         this.$.render.input = id;
         this.$.render.params = {
