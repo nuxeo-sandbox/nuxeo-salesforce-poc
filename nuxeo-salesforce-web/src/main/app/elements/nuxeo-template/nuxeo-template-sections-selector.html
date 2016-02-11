@@ -1,4 +1,25 @@
 <dom-module id="nuxeo-template-sections-selector">
+  <style>
+    paper-toggle-button {
+      padding: 2%;
+      --paper-toggle-button-label-color: black;
+      --paper-toggle-button-checked-bar-color: green;
+      --paper-toggle-button-checked-button-color: green;
+    }
+
+    h1 {
+      color: black;
+    }
+
+    p {
+      color: black;
+    }
+    .centered {
+      display: block;
+      margin: auto;
+    }
+
+  </style>
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
     <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
@@ -18,12 +39,22 @@
       </div>
     </template>
     <template is="dom-if" if="[[_show_spinner]]">
-      <h1>Rendering</h1>
-      <paper-spinner active></paper-spinner>
+      <h1>Rendering Template</h1>
+      <paper-spinner active class="centered"></paper-spinner>
     </template>
     <template is="dom-if" if="[[_show_result]]">
-      <h1>The document has been added to this opportunity</h1>
+      <h1>Rendering Completed</h1>
       <nuxeo-template-document doc=[[_result]]></nuxeo-template-document>
+      <p>This document has been saved in this opportunity</p>
+      <div class="buttons">
+        <paper-button dialog-confirm>Close</paper-button>
+      </div>
+    </template>
+    <template is="dom-if" if="[[_show_error]]">
+      <p>An Error Occured</p>
+      <div class="buttons">
+        <paper-button dialog-confirm>Close</paper-button>
+      </div>
     </template>
   </template>
   <script>
@@ -53,24 +84,30 @@
           value: false,
           notify: true
         },
+        _show_error: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
         _result: {
           type: Object,
           notify: true
         }
       },
 
-      observers: ['_updateSections(doc)', '_updateResult(_result)'],
+      observers: [
+        '_updateSections(doc)',
+        '_updateResult(_result)',
+        '_displayError(error)'
+      ],
 
-      ready: function () {},
+      ready: function() {},
 
       _updateSections() {
         var sectionNames = ["Assistance", "Advise"];
         var sectionsTmp = [];
         for (var i = 0; i < sectionNames.length; i++) {
-          sectionsTmp.push({
-            name: sectionNames[i],
-            checked: false
-          });
+          sectionsTmp.push({name: sectionNames[i], checked: false});
         }
         this.sections = sectionsTmp;
       },
@@ -82,7 +119,14 @@
         }
       },
 
-      _render: function (e) {
+      _displayError: function() {
+         this._show_selection = false;
+         this._show_spinner = false;
+         this._show_result = false;
+         this._show_error = true;
+      },
+
+      _render: function(e) {
         var id = e.currentTarget.id;
         this.$.render.input = id;
         this.$.render.params = {
@@ -94,8 +138,7 @@
         this.$.render.execute();
         this._show_spinner = true;
         this._show_selection = false;
-      },
-
+      }
     });
   </script>
 </dom-module>

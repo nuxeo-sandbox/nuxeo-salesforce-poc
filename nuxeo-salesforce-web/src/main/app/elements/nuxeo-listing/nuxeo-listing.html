@@ -97,6 +97,10 @@ Requires <nuxeo-connection> in order to get icons.
       white-space: nowrap;
     }
 
+    paper-dialog {
+      padding: 1%;
+    }
+
     paper-drawer-panel {
       --paper-drawer-panel-right-drawer-container: {
         background-color: var(--light-primary-color);
@@ -152,11 +156,11 @@ Requires <nuxeo-connection> in order to get icons.
                     <paper-icon-button icon="lock"></paper-icon-button>
                   </template>
                   <template is="dom-if" if="[[_isTemplate(item)]]">
-                    <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_open"></paper-icon-button>
-                    <paper-dialog id="renderDialog">
-                      <nuxeo-template-sections-selector doc=[[selected]]></nuxeo-template-sections-selector>
+                    <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" on-click="_open"></paper-icon-button>
+                    <paper-dialog id="dialog[[item.uid]]">
+                      <nuxeo-template-sections-selector doc=[[item]]></nuxeo-template-sections-selector>
                     </paper-dialog>
-                  </template>
+                 </template>
                 </div>
               </template>
             </paper-card>
@@ -274,7 +278,7 @@ Requires <nuxeo-connection> in order to get icons.
       },
 
       _open: function (e) {
-        var dialog = document.getElementById("renderDialog");
+        var dialog = document.getElementById("dialog"+e.currentTarget.id);
         if (dialog) {
           dialog.open();
         }
