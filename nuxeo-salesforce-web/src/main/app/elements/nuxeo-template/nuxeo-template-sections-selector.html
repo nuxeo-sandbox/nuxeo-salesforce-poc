@@ -68,7 +68,7 @@ An element to display a dialog for template rendering.
     <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
     <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
-    <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <nuxeo-operation id="render" op="Conversion.CreateSowOp" enrichers="preview, documentURL, driveEditURL" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
     <template is="dom-if" if="[[_show_selection]]">
       <div class="titleContainer">
