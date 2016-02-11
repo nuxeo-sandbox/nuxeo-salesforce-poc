@@ -1,0 +1,97 @@
+<dom-module id="nuxeo-template-sections-selector">
+  <template>
+    <nuxeo-connection id="nx"></nuxeo-connection>
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
+    <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+
+    <template is="dom-if" if="[[_show_selection]]">
+      <h1>Select the Sections to Include</h1>
+      <template is="dom-repeat" items="[[sections]]">
+        <paper-toggle-button checked="{{item.checked}}">{{item.name}}</paper-toggle-button>
+      </template>
+      <div class="buttons">
+        <paper-button id="[[doc.uid]]" on-click="_render">Render</paper-button>
+        <paper-button dialog-confirm>Cancel</paper-button>
+      </div>
+    </template>
+    <template is="dom-if" if="[[_show_spinner]]">
+      <h1>Rendering</h1>
+      <paper-spinner active></paper-spinner>
+    </template>
+    <template is="dom-if" if="[[_show_result]]">
+      <h1>The document has been added to this opportunity</h1>
+    </template>
+  </template>
+  <script>
+    Polymer({
+      is: 'nuxeo-template-sections-selector',
+      properties: {
+        doc: {
+          type: Object,
+          notify: true
+        },
+        sections: {
+          type: Array,
+          notify: true
+        },
+        _show_spinner: {
+          type: Boolean,
+          value: false,
+          notify: true
+       },
+       _show_selection: {
+         type: Boolean,
+         value: true,
+         notify: true
+      },
+      _show_result: {
+        type: Boolean,
+        value: false,
+        notify: true
+     },
+        _result: {
+           type: Object,
+          notify: true
+        }
+      },
+
+      observers: ['_updateSections(doc)','_updateResult(_result)'],
+
+      ready: function() {},
+
+      _updateSections() {
+        var sectionNames = ["Assistance", "Advise"];
+        var sectionsTmp = [];
+        for (var i = 0; i < sectionNames.length; i++) {
+          sectionsTmp.push({name: sectionNames[i], checked: false});
+        }
+        this.sections = sectionsTmp;
+      },
+
+      _updateResult() {
+         if (this.results) {
+            this._show_spinner = false;
+            this._show_result = true;
+         }
+      },
+
+      _render: function(e) {
+        var id = e.currentTarget.id;
+        this.$.render.input = id;
+        this.$.render.params = {
+          opportunity: this.sfopportunity,
+          account: this.sfaccount,
+          owner: this.sfowner,
+          sections: ["advise"]
+        };
+        this.$.render.execute();
+        this._show_spinner = true;
+        this._show_selection = false;
+     },
+
+    });
+  </script>
+</dom-module>
