@@ -23,7 +23,7 @@
     </template>
     <template is="dom-if" if="[[_show_result]]">
       <h1>The document has been added to this opportunity</h1>
-      <nuxeo-doc-listview doc=[[item]]></nuxeo-doc-listview>
+      <nuxeo-doc-listview doc=[[_result]]></nuxeo-doc-listview>
     </template>
   </template>
   <script>
@@ -73,7 +73,7 @@
       },
 
       _updateResult() {
-         if (this._results) {
+         if (this._result !== undefined && this._result !== null) {
             this._show_spinner = false;
             this._show_result = true;
          }
