@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Contributors:
-  Vladimir Pasquier <vpasquier@nuxeo.com>
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
 <!--
@@ -157,10 +156,10 @@ Requires <nuxeo-connection> in order to get icons.
                   </template>
                   <template is="dom-if" if="[[_isTemplate(item)]]">
                     <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" on-click="_open"></paper-icon-button>
-                    <paper-dialog id="dialog[[item.uid]]">
+                    <paper-dialog id="dialog[[item.uid]]" modal entry-animation="scale-up-animation" exit-animation="scale-down-animation">
                       <nuxeo-template-sections-selector doc=[[item]]></nuxeo-template-sections-selector>
                     </paper-dialog>
-                 </template>
+                  </template>
                 </div>
               </template>
             </paper-card>
@@ -278,7 +277,7 @@ Requires <nuxeo-connection> in order to get icons.
       },
 
       _open: function (e) {
-        var dialog = document.getElementById("dialog"+e.currentTarget.id);
+        var dialog = document.getElementById("dialog" + e.currentTarget.id);
         if (dialog) {
           dialog.open();
         }
