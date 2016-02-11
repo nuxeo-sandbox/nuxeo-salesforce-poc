@@ -152,7 +152,10 @@ Requires <nuxeo-connection> in order to get icons.
                     <paper-icon-button icon="lock"></paper-icon-button>
                   </template>
                   <template is="dom-if" if="[[_isTemplate(item)]]">
-                    <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
+                    <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_open"></paper-icon-button>
+                    <paper-dialog id="renderDialog">
+                      <nuxeo-template-sections-selector doc=[[doc]]></nuxeo-template-sections-selector>
+                    </paper-dialog>
                   </template>
                 </div>
               </template>
@@ -250,18 +253,6 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _render: function (e) {
-        var id = e.currentTarget.id;
-        this.$.render.input = id;
-        this.$.render.params = {
-          opportunity: this.sfopportunity,
-          account: this.sfaccount,
-          owner: this.sfowner,
-          sections: ["advise"]
-        };
-        this.$.render.execute();
-
-      },
 
       _isFolder: function (doc) {
         return doc.facets.some(function (e) {
@@ -280,6 +271,13 @@ Requires <nuxeo-connection> in order to get icons.
           }
         }
         return false;
+      },
+
+      _open: function (e) {
+        var dialog = document.getElementById("renderDialog");
+        if (dialog) {
+          dialog.open();
+        }
       }
 
     });

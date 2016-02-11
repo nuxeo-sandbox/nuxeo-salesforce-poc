@@ -23,7 +23,7 @@
     </template>
     <template is="dom-if" if="[[_show_result]]">
       <h1>The document has been added to this opportunity</h1>
-      <nuxeo-doc-listview doc=[[_result]]></nuxeo-doc-listview>
+      <nuxeo-template-document doc=[[_result]]></nuxeo-template-document>
     </template>
   </template>
   <script>
@@ -42,44 +42,47 @@
           type: Boolean,
           value: false,
           notify: true
-       },
-       _show_selection: {
-         type: Boolean,
-         value: true,
-         notify: true
-      },
-      _show_result: {
-        type: Boolean,
-        value: false,
-        notify: true
-     },
+        },
+        _show_selection: {
+          type: Boolean,
+          value: true,
+          notify: true
+        },
+        _show_result: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
         _result: {
-           type: Object,
+          type: Object,
           notify: true
         }
       },
 
-      observers: ['_updateSections(doc)','_updateResult(_result)'],
+      observers: ['_updateSections(doc)', '_updateResult(_result)'],
 
-      ready: function() {},
+      ready: function () {},
 
       _updateSections() {
         var sectionNames = ["Assistance", "Advise"];
         var sectionsTmp = [];
         for (var i = 0; i < sectionNames.length; i++) {
-          sectionsTmp.push({name: sectionNames[i], checked: false});
+          sectionsTmp.push({
+            name: sectionNames[i],
+            checked: false
+          });
         }
         this.sections = sectionsTmp;
       },
 
       _updateResult() {
-         if (this._result !== undefined && this._result !== null) {
-            this._show_spinner = false;
-            this._show_result = true;
-         }
+        if (this._result !== undefined && this._result !== null) {
+          this._show_spinner = false;
+          this._show_result = true;
+        }
       },
 
-      _render: function(e) {
+      _render: function (e) {
         var id = e.currentTarget.id;
         this.$.render.input = id;
         this.$.render.params = {
@@ -91,7 +94,7 @@
         this.$.render.execute();
         this._show_spinner = true;
         this._show_selection = false;
-     },
+      },
 
     });
   </script>
