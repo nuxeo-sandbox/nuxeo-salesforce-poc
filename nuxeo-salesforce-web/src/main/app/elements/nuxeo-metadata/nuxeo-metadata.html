@@ -105,7 +105,7 @@
   </template>
 
   <script>
-    (function() {
+    (function () {
       Polymer({
         is: 'nuxeo-metadata',
 
@@ -121,19 +121,19 @@
           }
         },
 
-        _icon: function(doc) {
+        _icon: function (doc) {
           if (doc && doc.properties['common:icon']) {
             return this.$.nx.client._baseURL + doc.properties['common:icon'];
           }
         },
 
-        _docURL: function(doc) {
-          if(doc && doc.contextParameters!==undefined){
+        _docURL: function (doc) {
+          if (doc && doc.contextParameters !== undefined) {
             return doc.contextParameters.documentURL;
           }
         },
 
-        _thumbnail: function(doc) {
+        _thumbnail: function (doc) {
           if (doc && doc.properties['thumb:thumbnail']) {
             return doc.properties['thumb:thumbnail'].data;
           }
@@ -145,14 +145,14 @@
           }
         },
 
-        _prop: function(doc, path) {
+        _prop: function (doc, path) {
           if (!doc || !doc.properties) {
             return;
           }
           return doc.properties[path];
         },
 
-        _date: function(doc, path) {
+        _date: function (doc, path) {
           if (!doc || !doc.properties) {
             return;
           }

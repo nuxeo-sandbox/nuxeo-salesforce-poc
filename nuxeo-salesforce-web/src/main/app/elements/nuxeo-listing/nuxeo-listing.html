@@ -110,10 +110,10 @@ Requires <nuxeo-connection> in order to get icons.
 
     <paper-drawer-panel drawer-width="30%" right-drawer>
 
-      <paper-header-panel drawer mode="seam">
+      <paper-header-panel drawer mode="waterfall">
         <!-- Drawer Content -->
         <template is="dom-if" if="[[selected]]">
-          <nuxeo-metadata doc="[[selected]]" id="rightPanelMetadata"></nuxeo-metadata>
+          <nuxeo-metadata doc="{{selected}}" id="rightPanelMetadata"></nuxeo-metadata>
         </template>
       </paper-header-panel>
 
@@ -131,7 +131,7 @@ Requires <nuxeo-connection> in order to get icons.
               </div>
               <template is="dom-if" if="[[_isNotFolder(item)]]">
                 <div class="card-actions horizontal justified">
-                  <a href="[[_preview(item)]]" target="_blank">
+                  <a href="[[_previewUrl(item)]]" target="_blank">
                     <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
                   </a>
                   <a href="[[_downloadURL(item)]]" target="_blank">
@@ -206,7 +206,7 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _preview: function (doc) {
+      _previewUrl: function (doc) {
         if (doc.contextParameters !== undefined) {
           /* Note that doc.contextParameters.preview is the old previewer. My
              assumption is that if the document can use the old previwer, it
