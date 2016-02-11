@@ -96,19 +96,12 @@ Requires <nuxeo-connection> in order to get icons.
       width: 280px;
       white-space: nowrap;
     }
+
   </style>
 
   <template>
-
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
-    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
-    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
-    <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{document}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-
     <div>
-
       <template is="dom-repeat" items="[[documentList]]">
         <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
           <div class="card-content docContainer">
@@ -135,13 +128,15 @@ Requires <nuxeo-connection> in order to get icons.
                 <paper-icon-button icon="lock"></paper-icon-button>
               </template>
               <template is="dom-if" if="[[_isTemplate(item)]]">
-                <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
+                  <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_open"></paper-icon-button>
+                  <paper-dialog id="renderDialog">
+                    <nuxeo-template-sections-selector doc=[[item]]></nuxeo-template-sections-selector>
+                  </paper-dialog>
               </template>
             </div>
           </template>
         </paper-card>
       </template>
-
     </div>
 
   </template>
@@ -165,11 +160,11 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isEmpty: function (data) {
+      _isEmpty: function(data) {
         return data === null || data.resultsCount === 0;
       },
 
-      _select: function (e) {
+      _select: function(e) {
         var item = e.model.item;
         // if folder and already selected navigate to it (dbl click)
         if (this._isFolder(item)) {
@@ -181,17 +176,17 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isSame: function (item, selected) {
+      _isSame: function(item, selected) {
         return selected && selected.uid === item.uid;
       },
 
-      _iconFor: function (doc) {
+      _iconFor: function(doc) {
         if (doc && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
         }
       },
 
-      _preview: function (doc) {
+      _preview: function(doc) {
         if (doc.contextParameters !== undefined) {
           /* Note that doc.contextParameters.preview is the old previewer. My
              assumption is that if the document can use the old previwer, it
@@ -204,23 +199,23 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isLock: function (doc) {
+      _isLock: function(doc) {
         return doc.lockOwner !== undefined;
       },
 
-      _docEditURL: function (doc) {
+      _docEditURL: function(doc) {
         if (doc && doc.contextParameters !== undefined) {
           return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
         }
       },
 
-      _driveEdit: function (doc) {
+      _driveEdit: function(doc) {
         if (doc.contextParameters !== undefined) {
           return doc.contextParameters.driveEditURL;
         }
       },
 
-      _downloadURL: function (doc) {
+      _downloadURL: function(doc) {
         if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
           return doc.properties["file:content"].data;
         } else {
@@ -230,38 +225,32 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _render: function (e) {
-        var id = e.currentTarget.id;
-        this.$.render.input = id;
-        this.$.render.params = {
-          opportunity: this.sfopportunity,
-          account: this.sfaccount,
-          owner: this.sfowner,
-          sections: ["advise"]
-        };
-        this.$.render.execute();
-
-      },
-
-      _isFolder: function (doc) {
-        return doc.facets.some(function (e) {
+      _isFolder: function(doc) {
+        return doc.facets.some(function(e) {
           return e === 'Folderish';
         });
       },
 
-      _isNotFolder: function (doc) {
+      _isNotFolder: function(doc) {
         return doc.facets.indexOf("Folderish") < 0;
       },
 
-      _isTemplate: function (doc) {
+      _isTemplate: function(doc) {
         if (doc) {
           if (doc.type == "TemplateSource") {
             return true;
           }
         }
         return false;
-      }
+     },
 
+     _open: function(e) {
+         var dialog = document.getElementById("renderDialog");
+         if (dialog) {
+            dialog.open();
+         }
+     },
+     
     });
   </script>
 </dom-module>
