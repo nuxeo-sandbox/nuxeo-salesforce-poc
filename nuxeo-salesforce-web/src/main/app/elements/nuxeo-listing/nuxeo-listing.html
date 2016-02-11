@@ -154,7 +154,7 @@ Requires <nuxeo-connection> in order to get icons.
                   <template is="dom-if" if="[[_isTemplate(item)]]">
                     <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_open"></paper-icon-button>
                     <paper-dialog id="renderDialog">
-                      <nuxeo-template-sections-selector doc=[[doc]]></nuxeo-template-sections-selector>
+                      <nuxeo-template-sections-selector doc=[[selected]]></nuxeo-template-sections-selector>
                     </paper-dialog>
                   </template>
                 </div>
