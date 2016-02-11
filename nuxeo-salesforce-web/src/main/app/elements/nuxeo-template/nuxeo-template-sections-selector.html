@@ -127,11 +127,18 @@
       _render: function(e) {
         var id = e.currentTarget.id;
         this.$.render.input = id;
+
+        var checkedSections = [];
+        for (var i=0;i<this.sections.length;i++) {
+           var section = this.sections[i];
+           if (section.checked) checkedSections.push(section.name);
+        }
+
         this.$.render.params = {
           opportunity: this.sfopportunity,
           account: this.sfaccount,
           owner: this.sfowner,
-          sections: this.sections
+          sections: checkedSections
         };
         this.$.render.execute();
         this._show_spinner = true;
