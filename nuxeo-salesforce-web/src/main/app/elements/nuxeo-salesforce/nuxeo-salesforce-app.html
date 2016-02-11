@@ -33,7 +33,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     }
 
     .tabsToolbar {
-      background: var(--dark-primary-color);
+      --paper-toolbar-background: var(--dark-primary-color);
     }
 
     .mainTabs {
@@ -45,6 +45,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     .mainTabs paper-tab {
       --paper-tab-ink: var(--accent-color);
+      --paper-tab-content: {
+        color: var(--secondary-text-color)
+      }
       width: 110px;
     }
 
@@ -66,7 +69,6 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     .embedded-toolbar {
       background: var(--default-primary-color);
-      color: var(--secondary-text-color);
     }
 
     .searchBox {
