@@ -91,7 +91,8 @@
         },
         _result: {
           type: Object,
-          notify: true
+          notify: true,
+          value: null
         }
       },
 
@@ -111,9 +112,11 @@
       },
 
       _updateResult() {
-        if (this._result !== undefined && this._result !== null) {
-          this._show_spinner = false;
-          this._show_result = true;
+        if (this._result === undefined) {
+           this._displayError();
+        } else if (this._result !== undefined && this._result !== null) {
+           this._show_spinner = false;
+           this._show_result = true;
         }
       },
 
@@ -135,9 +138,9 @@
         }
 
         this.$.render.params = {
-          opportunity: this.sfopportunity,
-          account: this.sfaccount,
-          owner: this.sfowner,
+          opportunity: (this.sfopportunity !== undefined ? this.sfopportunity: {}),
+          account: (this.sfaccount !== undefined ? this.sfaccount: {}),
+          owner: (this.sfowner !== undefined ? this.sfowner: {}),
           sections: checkedSections
         };
         this.$.render.execute();
