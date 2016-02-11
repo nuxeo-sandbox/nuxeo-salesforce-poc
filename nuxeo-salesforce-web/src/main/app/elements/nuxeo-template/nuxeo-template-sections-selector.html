@@ -29,14 +29,6 @@ An element to display a dialog for template rendering.
       --paper-toggle-button-checked-button-color: green;
     }
 
-    h1 {
-      color: var(--secondary-text-color);
-    }
-
-    p {
-      color: var(--secondary-text-color);
-    }
-
     .centered {
       display: block;
       margin: auto;
@@ -51,13 +43,13 @@ An element to display a dialog for template rendering.
     <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
     <template is="dom-if" if="[[_show_selection]]">
-      <h1>Select the Sections to Include</h1>
+      <h2>Select the Sections to Include</h2>
       <template is="dom-repeat" items="[[sections]]">
         <paper-toggle-button checked="{{item.checked}}">{{item.name}}</paper-toggle-button>
       </template>
       <div class="buttons">
-        <paper-button id="[[doc.uid]]" on-click="_render">Render</paper-button>
-        <paper-button dialog-confirm>Cancel</paper-button>
+        <paper-button id="[[doc.uid]]" on-click="_render" raised>Render</paper-button>
+        <paper-button dialog-confirm raised>Cancel</paper-button>
       </div>
     </template>
     <template is="dom-if" if="[[_show_spinner]]">
