@@ -95,7 +95,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
         <nuxeo-listing-parent current-parent="[[currentParent]]" refresh="{{refreshList}}" class="embedded-toolbar"></nuxeo-listing-parent>
         <paper-toolbar class="embedded-toolbar">
-          <paper-input id="searchDocsInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
+          <paper-input id="searchDocsInput" class="searchBox" type=search label="Search" bind-value="{{searchTerm}}"></paper-input>
         </paper-toolbar>
       </div>
       <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" parent-path="{{parentPath}}" class=" documentListContainer"></nuxeo-listing>
