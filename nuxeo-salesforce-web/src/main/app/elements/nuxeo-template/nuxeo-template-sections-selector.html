@@ -21,7 +21,15 @@ Contributors:
 An element to display a dialog for template rendering.
 -->
 <dom-module id="nuxeo-template-sections-selector">
+  <style include="paper-dialog-shared-styles">
+
+  </style>
+
   <style>
+    :host {
+      width: 380px;
+    }
+
     paper-toggle-button {
       padding: 2%;
       --paper-toggle-button-label-color: black;
@@ -33,8 +41,28 @@ An element to display a dialog for template rendering.
       display: block;
       margin: auto;
     }
+
+    .titleContainer {
+      /* With paper-dialog-behavior you are technically supposed to use an <h2>
+      for the title but I didn't like the way it looked and there is no container
+      you can style. I tried to use paper-card but the title would not render.
+      So I'm just using plain divs. */
+      font-size: 160%;
+      margin-top: 0px;
+      height: 64px;
+      padding-left: 20px;
+      background: var(--dark-primary-color);
+      color: var(--secondary-text-color);
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
   </style>
   <template>
+
     <nuxeo-connection id="nx"></nuxeo-connection>
     <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
@@ -43,37 +71,63 @@ An element to display a dialog for template rendering.
     <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
     <template is="dom-if" if="[[_show_selection]]">
-      <h2>Select the Sections to Include</h2>
-      <template is="dom-repeat" items="[[sections]]">
-        <paper-toggle-button checked="{{item.checked}}">{{item.name}}</paper-toggle-button>
-      </template>
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Render Template</div>
+      </div>
+      <div class="content">
+        <p>Select sections:</p>
+        <template is="dom-repeat" items="[[sections]]">
+          <paper-toggle-button checked="{{item.checked}}">{{item.name}}</paper-toggle-button>
+        </template>
+      </div>
       <div class="buttons">
-        <paper-button id="[[doc.uid]]" on-click="_render" raised>Render</paper-button>
+        <paper-button id="[[doc.uid]]" on-click="_render" raised>Ok</paper-button>
         <paper-button dialog-confirm raised>Cancel</paper-button>
       </div>
     </template>
+
     <template is="dom-if" if="[[_show_spinner]]">
-      <h1>Rendering Template</h1>
-      <paper-spinner active class="centered"></paper-spinner>
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Rendering Template...</div>
+      </div>
+      <div class="content">
+        <paper-spinner active class="centered"></paper-spinner>
+      </div>
     </template>
+
     <template is="dom-if" if="[[_show_result]]">
-      <h1>Rendering Completed</h1>
-      <nuxeo-template-document doc=[[_result]]></nuxeo-template-document>
-      <p>This document has been saved in this opportunity</p>
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Render Complete</div>
+      </div>
+      <div class="content">
+        <nuxeo-template-document doc=[[_result]]></nuxeo-template-document>
+        <p>This document has been saved in My Docs</p>
+      </div>
       <div class="buttons">
-        <paper-button dialog-confirm>Close</paper-button>
+        <paper-button dialog-confirm raised>Close</paper-button>
       </div>
     </template>
+
     <template is="dom-if" if="[[_show_error]]">
-      <p>An Error Occured</p>
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">An Error Occured</div>
+      </div>
+      <div class="content">[[error]]</div>
       <div class="buttons">
-        <paper-button dialog-confirm>Close</paper-button>
+        <paper-button dialog-confirm raised>Close</paper-button>
       </div>
     </template>
+
   </template>
+
   <script>
     Polymer({
       is: 'nuxeo-template-sections-selector',
+
+      behaviors: [
+        Polymer.PaperDialogBehavior
+      ],
+
       properties: {
         doc: {
           type: Object,
@@ -115,7 +169,15 @@ An element to display a dialog for template rendering.
         '_displayError(error)'
       ],
 
-      ready: function () {},
+      ready: function () {
+        this.addEventListener('iron-overlay-opened', function () {
+          this._show_selection = true;
+          this._show_spinner = false;
+          this._show_result = false;
+          this._show_error = false;
+        });
+
+      },
 
       _updateSections() {
         var sectionNames = ["Assistance", "Advise"];
@@ -156,6 +218,7 @@ An element to display a dialog for template rendering.
         this._show_spinner = true;
         this._show_selection = false;
       }
+
     });
   </script>
 </dom-module>
