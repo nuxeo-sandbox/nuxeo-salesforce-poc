@@ -59,6 +59,9 @@ public class CreateSowOp {
     @Param(name = "owner", required = true)
     protected Properties owner;
 
+    @Param(name = "contacts", required = true)
+    protected Properties contacts;
+
     @Param(name = "sections", required = true)
     protected List<String> sections;
 

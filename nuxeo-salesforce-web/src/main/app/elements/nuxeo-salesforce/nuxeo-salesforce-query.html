@@ -22,7 +22,7 @@ Contributors:
 Note: Elements that depend on a id use `sf` as default.
 @homepage http://www.nuxeo.org
 -->
-<dom-module id="nuxeo-salesforce-object" assetpath="nuxeo-salesforce/">
+<dom-module id="nuxeo-salesforce-query" assetpath="nuxeo-salesforce/">
   <template>
     <style>
       :host {
@@ -33,7 +33,7 @@ Note: Elements that depend on a id use `sf` as default.
 </dom-module>
 <script>
    Polymer({
-   is: 'nuxeo-salesforce-object',
+   is: 'nuxeo-salesforce-query',
 
    ready: function () {
      this._getCtx();
@@ -49,14 +49,8 @@ Note: Elements that depend on a id use `sf` as default.
      /* The Callback URL of the Nuxeo server for SF OAuth2. */
      callback: {type: String},
 
-     /* The method*/
-     method: {type: String, notify: true, value: 'GET'},
-
-     /* The Salesforce Object */
-     objectType: {type: String, notify: true},
-
-     /* The Salesforce Object */
-     objectId: {type: String, notify: true},
+     /* The Salesforce Query */
+     query: {type: String, notify: true},
 
      /* The Salesforce Object */
      sfobject: {type: Object, notify: true}
@@ -104,12 +98,11 @@ Note: Elements that depend on a id use `sf` as default.
        }
        console.log("Salesforce Error: " + ctx.payload[0].errorCode);
      }
-     if (!this.objectId) {
+     if (!this.query) {
        this.sfobject = null;
        return;
      }
-     var sobjectUrl = ctx.payload.links.sobjectUrl;
-     sobjectUrl = sobjectUrl + this.objectType + "/" + this.objectId;
+     var queryUrl = ctx.payload.links.queryUrl + "?q="+this.query;
      var callbackOp = this._callbackSFObject.bind(this);
      var settings = {
        client: JSON.parse(sessionStorage.getItem("client")),
@@ -118,7 +111,7 @@ Note: Elements that depend on a id use `sf` as default.
        contentType: "application/json",
        success: callbackOp
      }
-     Sfdc.canvas.client.ajax(sobjectUrl, settings);
+     Sfdc.canvas.client.ajax(queryUrl, settings);
    },
 
    _callbackSFObject: function (response) {

@@ -116,11 +116,6 @@ Requires <nuxeo-connection> in order to get icons.
   <template>
 
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
-    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
-    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
-
 
     <paper-drawer-panel drawer-width="300px" right-drawer>
 

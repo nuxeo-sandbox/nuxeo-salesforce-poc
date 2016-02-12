@@ -98,6 +98,7 @@ public class TestCreateSowOp {
                 set("owner", userProps).
                 set("account", accountProps).
                 set("opportunity", opportunityProps).
+                set("contacts",new Properties()).
                 set("sections",sections);
 
         DocumentModel rendered = (DocumentModel) as.run(ctx, chain);

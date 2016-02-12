@@ -68,6 +68,7 @@ An element to display a dialog for template rendering.
     <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
     <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-query id="sfoc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
     <nuxeo-operation id="render" op="Conversion.CreateSowOp" enrichers="preview, documentURL, driveEditURL" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
     <template is="dom-if" if="[[_show_selection]]">
@@ -165,7 +166,10 @@ An element to display a dialog for template rendering.
       },
 
       observers: [
-        '_updateSections(doc)', '_updateResult(_result)', '_displayError(error)'
+        '_updateSections(doc)',
+        '_updateContacts(sfopportunity)' ,
+        '_updateResult(_result)',
+        '_displayError(error)'
       ],
 
       ready: function () {
@@ -179,7 +183,7 @@ An element to display a dialog for template rendering.
 
       },
 
-      _updateSections() {
+      _updateSections: function() {
         var sectionNames = this.doc.properties['sections:sections'];
         var sectionsTmp = [];
         for (var i = 0; i < sectionNames.length; i++) {
@@ -191,7 +195,18 @@ An element to display a dialog for template rendering.
         this.sections = sectionsTmp;
       },
 
-      _updateResult() {
+      _updateContacts: function() {
+         if (this.sfopportunity === undefined) return;
+         var id = this.sfopportunity.Id;
+         var query =
+            "SELECT Role, Contact.Name, Contact.email, Contact.phone, "+
+            "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode,"+
+            " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '"+
+            id+"'";
+            this.$.sfoc.query = query;
+      },
+
+      _updateResult: function() {
         if (this._result === undefined) {
           this._displayError();
         } else if (this._result !== undefined && this._result !== null) {
@@ -221,6 +236,7 @@ An element to display a dialog for template rendering.
           opportunity: (this.sfopportunity !== undefined ? this.sfopportunity : {}),
           account: (this.sfaccount !== undefined ? this.sfaccount : {}),
           owner: (this.sfowner !== undefined ? this.sfowner : {}),
+          contacts : (this.sfcontacts !== undefined ? this.sfcontacts : {}),
           sections: checkedSections
         };
         this.$.render.execute();
