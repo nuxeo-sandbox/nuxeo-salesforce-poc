@@ -1,0 +1,233 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<!--
+An element to display a dialog for template rendering.
+-->
+<dom-module id="nuxeo-template-sections-selector">
+  <style include="paper-dialog-shared-styles">
+
+  </style>
+
+  <style>
+    :host {
+      width: 380px;
+    }
+
+    paper-toggle-button {
+      padding: 2%;
+      --paper-toggle-button-label-color: black;
+      --paper-toggle-button-checked-bar-color: green;
+      --paper-toggle-button-checked-button-color: green;
+    }
+
+    .centered {
+      display: block;
+      margin: auto;
+    }
+
+    .titleContainer {
+      /* With paper-dialog-behavior you are technically supposed to use an <h2>
+      for the title but I didn't like the way it looked and there is no container
+      you can style. I tried to use paper-card but the title would not render.
+      So I'm just using plain divs. */
+      font-size: 160%;
+      margin-top: 0px;
+      height: 64px;
+      padding-left: 20px;
+      background: var(--dark-primary-color);
+      color: var(--secondary-text-color);
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+  </style>
+  <template>
+
+    <nuxeo-connection id="nx"></nuxeo-connection>
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
+    <nuxeo-operation id="render" op="Conversion.CreateSowOp" enrichers="preview, documentURL, driveEditURL" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+
+    <template is="dom-if" if="[[_show_selection]]">
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Render Template</div>
+      </div>
+      <div class="content">
+        <p>Select Sections</p>
+        <template is="dom-repeat" items="[[sections]]">
+          <paper-toggle-button checked="{{item.checked}}">{{item.name}}</paper-toggle-button>
+        </template>
+      </div>
+      <div class="buttons">
+        <paper-button id="[[doc.uid]]" on-click="_render" raised>Ok</paper-button>
+        <paper-button dialog-confirm raised>Cancel</paper-button>
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_show_spinner]]">
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Rendering Template...</div>
+      </div>
+      <div class="content">
+        <paper-spinner active class="centered"></paper-spinner>
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_show_result]]">
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Render Complete</div>
+      </div>
+      <div class="content">
+        <nuxeo-template-document doc=[[_result]]></nuxeo-template-document>
+        <p>This document has been saved in My Docs</p>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-confirm raised>Close</paper-button>
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_show_error]]">
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">An Error Occured</div>
+      </div>
+      <div class="content">[[error]]</div>
+      <div class="buttons">
+        <paper-button dialog-confirm raised>Close</paper-button>
+      </div>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-template-sections-selector',
+
+      behaviors: [
+        Polymer.PaperDialogBehavior
+      ],
+
+      properties: {
+        doc: {
+          type: Object,
+          notify: true
+        },
+        sections: {
+          type: Array,
+          notify: true
+        },
+        _show_spinner: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        _show_selection: {
+          type: Boolean,
+          value: true,
+          notify: true
+        },
+        _show_result: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        _show_error: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        _result: {
+          type: Object,
+          notify: true,
+          value: null
+        }
+      },
+
+      observers: [
+        '_updateSections(doc)', '_updateResult(_result)', '_displayError(error)'
+      ],
+
+      ready: function () {
+        this.addEventListener('iron-overlay-opened', function () {
+          this._show_selection = true;
+          this._show_spinner = false;
+          this._show_result = false;
+          this._show_error = false;
+          this._result = null;
+        });
+
+      },
+
+      _updateSections() {
+        var sectionNames = this.doc.properties['sections:sections'];
+        var sectionsTmp = [];
+        for (var i = 0; i < sectionNames.length; i++) {
+          sectionsTmp.push({
+            name: sectionNames[i],
+            checked: false
+          });
+        }
+        this.sections = sectionsTmp;
+      },
+
+      _updateResult() {
+        if (this._result === undefined) {
+          this._displayError();
+        } else if (this._result !== undefined && this._result !== null) {
+          this._show_spinner = false;
+          this._show_result = true;
+        }
+      },
+
+      _displayError: function () {
+        this._show_selection = false;
+        this._show_spinner = false;
+        this._show_result = false;
+        this._show_error = true;
+      },
+
+      _render: function (e) {
+        var id = e.currentTarget.id;
+        this.$.render.input = id;
+
+        var checkedSections = [];
+        for (var i = 0; i < this.sections.length; i++) {
+          var section = this.sections[i];
+          if (section.checked) checkedSections.push(section.name);
+        }
+
+        this.$.render.params = {
+          opportunity: (this.sfopportunity !== undefined ? this.sfopportunity : {}),
+          account: (this.sfaccount !== undefined ? this.sfaccount : {}),
+          owner: (this.sfowner !== undefined ? this.sfowner : {}),
+          sections: checkedSections
+        };
+        this.$.render.execute();
+        this._show_spinner = true;
+        this._show_selection = false;
+      }
+
+    });
+  </script>
+</dom-module>

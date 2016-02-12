@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Contributors:
-  Vladimir Pasquier <vpasquier@nuxeo.com>
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
 <!--
@@ -96,6 +95,22 @@ Requires <nuxeo-connection> in order to get icons.
       width: 280px;
       white-space: nowrap;
     }
+
+    paper-dialog {
+      padding: 1%;
+    }
+
+    paper-drawer-panel {
+      --paper-drawer-panel-right-drawer-container: {
+        background-color: var(--light-primary-color);
+      }
+      ;
+    }
+
+    nuxeo-template-sections-selector {
+      --paper-dialog-button-color: var(--primary-text-color);
+      border-radius: 3px;
+    }
   </style>
 
   <template>
@@ -105,44 +120,57 @@ Requires <nuxeo-connection> in order to get icons.
     <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
     <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
-    <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{document}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
-    <div>
 
-      <template is="dom-repeat" items="[[documentList]]">
-        <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
-          <div class="card-content docContainer">
-            <iron-icon src="[[_iconFor(item)]]" class="listIconBox iconWithText"></iron-icon>
-            <div class="docTitleContainer">
-              <div class="docTitle">[[item.title]]</div>
-            </div>
-          </div>
-          <template is="dom-if" if="[[_isNotFolder(item)]]">
-            <div class="card-actions horizontal justified">
-              <a href="[[_preview(item)]]" target="_blank">
-                <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
-              </a>
-              <a href="[[_downloadURL(item)]]" target="_blank">
-                <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
-              </a>
-              <a href="[[_docEditURL(item)]]" target="_blank">
-                <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
-              </a>
-              <a href="[[_driveEdit(item)]]">
-                <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
-              </a>
-              <template is="dom-if" if="[[_isLock(item)]]">
-                <paper-icon-button icon="lock"></paper-icon-button>
-              </template>
-              <template is="dom-if" if="[[_isTemplate(item)]]">
-                <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_render" id="[[item.uid]]"></paper-icon-button>
-              </template>
-            </div>
-          </template>
-        </paper-card>
+    <paper-drawer-panel drawer-width="300px" right-drawer>
+
+      <!-- Drawer Content -->
+      <template is="dom-if" if="[[selected]]">
+        <nuxeo-metadata doc="{{selected}}" drawer></nuxeo-metadata>
       </template>
 
-    </div>
+      <paper-header-panel main mode="waterfall">
+
+        <div>
+
+          <template is="dom-repeat" items="[[documentList]]">
+            <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
+              <div class="card-content docContainer">
+                <iron-icon src="[[_iconFor(item)]]" class="listIconBox iconWithText"></iron-icon>
+                <div class="docTitleContainer">
+                  <div class="docTitle">[[item.title]]</div>
+                </div>
+              </div>
+              <template is="dom-if" if="[[_isNotFolder(item)]]">
+                <div class="card-actions horizontal justified">
+                  <a href="[[_previewUrl(item)]]" target="_blank">
+                    <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+                  </a>
+                  <a href="[[_downloadURL(item)]]" target="_blank">
+                    <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+                  </a>
+                  <a href="[[_docEditURL(item)]]" target="_blank">
+                    <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
+                  </a>
+                  <a href="[[_driveEdit(item)]]">
+                    <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
+                  </a>
+                  <template is="dom-if" if="[[_isLock(item)]]">
+                    <paper-icon-button icon="lock"></paper-icon-button>
+                  </template>
+                  <template is="dom-if" if="[[_isTemplate(item)]]">
+                    <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" onclick="templateDialog.open()"></paper-icon-button>
+                    <nuxeo-template-sections-selector id="templateDialog" doc=[[item]] modal></nuxeo-template-sections-selector>
+                  </template>
+                </div>
+              </template>
+            </paper-card>
+          </template>
+
+        </div>
+      </paper-header-panel>
+
+    </paper-drawer-panel>
 
   </template>
 
@@ -191,7 +219,7 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _preview: function (doc) {
+      _previewUrl: function (doc) {
         if (doc.contextParameters !== undefined) {
           /* Note that doc.contextParameters.preview is the old previewer. My
              assumption is that if the document can use the old previwer, it
@@ -230,17 +258,6 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _render: function (e) {
-        var id = e.currentTarget.id;
-        this.$.render.input = id;
-        this.$.render.params = {
-          opportunity: this.sfopportunity,
-          account: this.sfaccount,
-          owner: this.sfowner
-        };
-        this.$.render.execute();
-
-      },
 
       _isFolder: function (doc) {
         return doc.facets.some(function (e) {
