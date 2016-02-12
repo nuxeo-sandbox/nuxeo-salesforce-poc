@@ -87,6 +87,7 @@ public class CreateSowOp {
         //Map properties
         //opportunity
         sow.setPropertyValue("dc:title","SOW - "+opportunity.get("Name"));
+        sow.setPropertyValue("sfop:name",opportunity.get("Name"));
 
         //Account
         sow.setPropertyValue("sfa:name",account.get("Name"));

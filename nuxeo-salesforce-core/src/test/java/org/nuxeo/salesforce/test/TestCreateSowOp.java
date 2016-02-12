@@ -78,7 +78,6 @@ public class TestCreateSowOp {
 
         Properties accountProps = new Properties();
         accountProps.put("Name", "Nuxeo");
-        accountProps.put("Name", "My opportunity");
         accountProps.put("BillingStreet", "46 Rene Clair");
         accountProps.put("BillingCity", "Paris");
         accountProps.put("BillingPostalCode", "75018");
