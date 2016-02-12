@@ -40,5 +40,9 @@
             <facet name="Sales"/>
         </doctype>
 
+        <doctype name="TemplateSource" append="true">
+            <schema name="sections"/>
+        </doctype>
+
     </extension>
 </component>
