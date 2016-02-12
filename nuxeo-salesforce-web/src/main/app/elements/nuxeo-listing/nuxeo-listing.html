@@ -17,6 +17,7 @@ limitations under the License.
 Contributors:
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
+<link rel="import" href="nuxeo-listing-actions-behavior.html">
 <!--
 An element to display a list of Nuxeo documents.
 
@@ -175,6 +176,10 @@ Requires <nuxeo-connection> in order to get icons.
     Polymer({
       is: 'nuxeo-listing',
 
+      behaviors: [
+        Nuxeo.NuxeoListingActionsBehavior
+      ],
+
       properties: {
         documentList: {
           type: Object,
@@ -210,73 +215,12 @@ Requires <nuxeo-connection> in order to get icons.
         return selected && selected.uid === item.uid;
       },
 
-      _previewSupported: function (doc) {
-        if (doc.facets.indexOf("Video") > -1) {
-          return false;
-        }
-        return true;
-      },
 
       _iconFor: function (doc) {
         if (doc && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
         }
       },
-
-      _previewUrl: function (doc) {
-        if (doc.contextParameters !== undefined) {
-          /* Note that doc.contextParameters.preview is the old previewer. My
-             assumption is that if the document can use the old previwer, it
-             can also use the new one. */
-          if (doc.contextParameters.preview !== undefined) {
-
-            if (doc.facets.indexOf("Picture") > -1) {
-              // Pictures; use REST previewer.
-              return doc.contextParameters.preview.url;
-            }
-            if (doc.properties["file:content"]["mime-type"] == "application/pdf") {
-              // PDF's; use new previwer as is.
-              return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-                "/nuxeo/viewer/web/viewer.html?file=" + doc.properties["file:content"].data;
-            } else {
-              // Other documents; use new previwer but convert to PDF first.
-              return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-                "/nuxeo/viewer/web/viewer.html?file=" +
-                location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-                "/nuxeo/api/v1/id/" + doc.uid + "/%40blob/blobholder%3A0/%40convert%3Fformat%3Dpdf";
-            }
-          } else {
-            return doc.contextParameters.documentURL;
-          }
-        }
-      },
-
-      _isLock: function (doc) {
-        return doc.lockOwner !== undefined;
-      },
-
-      _docEditURL: function (doc) {
-        if (doc && doc.contextParameters !== undefined) {
-          return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
-        }
-      },
-
-      _driveEdit: function (doc) {
-        if (doc.contextParameters !== undefined) {
-          return doc.contextParameters.driveEditURL;
-        }
-      },
-
-      _downloadURL: function (doc) {
-        if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
-          return doc.properties["file:content"].data;
-        } else {
-          if (doc.contextParameters !== undefined) {
-            return doc.contextParameters.documentURL;
-          }
-        }
-      },
-
 
       _isFolder: function (doc) {
         return doc.facets.some(function (e) {
@@ -286,15 +230,6 @@ Requires <nuxeo-connection> in order to get icons.
 
       _isNotFolder: function (doc) {
         return doc.facets.indexOf("Folderish") < 0;
-      },
-
-      _isTemplate: function (doc) {
-        if (doc) {
-          if (doc.type == "TemplateSource") {
-            return true;
-          }
-        }
-        return false;
       }
 
     });
