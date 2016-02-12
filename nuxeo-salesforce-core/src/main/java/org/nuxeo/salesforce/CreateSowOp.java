@@ -31,7 +31,6 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.template.api.adapters.TemplateBasedDocument;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -71,7 +70,7 @@ public class CreateSowOp {
         // get opportunity folder
         DocumentModelList list =
                 session.query(
-                        "Select * From Document WHERE sf:objectId = '"+
+                        "Select * From Document WHERE sfop:objectId = '"+
                                 opportunity.get("Id")+"'");
 
         if (list.size()==0) return null;

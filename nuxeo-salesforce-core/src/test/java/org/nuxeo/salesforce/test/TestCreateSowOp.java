@@ -40,8 +40,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
         "org.nuxeo.template.manager.api",
         "org.nuxeo.template.manager",
         "org.nuxeo.template.manager.xdocreport",
-        "nuxeo-salesforce-core",
-        "studio.extensions.aws-sfdc"
+        "nuxeo-salesforce-core"
 })
 public class TestCreateSowOp {
 
@@ -53,8 +52,8 @@ public class TestCreateSowOp {
 
         //create opportunity
         DocumentModel opportunity = session.createDocumentModel("/", "Opportunity", "Folder");
-        opportunity.addFacet("salesforce");
-        opportunity.setPropertyValue("sf:objectId", "123");
+        opportunity.addFacet("SFDC_Opportunity");
+        opportunity.setPropertyValue("sfop:objectId", "123");
         opportunity = session.createDocument(opportunity);
         session.save();
 

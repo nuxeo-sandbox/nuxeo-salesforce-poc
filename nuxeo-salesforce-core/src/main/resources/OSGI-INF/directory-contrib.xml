@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.salesforce.directory.contrib">
+    <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
+        <directory name="Industries">
+            <schema>xvocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <cacheTimeout>3600</cacheTimeout>
+            <cacheMaxSize>1000</cacheMaxSize>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+            <table>studio_vocabulary_Industries</table>
+            <dataFile>data/vocabularies/Industries.csv</dataFile>
+            <parentDirectory>Industries</parentDirectory>
+        </directory>
+        <directory name="SalesStage">
+            <schema>xvocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <cacheTimeout>3600</cacheTimeout>
+            <cacheMaxSize>1000</cacheMaxSize>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+            <table>studio_vocabulary_SalesStage</table>
+            <dataFile>data/vocabularies/SalesStage.csv</dataFile>
+            <parentDirectory>SalesStage</parentDirectory>
+        </directory>
+    </extension>
+</component>

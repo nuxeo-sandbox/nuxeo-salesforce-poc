@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.salesforce.factory.contrib">
+    <extension target="org.nuxeo.ecm.platform.content.template.service.ContentTemplateService" point="factoryBinding">
+        <factoryBinding name="DomainFactory" factoryName="SimpleTemplateFactory" targetType="Domain">
+            <template>
+                <templateItem typeName="OpportunityContainer" id="Opportunities" title="Opportunities" description=""/>
+                <templateItem typeName="WorkspaceRoot" id="Workspaces" title="Workspaces" description=""/>
+            </template>
+        </factoryBinding>
+    </extension>
+</component>
