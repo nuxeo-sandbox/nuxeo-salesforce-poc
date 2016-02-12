@@ -17,6 +17,7 @@ limitations under the License.
 Contributors:
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
+<link rel="import" href="../nuxeo-listing/nuxeo-listing-actions-behavior.html">
 <!--
 An element to display a single item that is a Document.
 
@@ -99,9 +100,11 @@ Requires <nuxeo-connection> in order to get icons and urls.
         </div>
       </div>
       <div class="card-actions horizontal justified">
-        <a href="[[_previewUrl(doc)]]" target="_blank">
-          <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
-        </a>
+        <template is="dom-if" if="[[_previewSupported(doc)]]">
+          <a href="[[_previewUrl(doc)]]" target="_blank">
+            <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+          </a>
+        </template>
         <a href="[[_downloadURL(doc)]]" target="_blank">
           <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
         </a>
@@ -119,6 +122,10 @@ Requires <nuxeo-connection> in order to get icons and urls.
     Polymer({
       is: 'nuxeo-template-document',
 
+      behaviors: [
+        Nuxeo.NuxeoListingActionsBehavior
+      ],
+
       properties: {
         doc: {
           type: Object,
@@ -129,41 +136,6 @@ Requires <nuxeo-connection> in order to get icons and urls.
       _iconFor: function (doc) {
         if (doc && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
-        }
-      },
-
-      _previewUrl: function (doc) {
-        if (doc && doc.contextParameters !== undefined) {
-          /* Note that doc.contextParameters.preview is the old previewer. My
-             assumption is that if the document can use the old previwer, it
-             can also use the new one. */
-          if (doc.contextParameters.preview !== undefined) {
-            return "//" + window.location.hostname + ":" + window.location.port + "/nuxeo/viewer/web/viewer.html?file=" + doc.properties["file:content"].data;
-          } else {
-            return doc.contextParameters.documentURL;
-          }
-        }
-      },
-
-      _docEditURL: function (doc) {
-        if (doc && doc.contextParameters !== undefined) {
-          return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
-        }
-      },
-
-      _driveEdit: function (doc) {
-        if (doc && doc.contextParameters !== undefined) {
-          return doc.contextParameters.driveEditURL;
-        }
-      },
-
-      _downloadURL: function (doc) {
-        if (doc && doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
-          return doc.properties["file:content"].data;
-        } else {
-          if (doc && doc.contextParameters !== undefined) {
-            return doc.contextParameters.documentURL;
-          }
         }
       }
 

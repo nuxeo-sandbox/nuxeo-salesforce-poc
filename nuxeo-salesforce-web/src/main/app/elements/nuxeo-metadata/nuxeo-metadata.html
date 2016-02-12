@@ -64,6 +64,13 @@
       display: table-cell;
       vertical-align: middle;
     }
+
+    .docTitle {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 210px;
+      white-space: nowrap;
+    }
   </style>
 
   <template>
@@ -76,7 +83,7 @@
         <div class="docContainer">
           <iron-icon src="[[icon]]" class="documentIcon iconSize"></iron-icon>
           <div class="docTitleContainer">
-            <span class="paper-font-title docTitle">{{doc.title}}</span>
+            <div class="docTitle">{{doc.title}}</div>
           </div>
         </div>
         <div id="spacer">

@@ -89,6 +89,12 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     <nuxeo-connection id="nx"></nuxeo-connection>
 
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
+
+    <!-- These SFDC objects are used to get query parameteres. -->
+    <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
+
     <paper-header-panel mode="seam">
       <paper-toolbar class="tabsToolbar">
         <div class="logoButton">
@@ -177,7 +183,10 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       },
 
       _fetchPublic: function () {
-        var query = this._genericFilter("Document", this.publicSearchTerms) + " AND ecm:primaryType IN('File', 'Picture', 'Video')";
+        var query = this._genericFilter("Document", this.publicSearchTerms);
+        query = query + this._typeFilter();
+        query = query + this._publicFilter();
+        query = query + this._sfdcFilter();
 
         this.debounce('publicPageProviderQuery', function () {
           this.$.publicPageProvider.query = query;
@@ -185,7 +194,10 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       },
 
       _fetchInternal: function () {
-        var query = this._genericFilter("Document", this.internalSearchTerms) + " AND ecm:primaryType IN('File', 'Picture', 'Video')";
+        var query = this._genericFilter("Document", this.internalSearchTerms);
+        query = query + this._typeFilter();
+        query = query + this._internalFilter();
+        query = query + this._sfdcFilter();
 
         this.debounce('internalPageProviderQuery', function () {
           this.$.internalPageProvider.query = query;
@@ -198,6 +210,34 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         this.debounce('templatePageProviderQuery', function () {
           this.$.templatePageProvider.query = query;
         }.bind(this), 300);
+      },
+
+      _typeFilter: function () {
+        // Filter document types
+        return " AND ecm:primaryType IN('File', 'Picture', 'Video')";
+      },
+
+      _publicFilter: function () {
+        // Filter audience
+        return " AND sales:audience = 'Public'";
+      },
+
+      _internalFilter: function () {
+        // Filter audience
+        return " AND sales:audience = 'Internal'";
+      },
+
+      _sfdcFilter: function () {
+        var query = "";
+        if (this.sfaccount) {
+          // Filter industry
+          query = query + " AND sales:industry = '" + this.sfaccount.Industry + "'";
+        }
+        if (this.sfopportunity) {
+          // Filter stage
+          query = query + " AND sales:stage = '" + this.sfopportunity.StageName + "'";
+        }
+        return query;
       },
 
       _genericFilter: function (type, terms) {
