@@ -14,46 +14,72 @@
       <category>javascript</category>
       <script>
         <![CDATA[function run(input, params) {
-          var sfobject = JSON.parse(params.sfObject);
-          var docs = Repository.Query(null, {
-            'query': "SELECT * FROM Document WHERE ecm:currentLifeCycleState != 'deleted' AND sf:objectId = '" + sfobject.Id + "' AND ecm:isCheckedInVersion = 0 AND ecm:mixinType != 'HiddenInNavigation'",
+
+        var sfobject = JSON.parse(params.sfObject);
+
+        var docs = Repository.Query(null, {
+          'query': "SELECT * FROM Document WHERE ecm:currentLifeCycleState != 'deleted' AND sfop:objectId = '" + sfobject.Id + "' AND ecm:isCheckedInVersion = 0 AND ecm:mixinType != 'HiddenInNavigation'",
+        });
+
+        if (docs.length > 0) {
+          var foundDoc = Repository.GetDocument(null, {
+            'value': docs[0].id
           });
-          if (docs.length>0) {
-            return Repository.GetDocument(null, {
-              'value': docs[0].id
-            });
-          } else {
-            var workspaces = Repository.GetDocument(null, {
-                "value" : "/default-domain/workspaces"
-            });
-            var newSFobject = {};
-            if (sfobject.attributes.type === "Opportunity") {
-              var amount = sfobject.Amount ? sfobject.Amount.toString() : null;
-              newSFobject = Document.Create(workspaces, {
-                    "type" : "Workspace",
-                    "name" : sfobject.Name,
-                    "properties" : {
-                         "dc:title" : sfobject.Name,
-                         "sf:objectId" : sfobject.Id,
-                         "sf:objectType" : sfobject.attributes.type,
-                         "dc:description" : sfobject.Description,
-                         "sf:objectAmount" : amount
-                    }
-              });
-            } else {
-              newSFobject = Document.Create(workspaces, {
-                    "type" : "Workspace",
-                    "name" : sfobject.Name,
-                    "properties" : {
-                         "dc:title" : sfobject.Name,
-                         "sf:objectId" : sfobject.Id,
-                         "sf:objectType" : sfobject.attributes.type,
-                         "dc:description" : sfobject.Description
-                    }
-              });
+          /*Document.SetProperty(
+            foundDoc, {
+              'xpath': "sfo:sfObjectContent",
+              'save': true,
+              'value': JSON.stringify(sfobject)
             }
+          );*/
+
+          return foundDoc;
+
+        } else {
+
+          var newSFobject = {};
+
+          if (sfobject.attributes.type === "Opportunity") {
+
+            var opportunitiesRoot = Repository.GetDocument(null, {
+              "value": "/default-domain/Opportunities"
+            });
+
+            var amount = sfobject.Amount ? sfobject.Amount.toString() : null;
+
+            newSFobject = Document.Create(opportunitiesRoot, {
+              "type": "Opportunity",
+              "name": sfobject.Name,
+              "properties": {
+                "dc:title": sfobject.Name,
+                "sfop:objectId": sfobject.Id,
+                "sfop:type": sfobject.attributes.type,
+                "dc:description": sfobject.Description,
+                "sfop:description": sfobject.Description,
+                "sfop:amount": amount,
+                "sfop:object": JSON.stringify(sfobject)
+              }
+            });
+
             return newSFobject;
-        }}]]>
+
+          } else {
+
+            var message = "Unrecognized object type: " + sfobject.attributes.type;
+
+            Log(
+              input, {
+                /*required:true - type: string*/
+                'level': "warn",
+                /*required:true - type: string*/
+                'message': message
+              }
+            );
+
+            return null;
+          }
+        }
+      }]]>
       </script>
     </scriptedOperation>
     <scriptedOperation id="javascript.SFGetChildren">
