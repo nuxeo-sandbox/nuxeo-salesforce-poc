@@ -138,9 +138,11 @@ Requires <nuxeo-connection> in order to get icons.
               </div>
               <template is="dom-if" if="[[_isNotFolder(item)]]">
                 <div class="card-actions horizontal justified">
-                  <a href="[[_previewUrl(item)]]" target="_blank">
-                    <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
-                  </a>
+                  <template is="dom-if" if="[[_previewSupported(item)]]">
+                    <a href="[[_previewUrl(item)]]" target="_blank">
+                      <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+                    </a>
+                  </template>
                   <a href="[[_downloadURL(item)]]" target="_blank">
                     <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
                   </a>
@@ -208,6 +210,13 @@ Requires <nuxeo-connection> in order to get icons.
         return selected && selected.uid === item.uid;
       },
 
+      _previewSupported: function (doc) {
+        if (doc.facets.indexOf("Video") > -1) {
+          return false;
+        }
+        return true;
+      },
+
       _iconFor: function (doc) {
         if (doc && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
@@ -220,7 +229,22 @@ Requires <nuxeo-connection> in order to get icons.
              assumption is that if the document can use the old previwer, it
              can also use the new one. */
           if (doc.contextParameters.preview !== undefined) {
-            return "//" + window.location.hostname + ":" + window.location.port + "/nuxeo/viewer/web/viewer.html?file=" + doc.properties["file:content"].data;
+
+            if (doc.facets.indexOf("Picture") > -1) {
+              // Pictures; use REST previewer.
+              return doc.contextParameters.preview.url;
+            }
+            if (doc.properties["file:content"]["mime-type"] == "application/pdf") {
+              // PDF's; use new previwer as is.
+              return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
+                "/nuxeo/viewer/web/viewer.html?file=" + doc.properties["file:content"].data;
+            } else {
+              // Other documents; use new previwer but convert to PDF first.
+              return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
+                "/nuxeo/viewer/web/viewer.html?file=" +
+                location.protocol + "//" + window.location.hostname + ":" + window.location.port +
+                "/nuxeo/api/v1/id/" + doc.uid + "/%40blob/blobholder%3A0/%40convert%3Fformat%3Dpdf";
+            }
           } else {
             return doc.contextParameters.documentURL;
           }
