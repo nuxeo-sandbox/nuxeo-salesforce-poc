@@ -15,6 +15,7 @@
 
   <modules>
     <module>nuxeo-salesforce-core</module>
+    <module>nuxeo-salesforce-ui</module>
     <module>nuxeo-salesforce-web</module>
   </modules>
 
