@@ -4,6 +4,7 @@
         <factoryBinding name="DomainFactory" factoryName="SimpleTemplateFactory" targetType="Domain">
             <template>
                 <templateItem typeName="OpportunityContainer" id="Opportunities" title="Opportunities" description=""/>
+                <templateItem typeName="TemplateRoot" id="Templates" title="Templates" description=""/>
                 <templateItem typeName="WorkspaceRoot" id="Workspaces" title="Workspaces" description=""/>
             </template>
         </factoryBinding>
