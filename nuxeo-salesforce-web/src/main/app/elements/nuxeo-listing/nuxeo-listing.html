@@ -223,13 +223,21 @@ Requires <nuxeo-connection> in order to get icons.
       },
 
       _isFolder: function (doc) {
-        return doc.facets.some(function (e) {
-          return e === 'Folderish';
-        });
+        if (doc && doc.facets) {
+          if ((doc.facets.indexOf("Folderish") >= 0) || (doc.facets.indexOf("Collection") >= 0)) {
+            return true;
+          }
+        }
+        return false;
       },
 
       _isNotFolder: function (doc) {
-        return doc.facets.indexOf("Folderish") < 0;
+        if (doc && doc.facets) {
+          if ((doc.facets.indexOf("Folderish") < 0) && (doc.facets.indexOf("Collection") < 0)) {
+            return true;
+          }
+        }
+        return false;
       }
 
     });
