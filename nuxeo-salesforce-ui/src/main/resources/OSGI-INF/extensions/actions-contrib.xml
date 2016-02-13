@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.salesforce.ui.actions">
     <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="actions">
-        <action id="SalesTab" link="/studio_tabs/studio_tab_SalesTab.xhtml" order="0" label="SalesTab" type="rest_document_link">
+        <action id="SalesTab" link="/layouts/tab_SalesTab.xhtml" order="0" label="Sales" type="rest_document_link">
             <category>VIEW_ACTION_LIST</category>
             <filter id="filter@tab@SalesTab">
                 <rule grant="true">

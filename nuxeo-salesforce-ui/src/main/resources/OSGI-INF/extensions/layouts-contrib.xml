@@ -233,7 +233,7 @@
         </layout>
         <layout name="SalesLayout@view">
             <templates>
-                <template mode="any">/layouts/aws-sfdc_layout_template.xhtml</template>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
             </templates>
             <rows>
                 <row>
@@ -300,7 +300,7 @@
 
         <layout name="SalesTab@tabLayout">
             <templates>
-                <template mode="any">/layouts/tab_layout_template.xhtml</template>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
             </templates>
             <rows>
                 <row>
@@ -322,7 +322,7 @@
                 <subWidgets>
                     <widget name="sub0" type="toggleableLayoutWithForms">
                         <labels>
-                            <label mode="any">Toggleable form</label>
+                            <label mode="any">Sales Information</label>
                         </labels>
                         <translated>false</translated>
                         <fields>
