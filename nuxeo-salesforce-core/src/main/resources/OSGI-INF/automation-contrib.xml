@@ -27,7 +27,7 @@
           });
           /*Document.SetProperty(
             foundDoc, {
-              'xpath': "sfo:sfObjectContent",
+              'xpath': "sfop:object",
               'save': true,
               'value': JSON.stringify(sfobject)
             }
