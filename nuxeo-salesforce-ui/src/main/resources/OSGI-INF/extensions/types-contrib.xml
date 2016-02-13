@@ -7,8 +7,8 @@
 
         <type id="Opportunity">
             <label>Opportunity</label>
-            <icon>/img/folder.gif</icon>
-            <bigIcon>/img/folder_100.png</bigIcon>
+            <icon>/icons/folder.gif</icon>
+            <bigIcon>/icons/folder_100.png</bigIcon>
             <description></description>
             <default-view>view_documents</default-view>
             <subtypes>
@@ -42,8 +42,8 @@
         </type>
         <type id="OpportunityContainer">
             <label>Opportunities</label>
-            <icon>/img/workspace.gif</icon>
-            <bigIcon>/img/workspace_100.png</bigIcon>
+            <icon>/icons/workspace.gif</icon>
+            <bigIcon>/icons/workspace_100.png</bigIcon>
             <description></description>
             <default-view>view_documents</default-view>
             <subtypes>
