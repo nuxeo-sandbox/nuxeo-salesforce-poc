@@ -98,7 +98,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     <!-- Other related info. -->
     <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
-    <nuxeo-salesforce-query id="sfcp" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcompetitors}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfcp" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{_sfcompetitors}}"></nuxeo-salesforce-query>
 
     <paper-header-panel mode="seam">
       <paper-toolbar class="tabsToolbar">
@@ -175,15 +175,19 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         _sfaccount: {
           type: Object,
           value: null
+        },
+        _sfcompetitors: {
+          type: Object,
+          value: null
         }
       },
 
       observers: [
         '_updateRelatedObjects(_sfopportunity)',
         '_fetchPublic(_publicSearchTerms)',
-        '_fetchPublic(_sfopportunity,_sfaccount)',
+        '_fetchPublic(_sfopportunity,_sfaccount,_sfcompetitors)',
         '_fetchInternal(_internalSearchTerms)',
-        '_fetchInternal(_sfopportunity,_sfaccount)',
+        '_fetchInternal(_sfopportunity,_sfaccount,_sfcompetitors)',
         '_fetchTemplates(_templateSearchTerms)'
       ],
 
@@ -260,6 +264,16 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         if (this._sfopportunity) {
           // Filter stage
           query = query + " AND sales:stage = '" + this._sfopportunity.StageName + "'";
+        }
+        // Filter with competitors
+        if (this._sfcompetitors) {
+          var terms = this._sfcompetitors.records.map(function (item) {
+            return item.CompetitorName;
+          }).join(" ");
+
+          if (terms) {
+            query = query + " AND ecm:fulltext = '" + terms + "*'";
+          }
         }
         return query;
       },
