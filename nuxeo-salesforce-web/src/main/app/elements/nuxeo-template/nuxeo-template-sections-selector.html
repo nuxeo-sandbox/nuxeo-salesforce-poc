@@ -67,7 +67,7 @@ An element to display a dialog for template rendering.
     <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
-    <nuxeo-salesforce-query id="sfcp" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcompetitors}}"></nuxeo-salesforce-query>
+
     <nuxeo-operation id="render" op="Conversion.CreateSowOp" enrichers="preview, documentURL, driveEditURL" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
     <template is="dom-if" if="[[_show_selection]]">
@@ -200,12 +200,6 @@ An element to display a dialog for template rendering.
             "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode," +
             " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '" + id + "'";
           this.$.sfco.query = query;
-        }
-
-        //Get competitors
-        {
-          var query = "SELECT Id,CompetitorName,Strengths,Weaknesses FROM OpportunityCompetitor WHERE OpportunityId = '" + id + "'";
-          this.$.sfcp.query = query;
         }
       },
 
