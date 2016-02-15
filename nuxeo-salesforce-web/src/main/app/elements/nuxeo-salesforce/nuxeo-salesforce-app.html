@@ -267,7 +267,10 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         }
         // Filter with competitors
         if (this._sfcompetitors) {
-          var terms = "";
+          var terms = this._sfcompetitors.records.map(function (item) {
+            return item.CompetitorName;
+          }).join(" ");
+
           if (terms) {
             query = query + " AND ecm:fulltext = '" + terms + "*'";
           }
