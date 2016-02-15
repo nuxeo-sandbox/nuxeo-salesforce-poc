@@ -272,7 +272,10 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           }).join(" ");
 
           if (terms) {
-            query = query + " AND ecm:fulltext = '" + terms + "*'";
+            /* The `match` hint performs an OR so we can match a document containing
+               any of these instead of all. Note that the field is not important since
+               I am querying _all. */
+            query = query + " AND /*+ES: INDEX(_all) ANALYZER(fulltext) OPERATOR(match) */ dc:description = '" + terms + "'";
           }
         }
         return query;
@@ -284,7 +287,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           " AND ecm:isCheckedInVersion = 0 " +
           " AND ecm:mixinType != 'HiddenInNavigation' ";
         if (terms) {
-          query = query + " AND ecm:fulltext = '" + terms + "*'";
+          query = query + " AND ecm:fulltext = '" + terms + "'";
         }
 
         return query;
