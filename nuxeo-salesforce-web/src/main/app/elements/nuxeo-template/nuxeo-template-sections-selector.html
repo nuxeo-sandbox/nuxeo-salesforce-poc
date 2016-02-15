@@ -21,9 +21,7 @@ Contributors:
 An element to display a dialog for template rendering.
 -->
 <dom-module id="nuxeo-template-sections-selector">
-  <style include="paper-dialog-shared-styles">
-
-  </style>
+  <style include="paper-dialog-shared-styles"></style>
 
   <style>
     :host {
@@ -48,7 +46,7 @@ An element to display a dialog for template rendering.
       you can style. I tried to use paper-card but the title would not render.
       So I'm just using plain divs. */
       font-size: 160%;
-      margin-top: 0px;
+      margin-top: 0;
       height: 64px;
       padding-left: 20px;
       background: var(--dark-primary-color);
@@ -60,6 +58,7 @@ An element to display a dialog for template rendering.
       flex-direction: column;
       margin-bottom: 20px;
     }
+
   </style>
   <template>
 
@@ -68,7 +67,8 @@ An element to display a dialog for template rendering.
     <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
     <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
-    <nuxeo-salesforce-query id="sfoc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfcp" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcompetitors}}"></nuxeo-salesforce-query>
     <nuxeo-operation id="render" op="Conversion.CreateSowOp" enrichers="preview, documentURL, driveEditURL" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
 
     <template is="dom-if" if="[[_show_selection]]">
@@ -125,9 +125,7 @@ An element to display a dialog for template rendering.
     Polymer({
       is: 'nuxeo-template-sections-selector',
 
-      behaviors: [
-        Polymer.PaperDialogBehavior
-      ],
+      behaviors: [Polymer.PaperDialogBehavior],
 
       properties: {
         doc: {
@@ -166,14 +164,11 @@ An element to display a dialog for template rendering.
       },
 
       observers: [
-        '_updateSections(doc)',
-        '_updateContacts(sfopportunity)' ,
-        '_updateResult(_result)',
-        '_displayError(error)'
+        '_updateSections(doc)', '_updateRelatedObjects(sfopportunity)', '_updateResult(_result)', '_displayError(error)'
       ],
 
-      ready: function () {
-        this.addEventListener('iron-overlay-opened', function () {
+      ready: function() {
+        this.addEventListener('iron-overlay-opened', function() {
           this._show_selection = true;
           this._show_spinner = false;
           this._show_result = false;
@@ -187,23 +182,29 @@ An element to display a dialog for template rendering.
         var sectionNames = this.doc.properties['sections:sections'];
         var sectionsTmp = [];
         for (var i = 0; i < sectionNames.length; i++) {
-          sectionsTmp.push({
-            name: sectionNames[i],
-            checked: false
-          });
+          sectionsTmp.push({name: sectionNames[i], checked: false});
         }
         this.sections = sectionsTmp;
       },
 
-      _updateContacts: function() {
-         if (this.sfopportunity === undefined) return;
-         var id = this.sfopportunity.Id;
-         var query =
-            "SELECT Role, Contact.Name, Contact.email, Contact.phone, "+
-            "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode,"+
-            " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '"+
-            id+"'";
-            this.$.sfoc.query = query;
+      _updateRelatedObjects: function() {
+        if (this.sfopportunity === undefined)
+          return;
+        var id = this.sfopportunity.Id;
+
+        //Get contacts
+        {
+          var query = "SELECT Role, Contact.Name, Contact.email, Contact.phone, " +
+          "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode," +
+          " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '" + id + "'";
+          this.$.sfco.query = query;
+        }
+
+        //Get competitors
+        {
+          var query = "SELECT Id,CompetitorName,Strengths,Weaknesses FROM OpportunityCompetitor WHERE OpportunityId = '" + id + "'";
+          this.$.sfcp.query = query;
+        }
       },
 
       _updateResult: function() {
@@ -215,28 +216,37 @@ An element to display a dialog for template rendering.
         }
       },
 
-      _displayError: function () {
+      _displayError: function() {
         this._show_selection = false;
         this._show_spinner = false;
         this._show_result = false;
         this._show_error = true;
       },
 
-      _render: function (e) {
+      _render: function(e) {
         var id = e.currentTarget.id;
         this.$.render.input = id;
 
         var checkedSections = [];
         for (var i = 0; i < this.sections.length; i++) {
           var section = this.sections[i];
-          if (section.checked) checkedSections.push(section.name);
-        }
+          if (section.checked)
+            checkedSections.push(section.name);
+          }
 
         this.$.render.params = {
-          opportunity: (this.sfopportunity !== undefined ? this.sfopportunity : {}),
-          account: (this.sfaccount !== undefined ? this.sfaccount : {}),
-          owner: (this.sfowner !== undefined ? this.sfowner : {}),
-          contacts : (this.sfcontacts !== undefined ? this.sfcontacts : {}),
+          opportunity: (this.sfopportunity !== undefined
+            ? this.sfopportunity
+            : {}),
+          account: (this.sfaccount !== undefined
+            ? this.sfaccount
+            : {}),
+          owner: (this.sfowner !== undefined
+            ? this.sfowner
+            : {}),
+          contacts: (this.sfcontacts !== undefined
+            ? this.sfcontacts
+            : {}),
           sections: checkedSections
         };
         this.$.render.execute();
