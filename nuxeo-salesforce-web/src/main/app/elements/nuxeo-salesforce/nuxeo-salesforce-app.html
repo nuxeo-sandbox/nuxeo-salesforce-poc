@@ -179,7 +179,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       },
 
       observers: [
-        '_updateRelatedObjects(sfopportunity)',
+        '_updateRelatedObjects(_sfopportunity)',
         '_fetchPublic(_publicSearchTerms)',
         '_fetchPublic(_sfopportunity,_sfaccount)',
         '_fetchInternal(_internalSearchTerms)',
@@ -277,9 +277,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       },
 
       _updateRelatedObjects: function () {
-        if (this.sfopportunity === undefined)
+        if (this._sfopportunity === undefined)
           return;
-        var id = this.sfopportunity.Id;
+        var id = this._sfopportunity.Id;
 
         //Get contacts
         {
