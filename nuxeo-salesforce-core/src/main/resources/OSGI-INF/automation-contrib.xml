@@ -14,72 +14,65 @@
       <category>javascript</category>
       <script>
         <![CDATA[function run(input, params) {
+	var sfobject = JSON.parse(params.sfObject);
+	var query = "SELECT * FROM Document WHERE ecm:currentLifeCycleState != 'deleted' AND sfop:objectId = '" +
+		sfobject.Id + "' AND ecm:isCheckedInVersion = 0 AND ecm:mixinType != 'HiddenInNavigation'";
+	var docs = Repository.Query(null, {
+		'query': query,
+	});
 
-        var sfobject = JSON.parse(params.sfObject);
+	if (docs.length > 0) {
+		var foundDoc = Repository.GetDocument(null, {
+			'value': docs[0].id
+		});
+		return foundDoc;
 
-        var docs = Repository.Query(null, {
-          'query': "SELECT * FROM Document WHERE ecm:currentLifeCycleState != 'deleted' AND sfop:objectId = '" + sfobject.Id + "' AND ecm:isCheckedInVersion = 0 AND ecm:mixinType != 'HiddenInNavigation'",
-        });
+	} else {
+		var newSFobject = {};
+		if (sfobject.attributes.type === "Opportunity") {
+                    	var opportunitiesRoot;
+                        var roots = Repository.Query(null, {
+                            'query': "SELECT * FROM OpportunityContainer WHERE ecm:currentLifeCycleState != 'deleted'",
+                        });
 
-        if (docs.length > 0) {
-          var foundDoc = Repository.GetDocument(null, {
-            'value': docs[0].id
-          });
-          /*Document.SetProperty(
-            foundDoc, {
-              'xpath': "sfop:object",
-              'save': true,
-              'value': JSON.stringify(sfobject)
-            }
-          );*/
+			if (roots.length > 0) {
+              			opportunitiesRoot = roots[0];
+            		} else {
+                      		var domain = Repository.GetDocument(null, {'value': "/default-domain/"});
+				opportunitiesRoot = Document.Create(domain, {
+					"type": "OpportunityContainer",
+					"name": "Opportunities",
+					"properties": {
+						"dc:title": "Opportunities"
+					}
+				});
+			}
 
-          return foundDoc;
+			var amount = sfobject.Amount ? sfobject.Amount.toString() : null;
 
-        } else {
+			newSFobject = Document.Create(opportunitiesRoot, {
+				"type": "Opportunity",
+				"name": sfobject.Name,
+				"properties": {
+					"dc:title": sfobject.Name,
+					"sfop:objectId": sfobject.Id,
+					"sfop:type": sfobject.attributes.type,
+					"dc:description": sfobject.Description,
+					"sfop:description": sfobject.Description,
+					"sfop:amount": amount,
+					"sfop:object": JSON.stringify(sfobject)
+				}
+			});
 
-          var newSFobject = {};
+			return newSFobject;
 
-          if (sfobject.attributes.type === "Opportunity") {
-
-            var opportunitiesRoot = Repository.GetDocument(null, {
-              "value": "/default-domain/Opportunities"
-            });
-
-            var amount = sfobject.Amount ? sfobject.Amount.toString() : null;
-
-            newSFobject = Document.Create(opportunitiesRoot, {
-              "type": "Opportunity",
-              "name": sfobject.Name,
-              "properties": {
-                "dc:title": sfobject.Name,
-                "sfop:objectId": sfobject.Id,
-                "sfop:type": sfobject.attributes.type,
-                "dc:description": sfobject.Description,
-                "sfop:description": sfobject.Description,
-                "sfop:amount": amount,
-                "sfop:object": JSON.stringify(sfobject)
-              }
-            });
-
-            return newSFobject;
-
-          } else {
-
-            var message = "Unrecognized object type: " + sfobject.attributes.type;
-
-            Log(
-              input, {
-                /*required:true - type: string*/
-                'level': "warn",
-                /*required:true - type: string*/
-                'message': message
-              }
-            );
-
-            return null;
-          }
-        }
-      }]]>
+		} else {
+			var message = "Unrecognized object type: " + sfobject.attributes.type;
+			Log(input, {'level': "warn",'message': message});
+			return null;
+		}
+	}
+}]]>
       </script>
     </scriptedOperation>
     <scriptedOperation id="javascript.SFGetChildren">
