@@ -98,7 +98,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     <!-- Other related info. -->
     <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
-    <nuxeo-salesforce-query id="sfcp" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcompetitors}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfcp" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{_sfcompetitors}}"></nuxeo-salesforce-query>
 
     <paper-header-panel mode="seam">
       <paper-toolbar class="tabsToolbar">
