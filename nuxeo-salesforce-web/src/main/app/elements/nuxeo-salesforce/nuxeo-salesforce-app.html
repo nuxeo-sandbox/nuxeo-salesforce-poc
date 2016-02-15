@@ -175,15 +175,19 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         _sfaccount: {
           type: Object,
           value: null
+        },
+        _sfcompetitors: {
+          type: Object,
+          value: null
         }
       },
 
       observers: [
         '_updateRelatedObjects(_sfopportunity)',
         '_fetchPublic(_publicSearchTerms)',
-        '_fetchPublic(_sfopportunity,_sfaccount)',
+        '_fetchPublic(_sfopportunity,_sfaccount,_sfcompetitors)',
         '_fetchInternal(_internalSearchTerms)',
-        '_fetchInternal(_sfopportunity,_sfaccount)',
+        '_fetchInternal(_sfopportunity,_sfaccount,_sfcompetitors)',
         '_fetchTemplates(_templateSearchTerms)'
       ],
 
@@ -260,6 +264,13 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         if (this._sfopportunity) {
           // Filter stage
           query = query + " AND sales:stage = '" + this._sfopportunity.StageName + "'";
+        }
+        // Filter with competitors
+        if (this._sfcompetitors) {
+          var terms = "";
+          if (terms) {
+            query = query + " AND ecm:fulltext = '" + terms + "*'";
+          }
         }
         return query;
       },
