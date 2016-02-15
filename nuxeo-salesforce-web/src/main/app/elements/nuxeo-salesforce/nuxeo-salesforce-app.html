@@ -277,22 +277,22 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       },
 
       _updateRelatedObjects: function () {
-        if (this._sfopportunity === undefined)
-          return;
-        var id = this._sfopportunity.Id;
+        if (this._sfopportunity) {
+          var id = this._sfopportunity.Id;
 
-        //Get contacts
-        {
-          var query = "SELECT Role, Contact.Name, Contact.email, Contact.phone, " +
-            "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode," +
-            " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '" + id + "'";
-          this.$.sfco.query = query;
-        }
+          //Get contacts
+          {
+            var query = "SELECT Role, Contact.Name, Contact.email, Contact.phone, " +
+              "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode," +
+              " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '" + id + "'";
+            this.$.sfco.query = query;
+          }
 
-        //Get competitors
-        {
-          var query = "SELECT Id,CompetitorName,Strengths,Weaknesses FROM OpportunityCompetitor WHERE OpportunityId = '" + id + "'";
-          this.$.sfcp.query = query;
+          //Get competitors
+          {
+            var query = "SELECT Id,CompetitorName,Strengths,Weaknesses FROM OpportunityCompetitor WHERE OpportunityId = '" + id + "'";
+            this.$.sfcp.query = query;
+          }
         }
       }
     });
