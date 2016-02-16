@@ -33,7 +33,7 @@
             <idField>id</idField>
             <autoincrementIdField>false</autoincrementIdField>
             <createTablePolicy>on_missing_columns</createTablePolicy>
-            <table>studio_vocabulary_SalesStage</table>
+            <table>studio_vocabulary_Audience</table>
             <dataFile>data/vocabularies/Audience.csv</dataFile>
             <parentDirectory>Audience</parentDirectory>
         </directory>
