@@ -34,3 +34,5 @@ nashorn_code_cache/
 bower_components
 node_modules
 *.tmp
+
+nuxeo-salesforce-web/build.sh

@@ -25,5 +25,17 @@
             <dataFile>data/vocabularies/SalesStage.csv</dataFile>
             <parentDirectory>SalesStage</parentDirectory>
         </directory>
+        <directory name="Audience">
+            <schema>xvocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <cacheTimeout>3600</cacheTimeout>
+            <cacheMaxSize>1000</cacheMaxSize>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+            <table>studio_vocabulary_SalesStage</table>
+            <dataFile>data/vocabularies/Audience.csv</dataFile>
+            <parentDirectory>Audience</parentDirectory>
+        </directory>
     </extension>
 </component>
