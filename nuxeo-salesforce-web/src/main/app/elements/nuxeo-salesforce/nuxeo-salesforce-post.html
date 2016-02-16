@@ -22,7 +22,7 @@ Contributors:
 Note: Elements that depend on a id use `sf` as default.
 @homepage http://www.nuxeo.org
 -->
-<dom-module id="nuxeo-salesforce-object" assetpath="nuxeo-salesforce/">
+<dom-module id="nuxeo-salesforce-post" assetpath="nuxeo-salesforce/">
   <template>
     <style>
       :host {
@@ -34,7 +34,7 @@ Note: Elements that depend on a id use `sf` as default.
 </dom-module>
 <script>
   Polymer({
-    is: 'nuxeo-salesforce-object',
+    is: 'nuxeo-salesforce-post',
 
     ready: function() {
       this._getCtx();
@@ -57,22 +57,15 @@ Note: Elements that depend on a id use `sf` as default.
         type: String
       },
 
-      /* The method*/
-      method: {
-        type: String,
-        notify: true,
-        value: 'GET'
-      },
-
-      /* The Salesforce Object */
+      /* The Salesforce Object Type*/
       objectType: {
         type: String,
         notify: true
       },
 
-      /* The Salesforce Object */
-      objectId: {
-        type: String,
+      /* The Payload*/
+      data: {
+        type: Object,
         notify: true
       },
 
@@ -123,16 +116,17 @@ Note: Elements that depend on a id use `sf` as default.
         }
         console.log("Salesforce Error: " + ctx.payload[0].errorCode);
       }
-      if (!this.objectId) {
+      if (!this.data) {
         this.sfobject = null;
         return;
       }
       var sobjectUrl = ctx.payload.links.sobjectUrl;
-      sobjectUrl = sobjectUrl + this.objectType + "/" + this.objectId;
+      sobjectUrl = sobjectUrl + this.objectType;
       var callbackOp = this._callbackSFObject.bind(this);
       var settings = {
         client: JSON.parse(sessionStorage.getItem("client")),
-        method: 'GET',
+        method: 'POST',
+        data: this.data,
         async: true,
         contentType: "application/json",
         success: callbackOp

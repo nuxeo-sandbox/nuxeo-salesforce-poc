@@ -67,8 +67,8 @@ An element to display a dialog for template rendering.
     <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
-
     <nuxeo-operation id="render" op="Conversion.CreateSowOp" enrichers="preview, documentURL, driveEditURL" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <nuxeo-salesforce-post id="sfpost" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Task" sfobject="{{sftask}}"></nuxeo-salesforce-object>
 
     <template is="dom-if" if="[[_show_selection]]">
       <div class="titleContainer">
@@ -209,6 +209,12 @@ An element to display a dialog for template rendering.
         } else if (this._result !== undefined && this._result !== null) {
           this._show_spinner = false;
           this._show_result = true;
+          this.$.sfpost.data = {
+             WhatId: this.sfopportunity.Id,
+             Subject: "Statement of Work added to opportunity",
+             OwnerId: this.sfowner.Id,
+             TaskSubtype: "Task"
+          };
         }
       },
 
