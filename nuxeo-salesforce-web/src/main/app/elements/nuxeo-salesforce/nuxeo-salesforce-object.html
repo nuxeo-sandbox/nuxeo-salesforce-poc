@@ -83,7 +83,7 @@ Note: Elements that depend on a id use `sf` as default.
       }
     },
 
-    observers: ['_getCtx(clientid, callback)'],
+    observers: ['_getCtx(clientid, callback,objectId)'],
 
     _getCtx: function() {
       var isLogging = Sfdc.canvas.oauth.loggedin();
