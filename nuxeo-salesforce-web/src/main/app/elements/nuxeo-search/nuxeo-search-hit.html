@@ -43,7 +43,7 @@ Requires <nuxeo-connection> in order to get icons.
     }
 
     paper-card {
-      padding: 10px;
+      padding: 1%;
     }
 
     paper-icon-button {
@@ -69,47 +69,109 @@ Requires <nuxeo-connection> in order to get icons.
       vertical-align: middle;
     }
 
+    .docPills {
+      display: block;
+      vertical-align: middle;
+    }
+
+    .docPillsInner {
+      display: flex;
+    }
+
     .docTitle {
       overflow: hidden;
       text-overflow: ellipsis;
-      width: 200px;
+      width: 600px;
       white-space: nowrap;
+    }
+
+    .documentPills {
+      border-radius: 0.3em;
+      padding: 0.3em 0.5em;
+      margin: 0.5%;
+      display: inline-flex;
+      font-size: 80%;
+    }
+
+    .documentIndustry {
+      color: #fff;
+      background: #059EBD;
+    }
+
+    .documentStage {
+      color: #fff;
+      background: #7C7C7C;
+    }
+
+    .documentHighlightContainer {
+     background: #f1f1f1;
+     padding: 0.5em;
+     margin-bottom: 5px;
+     border-radius: 0.3em;
+    }
+
+    .documentHighlight {
+     font-style: italic;
+     font-size: smaller;
+     line-height: 2.5ex;
+     height: 4.4ex;
+     color: black;
+     overflow: hidden;
     }
 
   </style>
 
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-resource auto path="/id/[[docId]]" response="{{doc}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
+    <nuxeo-resource auto path="/id/[[docEs._id]]" response="{{doc}}" schemas="sales" enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
 
     <paper-card>
-      <div class="card-content docContainer">
-        <iron-icon src="[[_iconFor(doc)]]" class="listIconBox iconWithText"></iron-icon>
-        <div class="docTitleContainer">
-          <div class="docTitle">[[doc.title]]</div>
+      <div class="card-content">
+         <div class="docContainer">
+            <iron-icon src="[[_iconFor(doc)]]" class="listIconBox iconWithText"></iron-icon>
+            <div class="docTitleContainer">
+             <div class="docTitle">[[doc.title]]</div>
+            </div>
+            <template is="dom-if" if="[[_isNotFolder(doc)]]">
+              <div class="card-actions horizontal">
+                <template is="dom-if" if="[[_previewSupported(doc)]]">
+                  <a href="[[_previewUrl(doc)]]" target="_blank">
+                    <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+                  </a>
+                </template>
+                <a href="[[_downloadURL(doc)]]" target="_blank">
+                  <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+                </a>
+                <a href="[[_docEditURL(doc)]]" target="_blank">
+                  <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
+                </a>
+                <a href="[[_driveEdit(doc)]]">
+                  <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
+                </a>
+                <template is="dom-if" if="[[_isLock(doc)]]">
+                  <paper-icon-button icon="lock"></paper-icon-button>
+                </template>
+              </div>
+            </template>
+         </div>
+        <div class="docPills">
+           <div class="docPillsInner">
+             <template is="dom-repeat" items="[[doc.properties.sales:industry]]">
+                <div class="documentPills documentIndustry">[[item]]</div>
+             </template>
+             <template is="dom-repeat" items="[[doc.properties.sales:stage]]">
+                <div class="documentPills documentStage">[[item]]</div>
+             </template>
+           </div>
         </div>
-      </div>
-      <template is="dom-if" if="[[_isNotFolder(doc)]]">
-        <div class="card-actions horizontal justified">
-          <template is="dom-if" if="[[_previewSupported(doc)]]">
-            <a href="[[_previewUrl(doc)]]" target="_blank">
-              <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
-            </a>
-          </template>
-          <a href="[[_downloadURL(doc)]]" target="_blank">
-            <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
-          </a>
-          <a href="[[_docEditURL(doc)]]" target="_blank">
-            <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
-          </a>
-          <a href="[[_driveEdit(doc)]]">
-            <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
-          </a>
-          <template is="dom-if" if="[[_isLock(doc)]]">
-            <paper-icon-button icon="lock"></paper-icon-button>
-          </template>
-        </div>
+        <template is="dom-if" if="{{docEs.highlight}}">
+             <div class="documentHighlightContainer">
+                <div class="documentHighlight">
+                 <html-echo html-to-inject="[[_getHighlightedText(docEs.highlight)]]"></html-echo>
+                </div>
+             </div>
       </template>
+      </div>
     </paper-card>
   </template>
 
@@ -118,19 +180,17 @@ Requires <nuxeo-connection> in order to get icons.
       is: 'nuxeo-search-hit',
 
       properties: {
-        docId: {
-          type: String,
+        docEs: {
+          type: Object,
           notify: true
         },
         doc: {
           type: Object,
           notify: true
-        },
+        }
       },
 
-      behaviors: [
-        Nuxeo.NuxeoListingActionsBehavior
-      ],
+      behaviors: [Nuxeo.NuxeoListingActionsBehavior],
 
       _iconFor: function(doc) {
         if (doc && doc.properties['common:icon']) {
@@ -145,7 +205,16 @@ Requires <nuxeo-connection> in order to get icons.
           }
         }
         return false;
-      }
+     },
+
+     _getHighlightedText: function (highlightObject) {
+          if (highlightObject !== undefined) {
+            if (highlightObject['ecm:binarytext'] !== undefined && highlightObject['ecm:binarytext'].length > 0) {
+              return highlightObject['ecm:binarytext'][0];
+            }
+          }
+          return '<p>No Text Highlight</p>';
+       },
 
     });
   </script>

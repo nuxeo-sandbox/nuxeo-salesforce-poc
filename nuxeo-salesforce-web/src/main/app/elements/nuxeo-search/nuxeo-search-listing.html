@@ -30,9 +30,11 @@ Requires <nuxeo-connection> in order to get icons.
       }
       --paper-icon-button-ink-color: var(--placeholder-text-color);
    }
-  
+
     .item {
-      margin: 5px;
+      margin-left: 5% ;
+      margin-top: 1%;
+      margin-bottom: 1%;
       background: var(--paper-card-light-primary-color);
       display: inherit;
       overflow: hidden;
@@ -42,8 +44,7 @@ Requires <nuxeo-connection> in order to get icons.
       border-color: var(--paper-card-light-primary-color);
       border-style: solid;
       border-width: thin;
-      min-height: 56px;
-      width: 30%;
+      width: 90%;
       --paper-card-content: {}
     }
 
@@ -62,7 +63,7 @@ Requires <nuxeo-connection> in order to get icons.
       <paper-header-panel main mode="waterfall">
         <div>
           <template is="dom-repeat" items="[[documentList]]">
-            <nuxeo-search-hit class="item" doc-id=[[item._id]] on-tap="_select" selected$="[[_isSame(item, selected)]]"></nuxeo-search-hit>
+            <nuxeo-search-hit class="item" doc-es=[[item]] on-tap="_select" selected$="[[_isSame(item, selected)]]"></nuxeo-search-hit>
           </template>
         </div>
       </paper-header-panel>
