@@ -63,7 +63,7 @@ Requires <nuxeo-connection> in order to get icons.
       <paper-header-panel main mode="waterfall">
         <div>
           <template is="dom-repeat" items="[[documentList]]">
-            <nuxeo-search-hit class="item" doc-id=[[item._id]] on-tap="_select" selected$="[[_isSame(item, selected)]]"></nuxeo-search-hit>
+            <nuxeo-search-hit class="item" doc-es=[[item]] on-tap="_select" selected$="[[_isSame(item, selected)]]"></nuxeo-search-hit>
           </template>
         </div>
       </paper-header-panel>

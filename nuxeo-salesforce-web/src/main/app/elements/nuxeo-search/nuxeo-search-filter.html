@@ -108,7 +108,7 @@ Lesser General Public License for more details.
         var fulltextQuery;
         if (this.fulltext === undefined || this.fulltext.length == 0) {
           fulltextQuery = {
-            match_all: {}
+            //match_all: {}
           };
         } else {
           fulltextQuery = {
@@ -264,7 +264,7 @@ Lesser General Public License for more details.
         };
 
         this.suggest = {
-          /*my_term_suggest: {
+          my_term_suggest: {
             text: this.fulltext,
             term: {
               field: '_all',
@@ -291,7 +291,7 @@ Lesser General Public License for more details.
                     prune: false
                   }
                }
-            }*/
+            }
         };
 
         this.debounce('autoQuery', function() {

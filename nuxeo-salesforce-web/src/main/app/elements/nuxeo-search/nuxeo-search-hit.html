@@ -103,11 +103,27 @@ Requires <nuxeo-connection> in order to get icons.
       background: #7C7C7C;
     }
 
+    .documentHighlightContainer {
+     background: #f1f1f1;
+     padding: 0.5em;
+     margin-bottom: 5px;
+     border-radius: 0.3em;
+    }
+
+    .documentHighlight {
+     font-style: italic;
+     font-size: smaller;
+     line-height: 2.5ex;
+     height: 4.4ex;
+     color: black;
+     overflow: hidden;
+    }
+
   </style>
 
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-resource auto path="/id/[[docId]]" response="{{doc}}" schemas="sales" enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
+    <nuxeo-resource auto path="/id/[[docEs._id]]" response="{{doc}}" schemas="sales" enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
 
     <paper-card>
       <div class="card-content">
@@ -148,6 +164,13 @@ Requires <nuxeo-connection> in order to get icons.
              </template>
            </div>
         </div>
+        <template is="dom-if" if="{{docEs.highlight}}">
+             <div class="documentHighlightContainer">
+                <div class="documentHighlight">
+                 <html-echo html-to-inject="[[_getHighlightedText(docEs.highlight)]]"></html-echo>
+                </div>
+             </div>
+      </template>
       </div>
     </paper-card>
   </template>
@@ -157,8 +180,8 @@ Requires <nuxeo-connection> in order to get icons.
       is: 'nuxeo-search-hit',
 
       properties: {
-        docId: {
-          type: String,
+        docEs: {
+          type: Object,
           notify: true
         },
         doc: {
@@ -182,7 +205,16 @@ Requires <nuxeo-connection> in order to get icons.
           }
         }
         return false;
-      }
+     },
+
+     _getHighlightedText: function (highlightObject) {
+          if (highlightObject !== undefined) {
+            if (highlightObject['ecm:binarytext'] !== undefined && highlightObject['ecm:binarytext'].length > 0) {
+              return highlightObject['ecm:binarytext'][0];
+            }
+          }
+          return '<p>No Text Highlight</p>';
+       },
 
     });
   </script>

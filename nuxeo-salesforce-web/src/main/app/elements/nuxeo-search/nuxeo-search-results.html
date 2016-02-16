@@ -14,9 +14,11 @@ Lesser General Public License for more details.
 <dom-module id="nuxeo-search-results">
   <template>
     <style is="custom-style">
-    
+
     </style>
-    <nuxeo-fulltext-suggester text={{fulltext}} suggestions={{suggestions}}></nuxeo-fulltext-suggester>
+    <div>
+          <nuxeo-fulltext-suggester text={{fulltext}} suggestions={{suggestions}}></nuxeo-fulltext-suggester>
+    </div>
     <div>
       <nuxeo-search-listing document-list=[[hits.hits]]></nuxeo-search-listing>
     </div>
