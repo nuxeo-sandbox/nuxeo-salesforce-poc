@@ -293,8 +293,10 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           query = query + this._publicFilter();
           query = query + this._sfdcFilter();
 
+          this.$.publicPageProvider.query = query;
+
           this.debounce('publicPageProviderQuery', function() {
-            this.$.publicPageProvider.query = query;
+            this.$.publicPageProvider.fetch();
           }.bind(this), 300);
         }
       },
@@ -306,8 +308,10 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           query = query + this._internalFilter();
           query = query + this._sfdcFilter();
 
+          this.$.internalPageProvider.query = query;
+
           this.debounce('internalPageProviderQuery', function() {
-            this.$.internalPageProvider.query = query;
+            this.$.internalPageProvider.fetch();
           }.bind(this), 300);
         }
       },
