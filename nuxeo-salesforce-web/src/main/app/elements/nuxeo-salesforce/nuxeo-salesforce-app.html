@@ -132,7 +132,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
             <paper-toolbar id="searchPublicToolbar" class="embedded-toolbar">
               <paper-input id="searchPublicInput" type=search class="searchBox" label="Search" bind-value="{{_publicSearchTerms}}"></paper-input>
             </paper-toolbar>
-            <nuxeo-page-provider auto id="publicPageProvider" query="[[_fetchPublic()]]" page-size="[[searchPageSize]]" current-page="{{publicDocs}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
+            <nuxeo-page-provider auto id="publicPageProvider" provider="AssetSearch" query="[[_fetchPublic()]]" page-size="[[searchPageSize]]" current-page="{{publicDocs}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
             <nuxeo-listing document-list="[[publicDocs]]" class="documentListContainer"></nuxeo-listing>
           </paper-header-panel>
         </div>
@@ -142,7 +142,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
             <paper-toolbar id="searchInternalToolbar" class="embedded-toolbar">
               <paper-input id="searchInternalInput" type=search class="searchBox" label="Search" bind-value="{{_internalSearchTerms}}"></paper-input>
             </paper-toolbar>
-            <nuxeo-page-provider auto id="internalPageProvider" query="[[_fetchInternal()]]" page-size="[[searchPageSize]]" current-page="{{internalDocs}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
+            <nuxeo-page-provider auto id="internalPageProvider" provider="AssetSearch" query="[[_fetchInternal()]]" page-size="[[searchPageSize]]" current-page="{{internalDocs}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
             <nuxeo-listing document-list="[[internalDocs]]" class="documentListContainer"></nuxeo-listing>
           </paper-header-panel>
         </div>
@@ -152,7 +152,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
             <paper-toolbar id="searchTemplatesToolbar" class="embedded-toolbar">
               <paper-input id="searchTemplatesInput" type=search class="searchBox" label="Search" bind-value="{{_templateSearchTerms}}"></paper-input>
             </paper-toolbar>
-            <nuxeo-page-provider auto id="templatePageProvider" query="[[_fetchTemplates()]]" page-size="[[searchPageSize]]" enrichers="preview, documentURL, driveEditURL" current-page="{{templates}}"></nuxeo-page-provider>
+            <nuxeo-page-provider auto id="templatePageProvider" provider="AssetSearch" query="[[_fetchTemplates()]]" page-size="[[searchPageSize]]" enrichers="preview, documentURL, driveEditURL" current-page="{{templates}}"></nuxeo-page-provider>
             <nuxeo-listing document-list="[[templates]]" class="documentListContainer"></nuxeo-listing>
           </paper-header-panel>
         </div>
