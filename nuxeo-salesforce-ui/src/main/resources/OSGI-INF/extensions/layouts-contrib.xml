@@ -135,7 +135,7 @@
                     <widget>stage</widget>
                 </row>
             </rows>
-            <widget name="audience" type="text">
+            <widget name="audience" type="suggestOneDirectory">
                 <labels>
                     <label mode="any">Audience</label>
                 </labels>
@@ -143,6 +143,10 @@
                 <fields>
                     <field>sales:audience</field>
                 </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">Audience</property>
+                </properties>
             </widget>
             <widget name="industry" type="suggestManyDirectory">
                 <labels>
@@ -195,7 +199,7 @@
                     <widget>stage</widget>
                 </row>
             </rows>
-            <widget name="audience" type="text">
+            <widget name="audience" type="suggestOneDirectory">
                 <labels>
                     <label mode="any">Audience</label>
                 </labels>
@@ -203,6 +207,10 @@
                 <fields>
                     <field>sales:audience</field>
                 </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">Audience</property>
+                </properties>
             </widget>
             <widget name="industry" type="suggestManyDirectory">
                 <labels>
@@ -255,7 +263,7 @@
                     <widget>stage</widget>
                 </row>
             </rows>
-            <widget name="audience" type="text">
+            <widget name="audience" type="suggestOneDirectory">
                 <labels>
                     <label mode="any">Audience</label>
                 </labels>
@@ -263,6 +271,13 @@
                 <fields>
                     <field>sales:audience</field>
                 </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">Audience</property>
+                </properties>
+                <properties widgetMode="view">
+                    <property name="directoryName">Audience</property>
+                </properties>
             </widget>
             <widget name="industry" type="suggestManyDirectory">
                 <labels>
