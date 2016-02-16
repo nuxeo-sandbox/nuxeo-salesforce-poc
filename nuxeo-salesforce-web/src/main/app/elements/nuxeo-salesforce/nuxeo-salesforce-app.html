@@ -92,8 +92,13 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
 
     <!-- These SFDC objects are used to get query parameteres. -->
-    <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
-    <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{_sfopportunity}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{_sfopportunity.AccountId}}" sfobject="{{_sfaccount}}"></nuxeo-salesforce-object>
+
+    <!-- Other related info. -->
+    <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfcp" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{_sfcompetitors}}"></nuxeo-salesforce-query>
 
     <paper-header-panel mode="seam">
       <paper-toolbar class="tabsToolbar">
@@ -120,7 +125,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         <div id="searchPublicPage" class="mustHaveHeight">
           <paper-header-panel mode="waterfall">
             <paper-toolbar id="searchPublicToolbar" class="embedded-toolbar">
-              <paper-input id="searchPublicInput" type=search class="searchBox" label="Search" bind-value="{{publicSearchTerms}}"></paper-input>
+              <paper-input id="searchPublicInput" type=search class="searchBox" label="Search" bind-value="{{_publicSearchTerms}}"></paper-input>
             </paper-toolbar>
             <nuxeo-page-provider auto id="publicPageProvider" query="[[_fetchPublic()]]" page-size="[[searchPageSize]]" current-page="{{publicDocs}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
             <nuxeo-listing document-list="[[publicDocs]]" class="documentListContainer"></nuxeo-listing>
@@ -130,7 +135,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         <div id="searchInternalPage" class="mustHaveHeight">
           <paper-header-panel mode="waterfall">
             <paper-toolbar id="searchInternalToolbar" class="embedded-toolbar">
-              <paper-input id="searchInternalInput" type=search class="searchBox" label="Search" bind-value="{{internalSearchTerms}}"></paper-input>
+              <paper-input id="searchInternalInput" type=search class="searchBox" label="Search" bind-value="{{_internalSearchTerms}}"></paper-input>
             </paper-toolbar>
             <nuxeo-page-provider auto id="internalPageProvider" query="[[_fetchInternal()]]" page-size="[[searchPageSize]]" current-page="{{internalDocs}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
             <nuxeo-listing document-list="[[internalDocs]]" class="documentListContainer"></nuxeo-listing>
@@ -140,7 +145,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         <div id="searchTemplatesPage" class="mustHaveHeight">
           <paper-header-panel mode="waterfall">
             <paper-toolbar id="searchTemplatesToolbar" class="embedded-toolbar">
-              <paper-input id="searchTemplatesInput" type=search class="searchBox" label="Search" bind-value="{{templateSearchTerms}}"></paper-input>
+              <paper-input id="searchTemplatesInput" type=search class="searchBox" label="Search" bind-value="{{_templateSearchTerms}}"></paper-input>
             </paper-toolbar>
             <nuxeo-page-provider auto id="templatePageProvider" query="[[_fetchTemplates()]]" page-size="[[searchPageSize]]" enrichers="preview, documentURL, driveEditURL" current-page="{{templates}}"></nuxeo-page-provider>
             <nuxeo-listing document-list="[[templates]]" class="documentListContainer"></nuxeo-listing>
@@ -161,10 +166,29 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     Polymer({
       is: 'nuxeo-salesforce-app',
 
+      properties: {
+        /* These are not really meant to be properties but because I want to observe them they must be listed. */
+        _sfopportunity: {
+          type: Object,
+          value: null
+        },
+        _sfaccount: {
+          type: Object,
+          value: null
+        },
+        _sfcompetitors: {
+          type: Object,
+          value: null
+        }
+      },
+
       observers: [
-        '_fetchPublic(publicSearchTerms)',
-        '_fetchInternal(internalSearchTerms)',
-        '_fetchTemplates(templateSearchTerms)'
+        '_updateRelatedObjects(_sfopportunity)',
+        '_fetchPublic(_publicSearchTerms)',
+        '_fetchPublic(_sfopportunity,_sfaccount,_sfcompetitors)',
+        '_fetchInternal(_internalSearchTerms)',
+        '_fetchInternal(_sfopportunity,_sfaccount,_sfcompetitors)',
+        '_fetchTemplates(_templateSearchTerms)'
       ],
 
       ready: function () {
@@ -183,29 +207,33 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       },
 
       _fetchPublic: function () {
-        var query = this._genericFilter("Document", this.publicSearchTerms);
-        query = query + this._typeFilter();
-        query = query + this._publicFilter();
-        query = query + this._sfdcFilter();
+        if (this._sfopportunity && this._sfaccount) {
+          var query = this._genericFilter("Document", this._publicSearchTerms);
+          query = query + this._typeFilter();
+          query = query + this._publicFilter();
+          query = query + this._sfdcFilter();
 
-        this.debounce('publicPageProviderQuery', function () {
-          this.$.publicPageProvider.query = query;
-        }.bind(this), 300);
+          this.debounce('publicPageProviderQuery', function () {
+            this.$.publicPageProvider.query = query;
+          }.bind(this), 300);
+        }
       },
 
       _fetchInternal: function () {
-        var query = this._genericFilter("Document", this.internalSearchTerms);
-        query = query + this._typeFilter();
-        query = query + this._internalFilter();
-        query = query + this._sfdcFilter();
+        if (this._sfopportunity && this._sfaccount) {
+          var query = this._genericFilter("Document", this._internalSearchTerms);
+          query = query + this._typeFilter();
+          query = query + this._internalFilter();
+          query = query + this._sfdcFilter();
 
-        this.debounce('internalPageProviderQuery', function () {
-          this.$.internalPageProvider.query = query;
-        }.bind(this), 300);
+          this.debounce('internalPageProviderQuery', function () {
+            this.$.internalPageProvider.query = query;
+          }.bind(this), 300);
+        }
       },
 
       _fetchTemplates: function () {
-        var query = this._genericFilter("TemplateSource", this.templateSearchTerms);
+        var query = this._genericFilter("TemplateSource", this._templateSearchTerms);
 
         this.debounce('templatePageProviderQuery', function () {
           this.$.templatePageProvider.query = query;
@@ -229,13 +257,26 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
       _sfdcFilter: function () {
         var query = "";
-        if (this.sfaccount) {
+        if (this._sfaccount) {
           // Filter industry
-          query = query + " AND sales:industry = '" + this.sfaccount.Industry + "'";
+          query = query + " AND sales:industry = '" + this._sfaccount.Industry + "'";
         }
-        if (this.sfopportunity) {
+        if (this._sfopportunity) {
           // Filter stage
-          query = query + " AND sales:stage = '" + this.sfopportunity.StageName + "'";
+          query = query + " AND sales:stage = '" + this._sfopportunity.StageName + "'";
+        }
+        // Filter with competitors
+        if (this._sfcompetitors) {
+          var terms = this._sfcompetitors.records.map(function (item) {
+            return item.CompetitorName;
+          }).join(" ");
+
+          if (terms) {
+            /* The `match` hint performs an OR so we can match a document containing
+               any of these instead of all. Note that the field is not important since
+               I am querying _all. */
+            query = query + " AND /*+ES: INDEX(_all) ANALYZER(fulltext) OPERATOR(match) */ dc:description = '" + terms + "'";
+          }
         }
         return query;
       },
@@ -246,10 +287,30 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           " AND ecm:isCheckedInVersion = 0 " +
           " AND ecm:mixinType != 'HiddenInNavigation' ";
         if (terms) {
-          query = query + " AND ecm:fulltext = '" + terms + "*'";
+          query = query + " AND ecm:fulltext = '" + terms + "'";
         }
 
         return query;
+      },
+
+      _updateRelatedObjects: function () {
+        if (this._sfopportunity) {
+          var id = this._sfopportunity.Id;
+
+          //Get contacts
+          {
+            var query = "SELECT Role, Contact.Name, Contact.email, Contact.phone, " +
+              "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode," +
+              " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '" + id + "'";
+            this.$.sfco.query = query;
+          }
+
+          //Get competitors
+          {
+            var query = "SELECT Id,CompetitorName,Strengths,Weaknesses FROM OpportunityCompetitor WHERE OpportunityId = '" + id + "'";
+            this.$.sfcp.query = query;
+          }
+        }
       }
     });
   </script>
