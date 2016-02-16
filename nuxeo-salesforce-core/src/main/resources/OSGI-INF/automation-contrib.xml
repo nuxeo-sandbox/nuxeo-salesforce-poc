@@ -81,8 +81,12 @@
       <category>javascript</category>
       <script>
         <![CDATA[function run(input, params) {
-            return Document.GetChildren(input, {});
-        }]]>
+  var docs = Repository.Query(null, {
+    'query': "SELECT * FROM Document WHERE ecm:currentLifeCycleState != 'deleted' AND ecm:isCheckedInVersion = 0 AND ecm:mixinType != 'HiddenInNavigation' AND ecm:parentId = '" + input + "'"
+  });
+
+  return docs;
+}]]>
       </script>
     </scriptedOperation>
   </extension>
