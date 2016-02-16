@@ -177,7 +177,6 @@ The main nuxeo-salesforce application to be embedded in SFDC.
             </paper-toolbar>
             <nuxeo-page-provider id="publicPageProvider"
               provider="AssetSearch"
-              query="[[_fetchPublic()]]"
               page-size="[[searchPageSize]]"
               current-page="{{publicDocs}}"
               enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
@@ -199,7 +198,6 @@ The main nuxeo-salesforce application to be embedded in SFDC.
             </paper-toolbar>
             <nuxeo-page-provider id="internalPageProvider"
               provider="AssetSearch"
-              query="[[_fetchInternal()]]"
               page-size="[[searchPageSize]]"
               current-page="{{internalDocs}}"
               enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
