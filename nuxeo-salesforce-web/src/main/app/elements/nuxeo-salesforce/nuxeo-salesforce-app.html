@@ -91,13 +91,18 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
 
-    <!-- These SFDC objects are used to get query parameteres. -->
     <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{_sfopportunity}}"></nuxeo-salesforce-connection>
+
     <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{_sfopportunity.AccountId}}" sfobject="{{_sfaccount}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
+
+    <!-- Get latest data.
+         See https://developer.salesforce.com/forums/#!/feedtype=SINGLE_QUESTION_DETAIL&dc=APIs_and_Integration&criteria=OPENQUESTIONS&id=906F0000000D77OIAS -->
+    <nuxeo-salesforce-query id="sflop" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{_sfLiveOpportunity}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sflac" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{_sfLiveAccount}}"></nuxeo-salesforce-query>
 
     <!-- Other related info. -->
-    <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
-    <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{_sfcontacts}}"></nuxeo-salesforce-query>
     <nuxeo-salesforce-query id="sfcp" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{_sfcompetitors}}"></nuxeo-salesforce-query>
 
     <paper-header-panel mode="seam">
@@ -167,27 +172,27 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       is: 'nuxeo-salesforce-app',
 
       properties: {
-        /* These are not really meant to be properties but because I want to observe them they must be listed. */
-        _sfopportunity: {
-          type: Object,
+        _stageName: {
+          type: String,
           value: null
         },
-        _sfaccount: {
-          type: Object,
-          value: null
-        },
-        _sfcompetitors: {
-          type: Object,
+        _industry: {
+          type: String,
           value: null
         }
       },
 
       observers: [
+        '_getLiveOpportunityData(_sfopportunity)',
+        '_getStageName(_sfLiveOpportunity)',
+        '_getLiveAccountData(_sfopportunity)',
+        '_getIndustry(_sfLiveAccount)',
         '_updateRelatedObjects(_sfopportunity)',
         '_fetchPublic(_publicSearchTerms)',
-        '_fetchPublic(_sfopportunity,_sfaccount,_sfcompetitors)',
+        '_fetchPublic(_stageName)',
+        '_fetchPublic(_industry)',
+        '_fetchPublic(_sfcompetitors)',
         '_fetchInternal(_internalSearchTerms)',
-        '_fetchInternal(_sfopportunity,_sfaccount,_sfcompetitors)',
         '_fetchTemplates(_templateSearchTerms)'
       ],
 
@@ -207,7 +212,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       },
 
       _fetchPublic: function () {
-        if (this._sfopportunity && this._sfaccount) {
+        if (this._stageName && this._industry) {
           var query = this._genericFilter("Document", this._publicSearchTerms);
           query = query + this._typeFilter();
           query = query + this._publicFilter();
@@ -259,11 +264,11 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         var query = "";
         if (this._sfaccount) {
           // Filter industry
-          query = query + " AND sales:industry = '" + this._sfaccount.Industry + "'";
+          query = query + " AND sales:industry = '" + this._industry + "'";
         }
         if (this._sfopportunity) {
           // Filter stage
-          query = query + " AND sales:stage = '" + this._sfopportunity.StageName + "'";
+          query = query + " AND sales:stage = '" + this._stageName + "'";
         }
         // Filter with competitors
         if (this._sfcompetitors) {
@@ -291,6 +296,34 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         }
 
         return query;
+      },
+
+      _getLiveOpportunityData: function () {
+        if (this._sfopportunity) {
+          var id = this._sfopportunity.Id;
+          var query = "SELECT StageName FROM Opportunity where Id = '" + id + "'";
+          this.$.sflop.query = query;
+        }
+      },
+
+      _getLiveAccountData: function () {
+        if (this._sfopportunity) {
+          var id = this._sfopportunity.Id;
+          var query = "SELECT Account.Industry FROM Opportunity where OpportunityId = '" + id + "'";
+          this.$.sflac.query = query;
+        }
+      },
+
+      _getStageName: function () {
+        if (this._sfLiveOpportunity && this._sfLiveOpportunity.records) {
+          this._stageName = this._sfLiveOpportunity.records[0].StageName;
+        }
+      },
+
+      _getIndustry: function () {
+        if (this._sfLiveAccount && this._sfLiveAccount.records) {
+          this._industry = this._sfLiveAccount.records[0].Industry;
+        }
       },
 
       _updateRelatedObjects: function () {
