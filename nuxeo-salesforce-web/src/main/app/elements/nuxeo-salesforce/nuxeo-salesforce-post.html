@@ -76,7 +76,7 @@ Note: Elements that depend on a id use `sf` as default.
       }
     },
 
-    observers: ['_getCtx(clientid, callback)'],
+    observers: ['_getCtx(clientid, callback,data)'],
 
     _getCtx: function() {
       var isLogging = Sfdc.canvas.oauth.loggedin();
@@ -126,7 +126,7 @@ Note: Elements that depend on a id use `sf` as default.
       var settings = {
         client: JSON.parse(sessionStorage.getItem("client")),
         method: 'POST',
-        data: this.data,
+        data: JSON.stringify(this.data),
         async: true,
         contentType: "application/json",
         success: callbackOp
