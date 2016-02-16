@@ -1,0 +1,152 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<link rel="import" href="../nuxeo-listing/nuxeo-listing-actions-behavior.html">
+<!--
+An element to display a list of Nuxeo documents.
+
+Requires <nuxeo-connection> in order to get icons.
+-->
+<dom-module id="nuxeo-search-hit">
+  <style>
+    @media (max-width: 600px) {
+      h1.paper-font-display1 {
+        font-size: 24px;
+      }
+    }
+
+    .iconWithText {
+      padding-right: 5px;
+      vertical-align: text-top;
+    }
+
+    .listIconBox {
+      padding: 4px;
+      --iron-icon-width: 20px;
+      --iron-icon-height: 20px;
+    }
+
+    paper-card {
+      padding: 10px;
+    }
+
+    paper-icon-button {
+      padding: 4px;
+      width: 28px;
+      height: 28px;
+    }
+
+    .horizontal {
+      @apply(--layout-horizontal);
+    }
+
+    .justified {
+      @apply(--layout-justified);
+    }
+
+    .docContainer {
+      display: table;
+    }
+
+    .docTitleContainer {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    .docTitle {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 200px;
+      white-space: nowrap;
+    }
+
+  </style>
+
+  <template>
+    <nuxeo-connection id="nx"></nuxeo-connection>
+    <nuxeo-resource auto path="/id/[[docId]]" response="{{doc}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
+
+    <paper-card>
+      <div class="card-content docContainer">
+        <iron-icon src="[[_iconFor(doc)]]" class="listIconBox iconWithText"></iron-icon>
+        <div class="docTitleContainer">
+          <div class="docTitle">[[doc.title]]</div>
+        </div>
+      </div>
+      <template is="dom-if" if="[[_isNotFolder(doc)]]">
+        <div class="card-actions horizontal justified">
+          <template is="dom-if" if="[[_previewSupported(doc)]]">
+            <a href="[[_previewUrl(doc)]]" target="_blank">
+              <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+            </a>
+          </template>
+          <a href="[[_downloadURL(doc)]]" target="_blank">
+            <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+          </a>
+          <a href="[[_docEditURL(doc)]]" target="_blank">
+            <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
+          </a>
+          <a href="[[_driveEdit(doc)]]">
+            <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
+          </a>
+          <template is="dom-if" if="[[_isLock(doc)]]">
+            <paper-icon-button icon="lock"></paper-icon-button>
+          </template>
+        </div>
+      </template>
+    </paper-card>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-search-hit',
+
+      properties: {
+        docId: {
+          type: String,
+          notify: true
+        },
+        doc: {
+          type: Object,
+          notify: true
+        },
+      },
+
+      behaviors: [
+        Nuxeo.NuxeoListingActionsBehavior
+      ],
+
+      _iconFor: function(doc) {
+        if (doc && doc.properties['common:icon']) {
+          return this.$.nx.client._baseURL + doc.properties['common:icon'];
+        }
+      },
+
+      _isNotFolder: function(doc) {
+        if (doc && doc.facets) {
+          if ((doc.facets.indexOf("Folderish") < 0) && (doc.facets.indexOf("Collection") < 0)) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+    });
+  </script>
+</dom-module>

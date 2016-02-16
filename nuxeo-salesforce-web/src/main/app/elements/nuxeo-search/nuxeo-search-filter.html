@@ -1,0 +1,304 @@
+<!--
+(C) Copyright 2015 Nuxeo SA (http://nuxeo.com/) and contributors.
+
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU Lesser General Public License
+(LGPL) version 2.1 which accompanies this distribution, and is available at
+http://www.gnu.org/licenses/lgpl.html
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+-->
+
+<dom-module id="nuxeo-search-filter">
+
+  <template>
+
+    <style is="custom-style">
+      .filterItem {
+        margin-left: 0.5em;
+      }
+
+      .filterItemLabel {
+        margin-top: 1em;
+        margin-bottom: 0.5em;
+      }
+    </style>
+
+    <paper-input id="searchFullTextInput" label="Full Text Search" class="filterItem" value="{{fulltext}}"></paper-input>
+
+    <div class="filterItem">
+      <div class="filterItemLabel">Industry</div>
+      <nuxeo-checkbox-aggregation name='industry_agg' aggregations='[[aggregations]]' value="{{industryAgg}}"></nuxeo-checkbox-aggregation>
+      <div class="filterItemLabel">Sales Stage</div>
+      <nuxeo-checkbox-aggregation name='stage_agg' aggregations='[[aggregations]]' value="{{stageAgg}}"></nuxeo-checkbox-aggregation>
+    </div>
+    <nuxeo-es-search id='DocumentProvider' fields=[[fields]] query=[[query]] size="20" highlight=[[highlight]] post_filter=[[post_filter]] aggregates=[[aggregates]] hits={{hits}} aggregations={{aggregations}} suggest=[[suggest]] suggestions={{suggestions}}></nuxeo-es-search>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-search-filter',
+      properties: {
+        fulltext: {
+          type: String,
+          notify: true
+        },
+        hits: {
+          type: Object,
+          notify: true
+        },
+        query: {
+          type: Object,
+          notify: true
+        },
+        highlight: {
+          type: Object,
+          value: {}
+        },
+        fields: {
+          type: Array,
+          value: function() {
+            return ['_id', 'dc:title', 'dc:modified',
+              'ecm:uuid'
+            ];
+          }
+        },
+        aggregates: {
+          type: Object,
+          notify: true
+        },
+        post_filter: {
+          type: Object,
+          notify: true
+        },
+        aggregations: {
+          type: Object,
+          notify: true
+        },
+        suggest: {
+          type: Object,
+          notify: true
+        },
+        suggestions: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      observers: [
+        'resetFacets(fulltext)',
+        'updateQuery(industryAgg,stageAgg,diffusionAgg)',
+        'updateParameter(response)'
+      ],
+
+      resetFacets: function() {
+        this.industryAgg = [];
+        this.stageAgg = [];
+        this.diffusionAgg = [];
+      },
+
+      updateQuery: function() {
+
+        var score_functions = [];
+
+        var fulltextQuery;
+        if (this.fulltext === undefined || this.fulltext.length == 0) {
+          fulltextQuery = {
+            match_all: {}
+          };
+        } else {
+          fulltextQuery = {
+             bool: {
+               must: [{
+                 match: {
+                   _all: {
+                     query: this.fulltext,
+                     operator: "OR",
+                     analyzer: "fulltext",
+                     fuzziness: "AUTO"
+                   }
+                 }
+               }],
+               should: [{
+                 match: {
+                   _all: {
+                     query: this.fulltext,
+                     type: "phrase",
+                     slop: 3,
+                     analyzer: "fulltext"
+                   }
+                 }
+               }]
+             }
+          };
+        }
+
+        this.query = {
+          function_score: {
+            query: {
+              filtered: {
+                query: fulltextQuery,
+                filter: {
+                  bool: {
+                    must: [{
+                      term: {
+                        "ecm:isVersion": "0"
+                      }
+                    }, {
+                      term: {
+                        "ecm:primaryType": "File"                      }
+                    }],
+                    must_not: [{
+                      term: {
+                        "ecm:mixinType": "HiddenInNavigation"
+                      }
+                   },{
+                    term: {
+                       "ecm:currentLifeCycleState": "deleted"
+                    }
+                   }]
+                  }
+                }
+              }
+            },
+            functions: score_functions,
+            score_mode: "multiply"
+          }
+        };
+
+        this.highlight = {
+          pre_tags: ["<span style='background-color: lightgray;font-weight: bold;'>"],
+          post_tags: ["</span>"],
+          fields: {
+            'ecm:binarytext': {
+              fragment_size: 170,
+              number_of_fragments: 1,
+              index_options: "offsets"
+            }
+          }
+        };
+
+        var postFilters = [];
+        var stageAggFilter = {
+          match_all: {}
+        };
+        var industryAggFilter = {
+          match_all: {}
+        };
+
+        if (this.industryAgg !== undefined && this.industryAgg.length > 0) {
+          postFilters.push({
+            terms: {
+              "sales:industry": this.industryAgg
+            }
+          });
+          stageAggFilter = {
+            and: {
+              filters: [{
+                terms: {
+                  "sales:industry": this.industryAgg
+                }
+              }]
+            }
+          };
+        }
+        if (this.stageAgg !== undefined && this.stageAgg.length > 0) {
+          postFilters.push({
+            terms: {
+              "sales:stage": this.stageAgg
+            }
+          });
+          industryAggFilter = {
+            and: {
+              filters: [{
+                terms: {
+                  "sales:stage": this.stageAgg
+                }
+              }]
+            }
+          };
+        }
+        if (postFilters.length > 0) {
+          this.post_filter = {
+            and: {
+              filters: postFilters
+            }
+          };
+        } else {
+          this.post_filter = {
+            match_all: {}
+          };
+        }
+
+        this.aggregates = {
+          industry_agg_filter: {
+            filter: industryAggFilter,
+            aggregations: {
+              industry_agg: {
+                terms: {
+                  field: "sales:industry",
+                  order: {
+                    _count: "desc"
+                  }
+                }
+              }
+            }
+          },
+          stage_agg_filter: {
+            filter: stageAggFilter,
+            aggregations: {
+              stage_agg: {
+                terms: {
+                  field: "sales:stage",
+                  order: {
+                    _count: "desc"
+                  }
+                }
+              }
+            }
+          }
+        };
+
+        this.suggest = {
+          /*my_term_suggest: {
+            text: this.fulltext,
+            term: {
+              field: '_all',
+              analyzer: 'fulltext'
+            }
+         },
+          my_phrase_suggest : {
+            text : this.fulltext,
+              phrase : {
+                field : "suggestions",
+                size : 1,
+                real_word_error_likelihood : 0.95,
+                max_errors : 3,
+                collate: {
+                   query: {
+                      match : {
+                        _all : {
+                              query : "{{suggestion}}",
+                              operator: "AND",
+                           }
+                        }
+                     },
+                    params: {field_name : "suggestions"},
+                    prune: false
+                  }
+               }
+            }*/
+        };
+
+        this.debounce('autoQuery', function() {
+          this.$.DocumentProvider.execute();
+        }.bind(this), 200);
+      }
+
+    });
+  </script>
+</dom-module>
