@@ -316,10 +316,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
       _fetchTemplates: function() {
         var query = this._genericFilter("TemplateSource", this._templateSearchTerms);
-
-        this.debounce('templatePageProviderQuery', function() {
-          this.$.templatePageProvider.query = query;
-        }.bind(this), 300);
+        return query;
       },
 
       _typeFilter: function() {
