@@ -309,7 +309,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       _getLiveAccountData: function () {
         if (this._sfopportunity) {
           var id = this._sfopportunity.Id;
-          var query = "SELECT Account.Industry FROM Opportunity where OpportunityId = '" + id + "'";
+          var query = "SELECT Account.Industry FROM Opportunity where Id = '" + id + "'";
           this.$.sflac.query = query;
         }
       },
@@ -322,7 +322,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
       _getIndustry: function () {
         if (this._sfLiveAccount && this._sfLiveAccount.records) {
-          this._industry = this._sfLiveAccount.records[0].Industry;
+          this._industry = this._sfLiveAccount.records[0].Account.Industry;
         }
       },
 
