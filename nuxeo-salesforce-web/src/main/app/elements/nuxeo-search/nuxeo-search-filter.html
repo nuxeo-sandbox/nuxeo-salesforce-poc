@@ -37,7 +37,7 @@ Lesser General Public License for more details.
         value="{{fulltext}}"></paper-input>
 
       <template is="dom-if"
-        if="[[industryAgg]]">
+        if="[[aggregations]]">
         <div class="filterItemLabel">Industry</div>
         <nuxeo-checkbox-aggregation name='industry_agg'
           aggregations='[[aggregations]]'
@@ -45,7 +45,7 @@ Lesser General Public License for more details.
       </template>
 
       <template is="dom-if"
-        if="[[stageAgg]]">
+        if="[[aggregations]]">
         <div class="filterItemLabel">Sales Stage</div>
         <nuxeo-checkbox-aggregation name='stage_agg'
           aggregations='[[aggregations]]'
