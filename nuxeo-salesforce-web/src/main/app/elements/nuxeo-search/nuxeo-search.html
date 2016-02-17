@@ -25,18 +25,24 @@ Example: <nuxeo-article-search></nuxeo-article-search>
   <template>
     <style is="custom-style">
       .search_main {
-         display: flex;
-         flex-direction: row;
+        display: flex;
+        flex-direction: row;
       }
+
     </style>
     <div class="search_main">
       <paper-drawer-panel>
-         <div drawer>
-               <nuxeo-search-filter class="fixed" fulltext={{fulltext}} hits={{hits}} suggestions={{suggestions}}></nuxeo-search-filter>
-         </div>
-         <div main>
-               <nuxeo-search-results fulltext={{fulltext}} hits={{hits}} suggestions={{suggestions}}></nuxeo-search-results>
-         </div>
+        <div drawer>
+          <nuxeo-search-filter class="fixed"
+            fulltext={{fulltext}}
+            hits={{hits}}
+            suggestions={{suggestions}}></nuxeo-search-filter>
+        </div>
+        <div main>
+          <nuxeo-search-results fulltext={{fulltext}}
+            hits={{hits}}
+            suggestions={{suggestions}}></nuxeo-search-results>
+        </div>
       </paper-drawer-panel>
     </div>
   </template>
@@ -51,5 +57,6 @@ Example: <nuxeo-article-search></nuxeo-article-search>
         console.log("--nuxeo-search ready")
       }
     });
+
   </script>
 </dom-module>
