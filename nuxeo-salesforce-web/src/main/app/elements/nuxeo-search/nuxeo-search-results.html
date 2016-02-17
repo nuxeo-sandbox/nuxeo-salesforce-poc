@@ -15,39 +15,42 @@ Lesser General Public License for more details.
   <template>
     <style is="custom-style">
 
+
     </style>
     <div>
-          <nuxeo-fulltext-suggester text={{fulltext}} suggestions={{suggestions}}></nuxeo-fulltext-suggester>
+      <nuxeo-fulltext-suggester text={{fulltext}}
+        suggestions={{suggestions}}></nuxeo-fulltext-suggester>
     </div>
     <div>
       <nuxeo-search-listing document-list=[[hits.hits]]></nuxeo-search-listing>
     </div>
-    </template>
-    <script>
-      Polymer({
-        is: 'nuxeo-search-results',
+  </template>
+  <script>
+    Polymer({
+      is: 'nuxeo-search-results',
 
-        // Expose properties
-        properties: {
-          fulltext: {
-            type: String,
-            notify: true
-          },
-          hits: {
-            type: Object,
-            notify: true
-          },
-          suggestions: {
-            type: Object,
-            notify: true
-          }
+      // Expose properties
+      properties: {
+        fulltext: {
+          type: String,
+          notify: true
         },
-
-        ready: function() {
-          //When component is ready.
-          //console.log("--search result ready")
+        hits: {
+          type: Object,
+          notify: true
+        },
+        suggestions: {
+          type: Object,
+          notify: true
         }
-      });
-    </script>
+      },
 
-  </dom-module>
+      ready: function() {
+        //When component is ready.
+        //console.log("--search result ready")
+      }
+    });
+
+  </script>
+
+</dom-module>
