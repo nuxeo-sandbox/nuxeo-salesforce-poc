@@ -23,29 +23,53 @@ Example: <nuxeo-article-search></nuxeo-article-search>
 -->
 <dom-module id="nuxeo-search">
   <template>
-    <style is="custom-style">
-      .search_main {
-        display: flex;
-        flex-direction: row;
+    <style>
+      :host {
+        display: block;
+        --paper-icon-button: {
+          color: var(--accent-color);
+        }
+        --paper-icon-button-ink-color: var(--placeholder-text-color);
+      }
+
+      .mainToolBar {
+        --paper-toolbar-background: var(--dark-primary-color);
+        --paper-toolbar-title: {
+          margin-left: 10px;
+        }
       }
 
     </style>
-    <div class="search_main">
-      <paper-drawer-panel>
-        <div drawer>
-          <nuxeo-search-filter class="fixed"
-            fulltext={{fulltext}}
-            hits={{hits}}
-            suggestions={{suggestions}}></nuxeo-search-filter>
-        </div>
-        <div main>
-          <nuxeo-search-results fulltext={{fulltext}}
-            hits={{hits}}
-            suggestions={{suggestions}}></nuxeo-search-results>
-        </div>
-      </paper-drawer-panel>
-    </div>
+
+    <paper-header-panel mode="waterfall">
+      <paper-toolbar class="mainToolBar">
+        <a href="/nuxeo"
+          target="_blank">
+          <paper-icon-button src="[[_iconForApp()]]"
+            title="Nuxeo"></paper-icon-button>
+        </a>
+        <span class="title">This is the long title so I can see it.</span>
+      </paper-toolbar>
+
+      <div class="search_main">
+        <paper-drawer-panel>
+          <div drawer>
+            <nuxeo-search-filter class="fixed"
+              fulltext={{fulltext}}
+              hits={{hits}}
+              suggestions={{suggestions}}></nuxeo-search-filter>
+          </div>
+          <div main>
+            <nuxeo-search-results fulltext={{fulltext}}
+              hits={{hits}}
+              suggestions={{suggestions}}></nuxeo-search-results>
+          </div>
+        </paper-drawer-panel>
+      </div>
+    </paper-header-panel>
+
   </template>
+
   <script>
     Polymer({
       is: 'nuxeo-search',
@@ -55,7 +79,13 @@ Example: <nuxeo-article-search></nuxeo-article-search>
       ready: function() {
         //When component is ready.
         console.log("--nuxeo-search ready")
+      },
+
+      _iconForApp: function() {
+        /* TODO: figure out how to load this icon from app-theme.html */
+        return "images/aws_icon_24.png";
       }
+
     });
 
   </script>
