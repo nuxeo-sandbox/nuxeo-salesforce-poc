@@ -21,18 +21,18 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
 
 <dom-module id="nuxeo-fulltext-suggester">
 
-  <style>
-    paper-card {
-      --paper-card-header-text: {
-        font-size: 16px;
-        padding: 5px;
-      }
-      ;
-    }
-
-  </style>
-
   <template>
+
+    <style>
+      paper-card {
+        --paper-card-header-text: {
+          font-size: 16px;
+          padding: 5px;
+        }
+        ;
+      }
+
+    </style>
 
     <template is="dom-if"
       if="[[display_suggestion]]">
