@@ -13,21 +13,41 @@ Lesser General Public License for more details.
 -->
 <dom-module id="nuxeo-search-results">
 
-  <style is="custom-style">
-
-
-  </style>
-
   <template>
 
-    <div>
+    <style>
+      .mainContainer {
+        display: flex;
+        flex-direction: column;
+      }
+
+      nuxeo-fulltext-suggester {
+        margin-top: 10px;
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+
+      nuxeo-fulltext-suggester::content > paper-card {
+        width: 100%;
+      }
+
+      nuxeo-search-listing {
+        margin-top: 10px;
+        margin-left: 15px;
+        position: relative;
+        height: 900px;
+      }
+
+    </style>
+
+    <div class="mainContainer">
       <nuxeo-fulltext-suggester text={{fulltext}}
         suggestions={{suggestions}}></nuxeo-fulltext-suggester>
-    </div>
-    <div>
       <nuxeo-search-listing document-list=[[hits.hits]]></nuxeo-search-listing>
     </div>
+
   </template>
+
   <script>
     Polymer({
       is: 'nuxeo-search-results',
