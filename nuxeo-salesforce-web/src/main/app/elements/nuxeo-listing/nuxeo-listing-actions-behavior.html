@@ -78,11 +78,13 @@ Behavior to manage the "actions" for a document.
     },
 
     _downloadURL: function(doc) {
-      if (doc && doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
-        return doc.properties["file:content"].data;
-      } else {
-        if (doc.contextParameters !== undefined) {
-          return doc.contextParameters.documentURL;
+      if (doc) {
+        if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
+          return doc.properties["file:content"].data;
+        } else {
+          if (doc.contextParameters !== undefined) {
+            return doc.contextParameters.documentURL;
+          }
         }
       }
     },
