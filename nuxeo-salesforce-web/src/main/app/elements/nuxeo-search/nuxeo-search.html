@@ -22,24 +22,63 @@ Example: <nuxeo-article-search></nuxeo-article-search>
 @demo app/index.html
 -->
 <dom-module id="nuxeo-search">
-  <template>
-    <style is="custom-style">
-      .search_main {
-         display: flex;
-         flex-direction: row;
+  <style>
+    :host {
+      display: block;
+      --paper-icon-button: {
+        color: var(--accent-color);
       }
-    </style>
-    <div class="search_main">
-      <paper-drawer-panel>
-         <div drawer>
-               <nuxeo-search-filter class="fixed" fulltext={{fulltext}} hits={{hits}} suggestions={{suggestions}}></nuxeo-search-filter>
-         </div>
-         <div main>
-               <nuxeo-search-results fulltext={{fulltext}} hits={{hits}} suggestions={{suggestions}}></nuxeo-search-results>
-         </div>
-      </paper-drawer-panel>
+      --paper-icon-button-ink-color: var(--placeholder-text-color);
+    }
+
+    .mainToolBar {
+      --paper-toolbar-background: var(--dark-primary-color);
+      --paper-toolbar-title: {
+        margin-left: 10px;
+        line-height: inherit;
+      }
+    }
+
+    .mustHaveHeight {
+      /* A height is required in order for a paper-header-panel to display content.
+         See: https://elements.polymer-project.org/elements/paper-header-panel */
+      height: 900px;
+    }
+
+  </style>
+
+  <template>
+
+    <div class="mustHaveHeight">
+
+      <paper-header-panel mode="waterfall">
+
+        <paper-toolbar class="mainToolBar">
+          <a href="/nuxeo"
+            target="_blank">
+            <paper-icon-button src="[[_iconForApp()]]"
+              title="Nuxeo"></paper-icon-button>
+          </a>
+          <div class="title">AWS Knowledge Search</div>
+        </paper-toolbar>
+
+        <paper-drawer-panel>
+          <nuxeo-search-filter drawer
+            fulltext={{fulltext}}
+            hits={{hits}}
+            suggestions={{suggestions}}></nuxeo-search-filter>
+          <nuxeo-search-results main
+            fulltext={{fulltext}}
+            hits={{hits}}
+            suggestions={{suggestions}}></nuxeo-search-results>
+        </paper-drawer-panel>
+
+      </paper-header-panel>
+
     </div>
+
   </template>
+
   <script>
     Polymer({
       is: 'nuxeo-search',
@@ -49,7 +88,14 @@ Example: <nuxeo-article-search></nuxeo-article-search>
       ready: function() {
         //When component is ready.
         console.log("--nuxeo-search ready")
+      },
+
+      _iconForApp: function() {
+        /* TODO: figure out how to load this icon from app-theme.html */
+        return "images/aws_icon_24.png";
       }
+
     });
+
   </script>
 </dom-module>

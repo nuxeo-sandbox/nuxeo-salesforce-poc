@@ -25,15 +25,15 @@ Behavior to manage the "actions" for a document.
 
   Nuxeo.NuxeoListingActionsBehavior = {
 
-    _previewSupported: function (doc) {
-      if (doc.facets.indexOf("Video") > -1) {
+    _previewSupported: function(doc) {
+      if (doc && doc.facets.indexOf("Video") > -1) {
         return false;
       }
       return true;
     },
 
-    _previewUrl: function (doc) {
-      if (doc.contextParameters !== undefined) {
+    _previewUrl: function(doc) {
+      if (doc && doc.contextParameters !== undefined) {
         /* Note that doc.contextParameters.preview is the old previewer. My
            assumption is that if the document can use the old previwer, it
            can also use the new one. */
@@ -60,33 +60,36 @@ Behavior to manage the "actions" for a document.
       }
     },
 
-    _isLock: function (doc) {
-      return doc.lockOwner !== undefined;
+    _isLock: function(doc) {
+      if (doc)
+        return doc.lockOwner !== undefined;
     },
 
-    _docEditURL: function (doc) {
+    _docEditURL: function(doc) {
       if (doc && doc.contextParameters !== undefined) {
         return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
       }
     },
 
-    _driveEdit: function (doc) {
-      if (doc.contextParameters !== undefined) {
+    _driveEdit: function(doc) {
+      if (doc && doc.contextParameters !== undefined) {
         return doc.contextParameters.driveEditURL;
       }
     },
 
-    _downloadURL: function (doc) {
-      if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
-        return doc.properties["file:content"].data;
-      } else {
-        if (doc.contextParameters !== undefined) {
-          return doc.contextParameters.documentURL;
+    _downloadURL: function(doc) {
+      if (doc) {
+        if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
+          return doc.properties["file:content"].data;
+        } else {
+          if (doc.contextParameters !== undefined) {
+            return doc.contextParameters.documentURL;
+          }
         }
       }
     },
 
-    _isTemplate: function (doc) {
+    _isTemplate: function(doc) {
       if (doc) {
         if (doc.type == "TemplateSource") {
           return true;
@@ -96,4 +99,5 @@ Behavior to manage the "actions" for a document.
     }
 
   };
+
 </script>

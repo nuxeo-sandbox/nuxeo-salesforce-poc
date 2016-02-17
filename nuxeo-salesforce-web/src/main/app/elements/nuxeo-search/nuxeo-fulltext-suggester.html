@@ -20,82 +20,88 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
 -->
 
 <dom-module id="nuxeo-fulltext-suggester">
-	<template>
-		<style is="custom-style">
-			.sidecard{
-				width: 85%;
-				margin:1%;
-				color:#19204B;
-			}
 
-			.suggestion {
-				text-decoration: none;
-				font-weight: bold;
-				font-size: 130%;
-				padding: 1%;
-			}
-		</style>
-		<template is="dom-if" if="[[display_suggestion]]">
-			<paper-card class="sidecard"><div class="suggestion">Do you mean [[suggestion]]?</div></paper-card>
-		</template>
-	</template>
-	<script>
-	Polymer({
-		is: 'nuxeo-fulltext-suggester',
-		// Expose properties
-		properties: {
-			text : {
-				type: String,
-				notify: true
-			},
-			suggestions : {
-				type: Object,
-				notify: true
-			},
-			suggestion : {
-				type: String,
-				notify: true
-			},
-			display_suggestion : { // jshint ignore:line
-				type: Boolean,
-				value: false
-			}
-		},
+  <template>
 
-		ready: function() {
-			//When component is ready.
-			console.log('--fulltext suggester ready');
-		},
+    <style>
+      paper-card {
+        --paper-card-header-text: {
+          font-size: 16px;
+          padding: 5px;
+        }
+        ;
+      }
 
-		observers: [
-			// update the suggestion
-			'updateSuggestion(suggestions)'
-		],
+    </style>
 
-		listeners: {
-	             'tap': 'handleTap',
-	      },
+    <template is="dom-if"
+      if="[[display_suggestion]]">
+      <paper-card heading="Did you mean [[suggestion]]?">
+      </paper-card>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'nuxeo-fulltext-suggester',
+
+      // Expose properties
+      properties: {
+        text: {
+          type: String,
+          notify: true
+        },
+        suggestions: {
+          type: Object,
+          notify: true
+        },
+        suggestion: {
+          type: String,
+          notify: true
+        },
+        display_suggestion: { // jshint ignore:line
+          type: Boolean,
+          value: false
+        }
+      },
+
+      ready: function() {
+        //When component is ready.
+        console.log('--fulltext suggester ready');
+      },
+
+      observers: [
+        // update the suggestion
+        'updateSuggestion(suggestions)'
+      ],
+
+      listeners: {
+        'tap': 'handleTap',
+      },
 
 
-		handleTap: function() {
-			this.text = this.suggestion;
-		},
+      handleTap: function() {
+        this.text = this.suggestion;
+      },
 
-		updateSuggestion: function() {
-			this.display_suggestion = false; // jshint ignore:line
-			this.suggestion = '';
-			var array = this.suggestions.my_phrase_suggest; // jshint ignore:line
-			if (array === undefined) {
-				return;
-      	} else {
-				var options = array[0].options;
-				var option = options[0];
-				if (option !== undefined) {
-					this.suggestion += ' '+option.text;
-					this.display_suggestion = true; // jshint ignore:line
-				}
-			}
-		}
-	});
-	</script>
+      updateSuggestion: function() {
+        this.display_suggestion = false; // jshint ignore:line
+        this.suggestion = '';
+        var array = this.suggestions.my_phrase_suggest; // jshint ignore:line
+        if (array === undefined) {
+          return;
+        } else {
+          var options = array[0].options;
+          var option = options[0];
+          if (option !== undefined) {
+            this.suggestion += ' ' + option.text;
+            this.display_suggestion = true; // jshint ignore:line
+          }
+        }
+      }
+    });
+
+  </script>
 </dom-module>

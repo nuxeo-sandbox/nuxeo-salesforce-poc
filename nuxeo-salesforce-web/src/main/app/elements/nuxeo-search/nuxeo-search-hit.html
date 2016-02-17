@@ -17,162 +17,191 @@ limitations under the License.
 Contributors:
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
-<link rel="import" href="../nuxeo-listing/nuxeo-listing-actions-behavior.html">
+<link rel="import"
+  href="../nuxeo-listing/nuxeo-listing-actions-behavior.html">
 <!--
 An element to display a list of Nuxeo documents.
 
 Requires <nuxeo-connection> in order to get icons.
 -->
 <dom-module id="nuxeo-search-hit">
-  <style>
-    @media (max-width: 600px) {
-      h1.paper-font-display1 {
-        font-size: 24px;
-      }
-    }
-
-    .iconWithText {
-      padding-right: 5px;
-      vertical-align: text-top;
-    }
-
-    .listIconBox {
-      padding: 4px;
-      --iron-icon-width: 20px;
-      --iron-icon-height: 20px;
-    }
-
-    paper-card {
-      padding: 1%;
-    }
-
-    paper-icon-button {
-      padding: 4px;
-      width: 28px;
-      height: 28px;
-    }
-
-    .horizontal {
-      @apply(--layout-horizontal);
-    }
-
-    .justified {
-      @apply(--layout-justified);
-    }
-
-    .docContainer {
-      display: table;
-    }
-
-    .docTitleContainer {
-      display: table-cell;
-      vertical-align: middle;
-    }
-
-    .docPills {
-      display: block;
-      vertical-align: middle;
-    }
-
-    .docPillsInner {
-      display: flex;
-    }
-
-    .docTitle {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 600px;
-      white-space: nowrap;
-    }
-
-    .documentPills {
-      border-radius: 0.3em;
-      padding: 0.3em 0.5em;
-      margin: 0.5%;
-      display: inline-flex;
-      font-size: 80%;
-    }
-
-    .documentIndustry {
-      color: #fff;
-      background: #059EBD;
-    }
-
-    .documentStage {
-      color: #fff;
-      background: #7C7C7C;
-    }
-
-    .documentHighlightContainer {
-     background: #f1f1f1;
-     padding: 0.5em;
-     margin-bottom: 5px;
-     border-radius: 0.3em;
-    }
-
-    .documentHighlight {
-     font-style: italic;
-     font-size: smaller;
-     line-height: 2.5ex;
-     height: 4.4ex;
-     color: black;
-     overflow: hidden;
-    }
-
-  </style>
 
   <template>
-    <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-resource auto path="/id/[[docEs._id]]" response="{{doc}}" schemas="sales" enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
 
-    <paper-card>
-      <div class="card-content">
-         <div class="docContainer">
-            <iron-icon src="[[_iconFor(doc)]]" class="listIconBox iconWithText"></iron-icon>
-            <div class="docTitleContainer">
-             <div class="docTitle">[[doc.title]]</div>
-            </div>
-            <template is="dom-if" if="[[_isNotFolder(doc)]]">
-              <div class="card-actions horizontal">
-                <template is="dom-if" if="[[_previewSupported(doc)]]">
-                  <a href="[[_previewUrl(doc)]]" target="_blank">
-                    <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
-                  </a>
-                </template>
-                <a href="[[_downloadURL(doc)]]" target="_blank">
-                  <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
-                </a>
-                <a href="[[_docEditURL(doc)]]" target="_blank">
-                  <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
-                </a>
-                <a href="[[_driveEdit(doc)]]">
-                  <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
-                </a>
-                <template is="dom-if" if="[[_isLock(doc)]]">
-                  <paper-icon-button icon="lock"></paper-icon-button>
-                </template>
-              </div>
-            </template>
-         </div>
-        <div class="docPills">
-           <div class="docPillsInner">
-             <template is="dom-repeat" items="[[doc.properties.sales:industry]]">
-                <div class="documentPills documentIndustry">[[item]]</div>
-             </template>
-             <template is="dom-repeat" items="[[doc.properties.sales:stage]]">
-                <div class="documentPills documentStage">[[item]]</div>
-             </template>
-           </div>
+    <style>
+      paper-material {
+        padding: 10px;
+      }
+
+      .titleBar {
+        display: table;
+        margin-bottom: 5px;
+      }
+
+      .titleIconContainer {
+        display: table-cell;
+        vertical-align: middle;
+      }
+
+      .titleIcon {
+        padding-right: 5px;
+        --iron-icon-width: 20px;
+        --iron-icon-height: 20px;
+      }
+
+      .titleIconContainer {
+        display: table-cell;
+        vertical-align: middle;
+      }
+
+      .titleWrapper {
+        /* This is so that I can get dynamic support for the overflow/elipsis. */
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+        height: 100%;
+      }
+
+      .title {
+        display: table-cell;
+        vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 5px;
+      }
+
+      .actionsContainer {
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .actionsWrapper {
+        display: inline-flex;
+      }
+
+      paper-icon-button {
+        padding: 4px;
+        width: 28px;
+        height: 28px;
+      }
+
+      .documentPills {
+        display: inline-flex;
+      }
+
+      .documentPill {
+        border-radius: 5px;
+        padding: 5px;
+        margin-right: 5px;
+        font-size: 80%;
+        font-weight: bold;
+      }
+
+      .documentIndustry {
+        color: var(--secondary-text-color);
+        background: #059EBD;
+      }
+
+      .documentStage {
+        color: var(--secondary-text-color);
+        background: #7C7C7C;
+      }
+
+      .documentHighlightContainer {
+        padding: 5px;
+        margin-bottom: 5px;
+      }
+
+      .documentHighlight {
+        font-style: italic;
+        font-size: smaller;
+        line-height: 2.5ex;
+        height: 4.4ex;
+        overflow: hidden;
+      }
+
+    </style>
+
+    <nuxeo-connection id="nx"></nuxeo-connection>
+
+    <nuxeo-resource auto
+      path="/id/[[docEs._id]]"
+      response="{{doc}}"
+      schemas="sales"
+      enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
+
+    <paper-material>
+
+      <div class="titleBar">
+        <div class="titleIconContainer">
+          <iron-icon src="[[_iconFor(doc)]]"
+            class="titleIcon"></iron-icon>
         </div>
-        <template is="dom-if" if="{{docEs.highlight}}">
-             <div class="documentHighlightContainer">
-                <div class="documentHighlight">
-                 <html-echo html-to-inject="[[_getHighlightedText(docEs.highlight)]]"></html-echo>
-                </div>
-             </div>
-      </template>
+        <div class="titleIconContainer">
+          <div class="titleWrapper">
+            <div class="title">[[doc.title]]</div>
+          </div>
+        </div>
+
+          <div class="actionsContainer">
+            <div class="actionsWrapper">
+              <template is="dom-if"
+                if="[[_previewSupported(doc)]]">
+                <a href="[[_previewUrl(doc)]]"
+                  target="_blank">
+                  <paper-icon-button icon="visibility"
+                    title="Full Preview"></paper-icon-button>
+                </a>
+              </template>
+              <a href="[[_downloadURL(doc)]]"
+                target="_blank">
+                <paper-icon-button icon="file-download"
+                  title="Download"></paper-icon-button>
+              </a>
+              <a href="[[_docEditURL(doc)]]"
+                target="_blank">
+                <paper-icon-button icon="assignment"
+                  title="Edit Metadata"></paper-icon-button>
+              </a>
+              <a href="[[_driveEdit(doc)]]">
+                <paper-icon-button icon="create"
+                  title="Edit Document"></paper-icon-button>
+              </a>
+              <template is="dom-if"
+                if="[[_isLock(doc)]]">
+                <paper-icon-button icon="lock"></paper-icon-button>
+              </template>
+            </div>
+          </div>
       </div>
-    </paper-card>
+
+      <template is="dom-if"
+        if="{{docEs.highlight}}">
+        <div class="documentHighlightContainer">
+          <div class="documentHighlight">
+            <html-echo html-to-inject="[[_getHighlightedText(docEs.highlight)]]"></html-echo>
+          </div>
+        </div>
+      </template>
+
+      <template is="dom-if"
+        if="[[_docHasPills(doc)]]">
+        <div class="documentPills">
+          <template is="dom-repeat"
+            items="[[doc.properties.sales:industry]]">
+            <div class="documentPill documentIndustry">[[item]]</div>
+          </template>
+          <template is="dom-repeat"
+            items="[[doc.properties.sales:stage]]">
+            <div class="documentPill documentStage">[[item]]</div>
+          </template>
+        </div>
+      </template>
+
+    </paper-material>
+
   </template>
 
   <script>
@@ -198,24 +227,28 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isNotFolder: function(doc) {
-        if (doc && doc.facets) {
-          if ((doc.facets.indexOf("Folderish") < 0) && (doc.facets.indexOf("Collection") < 0)) {
-            return true;
+
+
+      _getHighlightedText: function(highlightObject) {
+        if (highlightObject !== undefined) {
+          if (highlightObject['ecm:binarytext'] !== undefined && highlightObject['ecm:binarytext'].length > 0) {
+            return highlightObject['ecm:binarytext'][0];
           }
         }
-        return false;
-     },
+        return '<p>No Text Highlight</p>';
+      },
 
-     _getHighlightedText: function (highlightObject) {
-          if (highlightObject !== undefined) {
-            if (highlightObject['ecm:binarytext'] !== undefined && highlightObject['ecm:binarytext'].length > 0) {
-              return highlightObject['ecm:binarytext'][0];
-            }
-          }
-          return '<p>No Text Highlight</p>';
-       },
+      _docHasPills: function(doc) {
+        if (doc && doc.properties && doc.properties["sales:industry"] && doc.properties["sales:industry"] != "") {
+          return true;
+        }
+        if (doc && doc.properties && doc.properties["sales:stage"] && doc.properties["sales:stage"] != "") {
+          return true;
+        }
+        return false;
+      }
 
     });
+
   </script>
 </dom-module>
