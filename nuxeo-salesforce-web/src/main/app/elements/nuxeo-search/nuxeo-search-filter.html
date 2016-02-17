@@ -25,17 +25,35 @@ Lesser General Public License for more details.
         margin-top: 1em;
         margin-bottom: 0.5em;
       }
+
     </style>
 
-    <paper-input id="searchFullTextInput" label="Full Text Search" class="filterItem" value="{{fulltext}}"></paper-input>
+    <paper-input id="searchFullTextInput"
+      label="Full Text Search"
+      class="filterItem"
+      value="{{fulltext}}"></paper-input>
 
     <div class="filterItem">
       <div class="filterItemLabel">Industry</div>
-      <nuxeo-checkbox-aggregation name='industry_agg' aggregations='[[aggregations]]' value="{{industryAgg}}"></nuxeo-checkbox-aggregation>
+      <nuxeo-checkbox-aggregation name='industry_agg'
+        aggregations='[[aggregations]]'
+        value="{{industryAgg}}"></nuxeo-checkbox-aggregation>
       <div class="filterItemLabel">Sales Stage</div>
-      <nuxeo-checkbox-aggregation name='stage_agg' aggregations='[[aggregations]]' value="{{stageAgg}}"></nuxeo-checkbox-aggregation>
+      <nuxeo-checkbox-aggregation name='stage_agg'
+        aggregations='[[aggregations]]'
+        value="{{stageAgg}}"></nuxeo-checkbox-aggregation>
     </div>
-    <nuxeo-es-search id='DocumentProvider' fields=[[fields]] query=[[query]] size="20" highlight=[[highlight]] post_filter=[[post_filter]] aggregates=[[aggregates]] hits={{hits}} aggregations={{aggregations}} suggest=[[suggest]] suggestions={{suggestions}}></nuxeo-es-search>
+    <nuxeo-es-search id='DocumentProvider'
+      fields=[[fields]]
+      query=[[query]]
+      size="20"
+      highlight=[[highlight]]
+      post_filter=[[post_filter]]
+      aggregates=[[aggregates]]
+      hits={{hits}}
+      aggregations={{aggregations}}
+      suggest=[[suggest]]
+      suggestions={{suggestions}}></nuxeo-es-search>
 
   </template>
 
@@ -112,28 +130,28 @@ Lesser General Public License for more details.
           };
         } else {
           fulltextQuery = {
-             bool: {
-               must: [{
-                 match: {
-                   _all: {
-                     query: this.fulltext,
-                     operator: "OR",
-                     analyzer: "fulltext",
-                     fuzziness: "AUTO"
-                   }
-                 }
-               }],
-               should: [{
-                 match: {
-                   _all: {
-                     query: this.fulltext,
-                     type: "phrase",
-                     slop: 3,
-                     analyzer: "fulltext"
-                   }
-                 }
-               }]
-             }
+            bool: {
+              must: [{
+                match: {
+                  _all: {
+                    query: this.fulltext,
+                    operator: "OR",
+                    analyzer: "fulltext",
+                    fuzziness: "AUTO"
+                  }
+                }
+              }],
+              should: [{
+                match: {
+                  _all: {
+                    query: this.fulltext,
+                    type: "phrase",
+                    slop: 3,
+                    analyzer: "fulltext"
+                  }
+                }
+              }]
+            }
           };
         }
 
@@ -150,17 +168,18 @@ Lesser General Public License for more details.
                       }
                     }, {
                       term: {
-                        "ecm:primaryType": "File"                      }
+                        "ecm:primaryType": "File"
+                      }
                     }],
                     must_not: [{
                       term: {
                         "ecm:mixinType": "HiddenInNavigation"
                       }
-                   },{
-                    term: {
-                       "ecm:currentLifeCycleState": "deleted"
-                    }
-                   }]
+                    }, {
+                      term: {
+                        "ecm:currentLifeCycleState": "deleted"
+                      }
+                    }]
                   }
                 }
               }
@@ -270,35 +289,38 @@ Lesser General Public License for more details.
               field: '_all',
               analyzer: 'fulltext'
             }
-         },
-          my_phrase_suggest : {
-            text : this.fulltext,
-              phrase : {
-                field : "suggestions",
-                size : 1,
-                real_word_error_likelihood : 0.95,
-                max_errors : 3,
-                collate: {
-                   query: {
-                      match : {
-                        _all : {
-                              query : "{{suggestion}}",
-                              operator: "AND",
-                           }
-                        }
-                     },
-                    params: {field_name : "suggestions"},
-                    prune: false
+          },
+          my_phrase_suggest: {
+            text: this.fulltext,
+            phrase: {
+              field: "suggestions",
+              size: 1,
+              real_word_error_likelihood: 0.95,
+              max_errors: 3,
+              collate: {
+                query: {
+                  match: {
+                    _all: {
+                      query: "{{suggestion}}",
+                      operator: "AND",
+                    }
                   }
-               }
+                },
+                params: {
+                  field_name: "suggestions"
+                },
+                prune: false
+              }
             }
+          }
         };
 
         this.debounce('autoQuery', function() {
           this.$.DocumentProvider.execute();
-       }.bind(this), 500);
+        }.bind(this), 500);
 
-       }
+      }
     });
+
   </script>
 </dom-module>
