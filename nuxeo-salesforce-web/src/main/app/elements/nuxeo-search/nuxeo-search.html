@@ -22,51 +22,60 @@ Example: <nuxeo-article-search></nuxeo-article-search>
 @demo app/index.html
 -->
 <dom-module id="nuxeo-search">
+  <style>
+    :host {
+      display: block;
+      --paper-icon-button: {
+        color: var(--accent-color);
+      }
+      --paper-icon-button-ink-color: var(--placeholder-text-color);
+    }
+
+    .mainToolBar {
+      --paper-toolbar-background: var(--dark-primary-color);
+      --paper-toolbar-title: {
+        margin-left: 10px;
+        line-height: inherit;
+      }
+    }
+
+    .mustHaveHeight {
+      /* A height is required in order for a paper-header-panel to display content.
+         See: https://elements.polymer-project.org/elements/paper-header-panel */
+      height: 900px;
+    }
+
+  </style>
+
   <template>
-    <style>
-      :host {
-        display: block;
-        --paper-icon-button: {
-          color: var(--accent-color);
-        }
-        --paper-icon-button-ink-color: var(--placeholder-text-color);
-      }
 
-      .mainToolBar {
-        --paper-toolbar-background: var(--dark-primary-color);
-        --paper-toolbar-title: {
-          margin-left: 10px;
-        }
-      }
+    <div class="mustHaveHeight">
 
-    </style>
+      <paper-header-panel mode="waterfall">
 
-    <paper-header-panel mode="waterfall">
-      <paper-toolbar class="mainToolBar">
-        <a href="/nuxeo"
-          target="_blank">
-          <paper-icon-button src="[[_iconForApp()]]"
-            title="Nuxeo"></paper-icon-button>
-        </a>
-        <span class="title">This is the long title so I can see it.</span>
-      </paper-toolbar>
+        <paper-toolbar class="mainToolBar">
+          <a href="/nuxeo"
+            target="_blank">
+            <paper-icon-button src="[[_iconForApp()]]"
+              title="Nuxeo"></paper-icon-button>
+          </a>
+          <div class="title">AWS Knowledge Search</div>
+        </paper-toolbar>
 
-      <div class="search_main">
         <paper-drawer-panel>
-          <div drawer>
-            <nuxeo-search-filter class="fixed"
-              fulltext={{fulltext}}
-              hits={{hits}}
-              suggestions={{suggestions}}></nuxeo-search-filter>
-          </div>
-          <div main>
-            <nuxeo-search-results fulltext={{fulltext}}
-              hits={{hits}}
-              suggestions={{suggestions}}></nuxeo-search-results>
-          </div>
+          <nuxeo-search-filter drawer
+            fulltext={{fulltext}}
+            hits={{hits}}
+            suggestions={{suggestions}}></nuxeo-search-filter>
+          <nuxeo-search-results main
+            fulltext={{fulltext}}
+            hits={{hits}}
+            suggestions={{suggestions}}></nuxeo-search-results>
         </paper-drawer-panel>
-      </div>
-    </paper-header-panel>
+
+      </paper-header-panel>
+
+    </div>
 
   </template>
 
