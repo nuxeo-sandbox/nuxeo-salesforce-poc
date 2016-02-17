@@ -22,102 +22,120 @@ Contributors:
 Note: Elements that depend on a id use `sf` as default.
 @homepage http://www.nuxeo.org
 -->
-<dom-module id="nuxeo-salesforce-connection" assetpath="nuxeo-salesforce/">
+<dom-module id="nuxeo-salesforce-connection"
+  assetpath="nuxeo-salesforce/">
   <template>
     <style>
       :host {
         display: none;
       }
+
     </style>
   </template>
 </dom-module>
 <script>
-   Polymer({
-   is: 'nuxeo-salesforce-connection',
+  Polymer({
+    is: 'nuxeo-salesforce-connection',
 
-   ready: function () {
-     this._getCtx();
-   },
+    ready: function() {
+      this._getCtx();
+    },
 
-   properties: {
-     /* A unique identifier for this connection. */
-     id: {type: String, value: 'sf'},
+    properties: {
+      /* A unique identifier for this connection. */
+      id: {
+        type: String,
+        value: 'sf'
+      },
 
-     /* The SF client id. */
-     clientid: {type: String},
+      /* The SF client id. */
+      clientid: {
+        type: String
+      },
 
-     /* The Callback URL of the Nuxeo server for SF OAuth2. */
-     callback: {type: String},
+      /* The Callback URL of the Nuxeo server for SF OAuth2. */
+      callback: {
+        type: String
+      },
 
-     /* The Salesforce Object */
-     sfobject: {type: Object, notify: true}
-   },
+      /* The Salesforce Object */
+      sfobject: {
+        type: Object,
+        notify: true
+      }
+    },
 
-   observers: [
-     '_getCtx(clientid, callback)'
-   ],
+    observers: [
+      '_getCtx(clientid, callback)'
+    ],
 
-   _getCtx: function () {
-     var isLogging = Sfdc.canvas.oauth.loggedin();
-     var isLogged = !!sessionStorage.getItem("isLogged");
-     if (isLogging || isLogged) {
-       if (isLogging) {
-         sessionStorage.setItem("client", JSON.stringify(Sfdc.canvas.oauth.client()));
-         sessionStorage.setItem("isLogged", true);
-       }
-       var callback = this._callbackCtx.bind(this);
-       Sfdc.canvas.client.ctx(callback, JSON.parse(sessionStorage.getItem("client")));
-     } else if (this.clientid && this.callback) {
-       var uri = Sfdc.canvas.oauth.loginUrl();
-       Sfdc.canvas.oauth.login({
-         uri: uri,
-         params: {
-           response_type: "token",
-           client_id: this.clientid,
-           redirect_uri: encodeURIComponent(this.callback)
-         }
-       });
-     }
-   },
+    _getCtx: function() {
+      var isLogging = Sfdc.canvas.oauth.loggedin();
+      var isLogged = !!sessionStorage.getItem("isLogged");
+      if (isLogging || isLogged) {
+        if (isLogging) {
+          sessionStorage.setItem("client", JSON.stringify(Sfdc.canvas.oauth.client()));
+          sessionStorage.setItem("isLogged", true);
+        }
+        var callback = this._callbackCtx.bind(this);
+        Sfdc.canvas.client.ctx(callback, JSON.parse(sessionStorage.getItem("client")));
+      } else if (this.clientid && this.callback) {
+        var uri = Sfdc.canvas.oauth.loginUrl();
+        Sfdc.canvas.oauth.login({
+          uri: uri,
+          params: {
+            response_type: "token",
+            client_id: this.clientid,
+            redirect_uri: encodeURIComponent(this.callback)
+          }
+        });
+      }
+    },
 
-   _callbackCtx: function (ctx) {
-     if(!ctx.payload.environment){
-       if(ctx.payload[0].errorCode === "INVALID_SESSION_ID"){
-         var uri = Sfdc.canvas.oauth.loginUrl();
-         Sfdc.canvas.oauth.login({
-           uri: uri,
-           params: {
-             response_type: "token",
-             client_id: this.clientid,
-             redirect_uri: encodeURIComponent(this.callback)
-           }
-         });
-       }
-       console.log("Salesforce Error: " + ctx.payload[0].errorCode);
-     }
-     var opId = ctx.payload.environment.record.Id;
-     if (!opId) {
-       this.sfobject = null;
-       return;
-     }
-     var sobjectUrl = ctx.payload.links.sobjectUrl;
-     var sfObject = ctx.payload.environment.record.attributes.type;
-     sobjectUrl = sobjectUrl + sfObject + "/" + opId;
-     var callbackOp = this._callbackSFObject.bind(this);
-     var settings = {
-       client: JSON.parse(sessionStorage.getItem("client")),
-       method: 'GET',
-       async: true,
-       contentType: "application/json",
-       success: callbackOp
-     }
-     Sfdc.canvas.client.ajax(sobjectUrl, settings);
-   },
+    _callbackCtx: function(ctx) {
+      if (!ctx.payload.environment) {
+        if (ctx.payload[0].errorCode === "INVALID_SESSION_ID") {
+          var uri = Sfdc.canvas.oauth.loginUrl();
+          Sfdc.canvas.oauth.login({
+            uri: uri,
+            params: {
+              response_type: "token",
+              client_id: this.clientid,
+              redirect_uri: encodeURIComponent(this.callback)
+            }
+          });
+        }
+        console.log("Salesforce Error: " + ctx.payload[0].errorCode);
+      }
+      var opId = ctx.payload.environment.record.Id;
+      if (!opId) {
+        this.sfobject = null;
+        return;
+      }
+      var sobjectUrl = ctx.payload.links.sobjectUrl;
+      var sfObject = ctx.payload.environment.record.attributes.type;
+      sobjectUrl = sobjectUrl + sfObject + "/" + opId;
+      var callbackOp = this._callbackSFObject.bind(this);
+      var settings = {
+        client: JSON.parse(sessionStorage.getItem("client")),
+        method: 'GET',
+        async: true,
+        contentType: "application/json",
+        headers: {
+          "Authorization": "OAuth " + JSON.parse(sessionStorage.getItem("client")).oauthToken,
+          "Accept": "application/json",
+          "Cache-Control": "no-cache"
+        },
+        success: callbackOp
+      }
+      Sfdc.canvas.client.ajax(sobjectUrl, settings);
+    },
 
-   _callbackSFObject: function (response) {
-     if (!this.sfobject) {
-       this.sfobject = response.payload;
-     }
-   }
-   });
+    _callbackSFObject: function(response) {
+      if (!this.sfobject) {
+        this.sfobject = response.payload;
+      }
+    }
+  });
+
 </script>
