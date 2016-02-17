@@ -14,35 +14,44 @@ Lesser General Public License for more details.
 
 <dom-module id="nuxeo-search-filter">
 
+  <style is="custom-style">
+    .filterContainer {
+      margin-left: 10px;
+    }
+
+    .filterItemLabel {
+      margin-top: 10px;
+      margin-bottom: 8px;
+    }
+
+  </style>
+
   <template>
 
-    <style is="custom-style">
-      .filterItem {
-        margin-left: 0.5em;
-      }
+    <div class="filterContainer">
 
-      .filterItemLabel {
-        margin-top: 1em;
-        margin-bottom: 0.5em;
-      }
+      <paper-input id="searchFullTextInput"
+        type="search"
+        label="Full Text Search"
+        class="filterItem"
+        value="{{fulltext}}"></paper-input>
 
-    </style>
+      <template is="dom-if"
+        if="[[industryAgg]]">
+        <div class="filterItemLabel">Industry</div>
+        <nuxeo-checkbox-aggregation name='industry_agg'
+          aggregations='[[aggregations]]'
+          value="{{industryAgg}}"></nuxeo-checkbox-aggregation>
+      </template>
 
-    <paper-input id="searchFullTextInput"
-      type="search"
-      label="Full Text Search"
-      class="filterItem"
-      value="{{fulltext}}"></paper-input>
+      <template is="dom-if"
+        if="[[stageAgg]]">
+        <div class="filterItemLabel">Sales Stage</div>
+        <nuxeo-checkbox-aggregation name='stage_agg'
+          aggregations='[[aggregations]]'
+          value="{{stageAgg}}"></nuxeo-checkbox-aggregation>
+      </template>
 
-    <div class="filterItem">
-      <div class="filterItemLabel">Industry</div>
-      <nuxeo-checkbox-aggregation name='industry_agg'
-        aggregations='[[aggregations]]'
-        value="{{industryAgg}}"></nuxeo-checkbox-aggregation>
-      <div class="filterItemLabel">Sales Stage</div>
-      <nuxeo-checkbox-aggregation name='stage_agg'
-        aggregations='[[aggregations]]'
-        value="{{stageAgg}}"></nuxeo-checkbox-aggregation>
     </div>
 
     <nuxeo-es-search id='DocumentProvider'
@@ -61,7 +70,9 @@ Lesser General Public License for more details.
 
   <script>
     Polymer({
+
       is: 'nuxeo-search-filter',
+
       properties: {
         fulltext: {
           type: String,
