@@ -8,6 +8,7 @@
   <extension
           target="org.nuxeo.automation.scripting.internals.AutomationScriptingComponent"
           point="operation">
+
     <scriptedOperation id="javascript.FetchSFObject">
       <inputType>void</inputType>
       <outputType>void</outputType>
@@ -75,9 +76,10 @@
 }]]>
       </script>
     </scriptedOperation>
+
     <scriptedOperation id="javascript.SFGetChildren">
-      <inputType>document</inputType>
-      <outputType>documents</outputType>
+      <inputType>void</inputType>
+      <outputType>void</outputType>
       <category>javascript</category>
       <script>
         <![CDATA[function run(input, params) {
@@ -89,6 +91,7 @@
 }]]>
       </script>
     </scriptedOperation>
+
   </extension>
   <extension target="org.nuxeo.ecm.automation.server.AutomationServer"
              point="bindings">

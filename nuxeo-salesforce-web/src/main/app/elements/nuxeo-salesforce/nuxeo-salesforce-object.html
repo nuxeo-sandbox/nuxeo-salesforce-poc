@@ -22,7 +22,8 @@ Contributors:
 Note: Elements that depend on a id use `sf` as default.
 @homepage http://www.nuxeo.org
 -->
-<dom-module id="nuxeo-salesforce-object" assetpath="nuxeo-salesforce/">
+<dom-module id="nuxeo-salesforce-object"
+  assetpath="nuxeo-salesforce/">
   <template>
     <style>
       :host {
@@ -83,7 +84,7 @@ Note: Elements that depend on a id use `sf` as default.
       }
     },
 
-    observers: ['_getCtx(clientid, callback,objectId)'],
+    observers: ['_getCtx(clientid,callback,objectId)'],
 
     _getCtx: function() {
       var isLogging = Sfdc.canvas.oauth.loggedin();
@@ -135,6 +136,11 @@ Note: Elements that depend on a id use `sf` as default.
         method: 'GET',
         async: true,
         contentType: "application/json",
+        headers: {
+          "Authorization": "OAuth " + JSON.parse(sessionStorage.getItem("client")).oauthToken,
+          "Accept": "application/json",
+          "Cache-Control": "no-cache"
+        },
         success: callbackOp
       }
       Sfdc.canvas.client.ajax(sobjectUrl, settings);
@@ -146,4 +152,5 @@ Note: Elements that depend on a id use `sf` as default.
       }
     }
   });
+
 </script>
