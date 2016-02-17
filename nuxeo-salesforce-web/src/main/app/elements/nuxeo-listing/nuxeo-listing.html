@@ -153,6 +153,8 @@ Requires <nuxeo-connection> in order to get icons.
                   <a href="[[_driveEdit(item)]]">
                     <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
                   </a>
+                  <paper-icon-button icon="send" title="Send Document" onclick="emailDialog.open()"></paper-icon-button>
+                  <nuxeo-email-dialog id="emailDialog" doc=[[item]] modal></nuxeo-email-dialog>
                   <template is="dom-if" if="[[_isLock(item)]]">
                     <paper-icon-button icon="lock"></paper-icon-button>
                   </template>
