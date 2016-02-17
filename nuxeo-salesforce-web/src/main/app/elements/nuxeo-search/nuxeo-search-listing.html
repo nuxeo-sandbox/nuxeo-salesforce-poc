@@ -35,23 +35,22 @@ Requires <nuxeo-connection> in order to get icons.
       }
 
       nuxeo-search-hit {
-        margin: 5px;
-        margin-bottom: 10px;
-        display: inherit;
-        overflow: hidden;
-        @apply(--shadow-elevation-3dp);
+        padding: 5px;
+        display: block;
+      }
+
+      nuxeo-search-hit::content paper-material {
         border-color: #ffffff;
         border-style: solid;
         border-width: thin;
       }
 
-      nuxeo-search-hit[selected] {
-        font-weight: bold;
+      nuxeo-search-hit[selected]::content paper-material {
         border-color: var(--paper-card-selected-primary-color);
       }
 
-      nuxeo-search-hit::content > paper-card {
-        background: #ffffff;
+      nuxeo-search-hit[selected]::content paper-material .titleBar {
+        font-weight: bold;
       }
 
     </style>
@@ -77,10 +76,12 @@ Requires <nuxeo-connection> in order to get icons.
       </div>
 
     </paper-drawer-panel>
+
   </template>
 
   <script>
     Polymer({
+
       is: 'nuxeo-search-listing',
 
       properties: {
