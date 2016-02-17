@@ -64,18 +64,13 @@ An element to display a dialog for template rendering.
     <nuxeo-connection id="nx"></nuxeo-connection>
     <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
-    <nuxeo-salesforce-object id="sfa" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
-    <nuxeo-salesforce-object id="sfu" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
     <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
-    <nuxeo-operation id="render" op="Conversion.CreateSowOp" enrichers="preview, documentURL, driveEditURL" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-    <nuxeo-salesforce-post id="sfpost" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Task" sfobject="{{sftask}}"></nuxeo-salesforce-post>
-
     <template is="dom-if" if="[[_show_selection]]">
       <div class="titleContainer">
         <div class="verticalCenterAnything">Send Document</div>
       </div>
       <div class="content">
-         <form is="iron-form" id="formGet" method="get" action="/">
+         <form is="iron-form" id="formEmail">
              <paper-input name="subject" label="Subject" required></paper-input>
              <paper-dropdown-menu label="Recepient" name="recepient" required>
                 <paper-menu class="dropdown-content">
@@ -84,14 +79,14 @@ An element to display a dialog for template rendering.
                   </template>
                 </paper-menu>
              </paper-dropdown-menu>
-            <paper-input textarea input name="message" label="Message" ></paper-input>
-             <div>Attachment</div>
+            <paper-textarea name="message" label="Message"></paper-textarea>
+             <p>Attachment</p>
              <nuxeo-template-document doc=[[doc]]></nuxeo-template-document>
              <div>
                 <paper-button raised
-                    onclick="submitHandler(event)">Submit</paper-button>
+                    onclick="_send()">Submit</paper-button>
                 <paper-button raised
-                    onclick="resetHandler(event)">Reset</paper-button>
+                    onclick="_reset()">Reset</paper-button>
              </div>
            </form>
     </template>
@@ -187,7 +182,6 @@ An element to display a dialog for template rendering.
         if (this.sfopportunity === undefined)
           return;
         var id = this.sfopportunity.Id;
-
         //Get contacts
         {
           var query = "SELECT Role, Contact.Name, Contact.email, Contact.phone, " +
@@ -203,14 +197,6 @@ An element to display a dialog for template rendering.
         } else if (this._result !== undefined && this._result !== null) {
           this._show_spinner = false;
           this._show_result = true;
-          this.$.sfpost.data = {
-             WhatId: this.sfopportunity.Id,
-             Subject: "Statement of Work added to opportunity",
-             OwnerId: this.sfowner.Id,
-             TaskSubtype: "Task",
-             Status: "In Progress",
-             Priority: "High"
-          };
         }
       },
 
@@ -221,25 +207,8 @@ An element to display a dialog for template rendering.
         this._show_error = true;
       },
 
-      _render: function (e) {
-        var id = e.currentTarget.id;
-        this.$.render.input = id;
-
-        var checkedSections = [];
-        for (var i = 0; i < this.sections.length; i++) {
-          var section = this.sections[i];
-          if (section.checked)
-            checkedSections.push(section.name);
-        }
-
-        this.$.render.params = {
-          opportunity: (this.sfopportunity !== undefined ? this.sfopportunity : {}),
-          account: (this.sfaccount !== undefined ? this.sfaccount : {}),
-          owner: (this.sfowner !== undefined ? this.sfowner : {}),
-          contacts: (this.sfcontacts !== undefined ? this.sfcontacts : {}),
-          sections: checkedSections
-        };
-        this.$.render.execute();
+      _send: function (e) {
+         var form = document.getElementById('formEmail');
         this._show_spinner = true;
         this._show_selection = false;
       }
