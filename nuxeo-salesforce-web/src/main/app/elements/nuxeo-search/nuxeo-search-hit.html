@@ -29,15 +29,56 @@ Requires <nuxeo-connection> in order to get icons.
   <template>
 
     <style>
-      .iconWithText {
-        padding-right: 5px;
-        vertical-align: text-top;
+      paper-material {
+        padding: 10px;
       }
 
-      .listIconBox {
-        padding: 4px;
+      .titleBar {
+        display: table;
+        margin-bottom: 5px;
+      }
+
+      .titleIconContainer {
+        display: table-cell;
+        vertical-align: middle;
+      }
+
+      .titleIcon {
+        padding-right: 5px;
         --iron-icon-width: 20px;
         --iron-icon-height: 20px;
+      }
+
+      .titleIconContainer {
+        display: table-cell;
+        vertical-align: middle;
+      }
+
+      .titleWrapper {
+        /* This is so that I can get dynamic support for the overflow/elipsis. */
+        display: table;
+        table-layout: fixed;
+        width: 100%;
+        height: 100%;
+      }
+
+      .title {
+        display: table-cell;
+        vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 5px;
+      }
+
+      .actionsContainer {
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .actionsWrapper {
+        display: inline-flex;
       }
 
       paper-icon-button {
@@ -46,35 +87,8 @@ Requires <nuxeo-connection> in order to get icons.
         height: 28px;
       }
 
-      .horizontal {
-        @apply(--layout-horizontal);
-      }
-
-      .justified {
-        @apply(--layout-justified);
-      }
-
-      .docContainer {
-        display: table;
-        margin-bottom: 5px;
-      }
-
-      .docTitleContainer {
-        display: table-cell;
-        vertical-align: middle;
-      }
-
-      .docTitle {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-        white-space: nowrap;
-      }
-
       .documentPills {
         display: inline-flex;
-        margin-bottom: 5px;
-        margin-left: 5px;
       }
 
       .documentPill {
@@ -82,15 +96,16 @@ Requires <nuxeo-connection> in order to get icons.
         padding: 5px;
         margin-right: 5px;
         font-size: 80%;
+        font-weight: bold;
       }
 
       .documentIndustry {
-        color: #fff;
+        color: var(--secondary-text-color);
         background: #059EBD;
       }
 
       .documentStage {
-        color: #fff;
+        color: var(--secondary-text-color);
         background: #7C7C7C;
       }
 
@@ -104,28 +119,75 @@ Requires <nuxeo-connection> in order to get icons.
         font-size: smaller;
         line-height: 2.5ex;
         height: 4.4ex;
-        color: black;
         overflow: hidden;
       }
 
     </style>
+
     <nuxeo-connection id="nx"></nuxeo-connection>
+
     <nuxeo-resource auto
       path="/id/[[docEs._id]]"
       response="{{doc}}"
       schemas="sales"
       enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
 
-    <paper-card>
-      <div class="card-content">
-        <div class="docContainer">
+    <paper-material>
+
+      <div class="titleBar">
+        <div class="titleIconContainer">
           <iron-icon src="[[_iconFor(doc)]]"
-            class="listIconBox iconWithText"></iron-icon>
-          <div class="docTitleContainer">
-            <div class="docTitle">[[doc.title]]</div>
+            class="titleIcon"></iron-icon>
+        </div>
+        <div class="titleIconContainer">
+          <div class="titleWrapper">
+            <div class="title">[[doc.title]]</div>
           </div>
         </div>
 
+          <div class="actionsContainer">
+            <div class="actionsWrapper">
+              <template is="dom-if"
+                if="[[_previewSupported(doc)]]">
+                <a href="[[_previewUrl(doc)]]"
+                  target="_blank">
+                  <paper-icon-button icon="visibility"
+                    title="Full Preview"></paper-icon-button>
+                </a>
+              </template>
+              <a href="[[_downloadURL(doc)]]"
+                target="_blank">
+                <paper-icon-button icon="file-download"
+                  title="Download"></paper-icon-button>
+              </a>
+              <a href="[[_docEditURL(doc)]]"
+                target="_blank">
+                <paper-icon-button icon="assignment"
+                  title="Edit Metadata"></paper-icon-button>
+              </a>
+              <a href="[[_driveEdit(doc)]]">
+                <paper-icon-button icon="create"
+                  title="Edit Document"></paper-icon-button>
+              </a>
+              <template is="dom-if"
+                if="[[_isLock(doc)]]">
+                <paper-icon-button icon="lock"></paper-icon-button>
+              </template>
+            </div>
+          </div>
+      </div>
+
+      <template is="dom-if"
+        if="{{docEs.highlight}}">
+        <div class="documentHighlightContainer">
+          <div class="documentHighlight">
+            <html-echo html-to-inject="[[_getHighlightedText(docEs.highlight)]]"></html-echo>
+          </div>
+        </div>
+      </template>
+
+      <template is="dom-if"
+        if="[[_docHasPills(doc)]]">
         <div class="documentPills">
           <template is="dom-repeat"
             items="[[doc.properties.sales:industry]]">
@@ -136,50 +198,10 @@ Requires <nuxeo-connection> in order to get icons.
             <div class="documentPill documentStage">[[item]]</div>
           </template>
         </div>
-        <template is="dom-if"
-          if="{{docEs.highlight}}">
-          <div class="documentHighlightContainer">
-            <div class="documentHighlight">
-              <html-echo html-to-inject="[[_getHighlightedText(docEs.highlight)]]"></html-echo>
-            </div>
-          </div>
-        </template>
-      </div>
-
-      <template is="dom-if"
-        if="[[_isNotFolder(doc)]]">
-
-        <div class="card-actions horizontal justified">
-          <template is="dom-if"
-            if="[[_previewSupported(doc)]]">
-            <a href="[[_previewUrl(doc)]]"
-              target="_blank">
-              <paper-icon-button icon="visibility"
-                title="Full Preview"></paper-icon-button>
-            </a>
-          </template>
-          <a href="[[_downloadURL(doc)]]"
-            target="_blank">
-            <paper-icon-button icon="file-download"
-              title="Download"></paper-icon-button>
-          </a>
-          <a href="[[_docEditURL(doc)]]"
-            target="_blank">
-            <paper-icon-button icon="assignment"
-              title="Edit Metadata"></paper-icon-button>
-          </a>
-          <a href="[[_driveEdit(doc)]]">
-            <paper-icon-button icon="create"
-              title="Edit Document"></paper-icon-button>
-          </a>
-          <template is="dom-if"
-            if="[[_isLock(doc)]]">
-            <paper-icon-button icon="lock"></paper-icon-button>
-          </template>
-        </div>
       </template>
 
-    </paper-card>
+    </paper-material>
+
   </template>
 
   <script>
@@ -205,14 +227,7 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isNotFolder: function(doc) {
-        if (doc && doc.facets) {
-          if ((doc.facets.indexOf("Folderish") < 0) && (doc.facets.indexOf("Collection") < 0)) {
-            return true;
-          }
-        }
-        return false;
-      },
+
 
       _getHighlightedText: function(highlightObject) {
         if (highlightObject !== undefined) {
@@ -222,6 +237,16 @@ Requires <nuxeo-connection> in order to get icons.
         }
         return '<p>No Text Highlight</p>';
       },
+
+      _docHasPills: function(doc) {
+        if (doc && doc.properties && doc.properties["sales:industry"] && doc.properties["sales:industry"] != "") {
+          return true;
+        }
+        if (doc && doc.properties && doc.properties["sales:stage"] && doc.properties["sales:stage"] != "") {
+          return true;
+        }
+        return false;
+      }
 
     });
 
