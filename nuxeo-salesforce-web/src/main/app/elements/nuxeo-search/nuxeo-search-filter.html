@@ -29,6 +29,7 @@ Lesser General Public License for more details.
     </style>
 
     <paper-input id="searchFullTextInput"
+      type="search"
       label="Full Text Search"
       class="filterItem"
       value="{{fulltext}}"></paper-input>
@@ -43,6 +44,7 @@ Lesser General Public License for more details.
         aggregations='[[aggregations]]'
         value="{{stageAgg}}"></nuxeo-checkbox-aggregation>
     </div>
+
     <nuxeo-es-search id='DocumentProvider'
       fields=[[fields]]
       query=[[query]]
