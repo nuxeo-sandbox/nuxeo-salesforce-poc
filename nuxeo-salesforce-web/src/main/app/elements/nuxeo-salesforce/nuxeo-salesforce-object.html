@@ -136,6 +136,11 @@ Note: Elements that depend on a id use `sf` as default.
         method: 'GET',
         async: true,
         contentType: "application/json",
+        headers: {
+          "Authorization": "OAuth " + JSON.parse(sessionStorage.getItem("client")).oauthToken,
+          "Accept": "application/json",
+          "Cache-Control": "no-cache"
+        },
         success: callbackOp
       }
       Sfdc.canvas.client.ajax(sobjectUrl, settings);
