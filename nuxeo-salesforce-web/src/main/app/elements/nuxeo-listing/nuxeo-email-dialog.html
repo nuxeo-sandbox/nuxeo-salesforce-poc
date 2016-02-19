@@ -74,7 +74,7 @@ An element to display a dialog for template rendering.
       <div class="content">
              <paper-input name="subject" label="Subject" value="{{subject}}" required></paper-input>
              <paper-dropdown-menu label="Recepient" name="recepient" required>
-                <paper-menu class="dropdown-content">
+                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{to}}">
                   <template is="dom-repeat" items="[[sfcontacts.records]]">
                      <paper-item value="[[item.Contact.Email]]">[[item.Contact.Name]] ([[item.Contact.Email]])</paper-item>
                   </template>
@@ -210,7 +210,7 @@ An element to display a dialog for template rendering.
       _send: function (e) {
          this.$.send.params = {
            to: (this.to !== undefined ? this.to : ""),
-           bcc: (this.sfbcc !== undefined ? this.sfbcc.records[0].EmailDomainName : ""),
+           bcc: (this.sfbcc !== undefined ? ""+ this.sfbcc.records[0].LocalPart+"@"+this.sfbcc.records[0].EmailDomainName : ""),
            subject: (this.subject !== undefined ? this.subject : ""),
            message: (this.message !== undefined ? this.message : ""),
          };
