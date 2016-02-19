@@ -104,14 +104,14 @@ Requires <nuxeo-connection> in order to get icons.
     paper-drawer-panel {
       --paper-drawer-panel-right-drawer-container: {
         background-color: var(--light-primary-color);
-      }
-      ;
+      };
     }
 
     nuxeo-template-sections-selector {
       --paper-dialog-button-color: var(--primary-text-color);
       border-radius: 3px;
     }
+
   </style>
 
   <template>
@@ -153,34 +153,29 @@ Requires <nuxeo-connection> in order to get icons.
                   <a href="[[_driveEdit(item)]]">
                     <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
                   </a>
-                  <paper-icon-button icon="send" title="Send Document" onclick="emailDialog.open()"></paper-icon-button>
-                  <nuxeo-email-dialog id="emailDialog" doc=[[item]] modal></nuxeo-email-dialog>
+                  <paper-icon-button icon="send" title="Send Document" on-click="_openEmailDialog"></paper-icon-button>
                   <template is="dom-if" if="[[_isLock(item)]]">
                     <paper-icon-button icon="lock"></paper-icon-button>
                   </template>
                   <template is="dom-if" if="[[_isTemplate(item)]]">
-                    <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" onclick="templateDialog.open()"></paper-icon-button>
-                    <nuxeo-template-sections-selector id="templateDialog" doc=[[item]] modal></nuxeo-template-sections-selector>
+                    <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" on-click="_openRenditionDialog"></paper-icon-button>
                   </template>
                 </div>
               </template>
             </paper-card>
           </template>
-
         </div>
       </paper-header-panel>
-
     </paper-drawer-panel>
-
+    <nuxeo-email-dialog id="emailDialog" modal></nuxeo-email-dialog>
+   <nuxeo-template-sections-selector id="templateDialog" modal></nuxeo-template-sections-selector>
   </template>
 
   <script>
     Polymer({
       is: 'nuxeo-listing',
 
-      behaviors: [
-        Nuxeo.NuxeoListingActionsBehavior
-      ],
+      behaviors: [Nuxeo.NuxeoListingActionsBehavior],
 
       properties: {
         documentList: {
@@ -197,11 +192,11 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isEmpty: function (data) {
+      _isEmpty: function(data) {
         return data === null || data.resultsCount === 0;
       },
 
-      _select: function (e) {
+      _select: function(e) {
         var item = e.model.item;
         // if folder and already selected navigate to it (dbl click)
         if (this._isFolder(item)) {
@@ -213,18 +208,17 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isSame: function (item, selected) {
+      _isSame: function(item, selected) {
         return selected && selected.uid === item.uid;
       },
 
-
-      _iconFor: function (doc) {
+      _iconFor: function(doc) {
         if (doc && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
         }
       },
 
-      _isFolder: function (doc) {
+      _isFolder: function(doc) {
         if (doc && doc.facets) {
           if ((doc.facets.indexOf("Folderish") >= 0) || (doc.facets.indexOf("Collection") >= 0)) {
             return true;
@@ -233,15 +227,26 @@ Requires <nuxeo-connection> in order to get icons.
         return false;
       },
 
-      _isNotFolder: function (doc) {
+      _isNotFolder: function(doc) {
         if (doc && doc.facets) {
           if ((doc.facets.indexOf("Folderish") < 0) && (doc.facets.indexOf("Collection") < 0)) {
             return true;
           }
         }
         return false;
-      }
+      },
 
+      _openEmailDialog: function(e) {
+        var item = e.model.item;
+        this.$.emailDialog.doc = item;
+        this.$.emailDialog.open();
+      },
+
+      _openRenditionDialog: function(e) {
+        var item = e.model.item;
+        this.$.templateDialog.doc = item;
+        this.$.templateDialog.open();
+      }
     });
   </script>
 </dom-module>
