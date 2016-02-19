@@ -65,13 +65,14 @@ An element to display a dialog for template rendering.
     <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
     <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfbcc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfbcc}}"></nuxeo-salesforce-query>
+    <nuxeo-operation id="send" op="SendDocument" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
     <template is="dom-if" if="[[_show_selection]]">
       <div class="titleContainer">
         <div class="verticalCenterAnything">Send Document</div>
       </div>
       <div class="content">
-         <form is="iron-form" id="formEmail">
-             <paper-input name="subject" label="Subject" required></paper-input>
+             <paper-input name="subject" label="Subject" value="{{subject}}" required></paper-input>
              <paper-dropdown-menu label="Recepient" name="recepient" required>
                 <paper-menu class="dropdown-content">
                   <template is="dom-repeat" items="[[sfcontacts.records]]">
@@ -79,20 +80,18 @@ An element to display a dialog for template rendering.
                   </template>
                 </paper-menu>
              </paper-dropdown-menu>
-            <paper-textarea name="message" label="Message"></paper-textarea>
+            <paper-textarea name="message" label="Message" value="{{message}}"></paper-textarea>
              <p>Attachment</p>
              <nuxeo-template-document doc=[[doc]]></nuxeo-template-document>
              <div>
-                <paper-button raised
-                    onclick="_send()">Send</paper-button>
+                <paper-button raised on-click="_send">Send</paper-button>
                 <paper-button raised dialog-confirm>Cancel</paper-button>
              </div>
-           </form>
     </template>
 
     <template is="dom-if" if="[[_show_spinner]]">
       <div class="titleContainer">
-        <div class="verticalCenterAnything">Rendering Template...</div>
+        <div class="verticalCenterAnything">Sending.</div>
       </div>
       <div class="content">
         <paper-spinner active class="centered"></paper-spinner>
@@ -101,11 +100,7 @@ An element to display a dialog for template rendering.
 
     <template is="dom-if" if="[[_show_result]]">
       <div class="titleContainer">
-        <div class="verticalCenterAnything">Render Complete</div>
-      </div>
-      <div class="content">
-        <nuxeo-template-document doc=[[_result]]></nuxeo-template-document>
-        <p>This document has been saved in My Docs</p>
+        <div class="verticalCenterAnything">Done</div>
       </div>
       <div class="buttons">
         <paper-button dialog-confirm raised>Close</paper-button>
@@ -163,7 +158,7 @@ An element to display a dialog for template rendering.
       },
 
       observers: [
-        '_updateSections(doc)', '_updateRelatedObjects(sfopportunity)', '_updateResult(_result)', '_displayError(error)'
+        '_updateRelatedObjects(sfopportunity)', '_updateResult(_result)', '_displayError(error)'
       ],
 
       ready: function () {
@@ -188,6 +183,12 @@ An element to display a dialog for template rendering.
             " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '" + id + "'";
           this.$.sfco.query = query;
         }
+
+        {
+          var query = "Select Id, LocalPart, EmailDomainName From EmailServicesAddress WHERE RunAsUserId  = '" +
+            this.sfopportunity.OwnerId + "'";
+          this.$.sfbcc.query = query;
+        }
       },
 
       _updateResult: function () {
@@ -207,11 +208,17 @@ An element to display a dialog for template rendering.
       },
 
       _send: function (e) {
-         var form = document.getElementById('formEmail');
-        this._show_spinner = true;
-        this._show_selection = false;
-      }
-
+         this.$.send.params = {
+           to: (this.to !== undefined ? this.to : ""),
+           bcc: (this.sfbcc !== undefined ? this.sfbcc.records[0].EmailDomainName : ""),
+           subject: (this.subject !== undefined ? this.subject : ""),
+           message: (this.message !== undefined ? this.message : ""),
+         };
+         this.$.send.input = this.doc.uid;
+         this.$.send.execute();
+         this._show_spinner = true;
+         this._show_selection = false;
+       }
     });
   </script>
 </dom-module>
