@@ -235,8 +235,10 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
       observers: [
         '_updateRelatedObjects(_sfopportunity)',
+        '_fetchPublic(_sfopportunity,_sfaccount)',
         '_fetchPublic(_publicSearchTerms)',
         '_fetchPublic(_sfcompetitors)',
+        '_fetchInternal(_sfopportunity,_sfaccount)',
         '_fetchInternal(_internalSearchTerms)',
         '_fetchInternal(_sfcompetitors)',
         '_fetchTemplates(_templateSearchTerms)'
