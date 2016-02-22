@@ -21,7 +21,8 @@ Contributors:
 <!--
 The main nuxeo-salesforce application to be embedded in SFDC.
 -->
-<dom-module id="nuxeo-salesforce-app" assetpath="nuxeo-salesforce/">
+<dom-module id="nuxeo-salesforce-app"
+  assetpath="nuxeo-salesforce/">
 
   <style>
     :host {
@@ -33,7 +34,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     }
 
     .tabsToolbar {
-      background: var(--dark-primary-color);
+      --paper-toolbar-background: var(--dark-primary-color);
     }
 
     .mainTabs {
@@ -45,6 +46,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     .mainTabs paper-tab {
       --paper-tab-ink: var(--accent-color);
+      --paper-tab-content: {
+        color: var(--secondary-text-color)
+      }
       width: 110px;
     }
 
@@ -66,7 +70,6 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     .embedded-toolbar {
       background: var(--default-primary-color);
-      color: var(--secondary-text-color);
     }
 
     .searchBox {
@@ -81,22 +84,63 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       height: 362px;
       width: 100%;
     }
+
   </style>
 
   <template>
 
     <nuxeo-connection id="nx"></nuxeo-connection>
 
+    <nuxeo-resource id="oauth2directory"
+      path="/oauth2directory/salesforce"
+      response="{{result}}"
+      auto=""
+      success="{{success}}"
+      error="{{error}}"></nuxeo-resource>
+
+    <nuxeo-salesforce-connection id="sfc"
+      callback="[[result.userAuthorizationURL]]"
+      clientid="[[result.clientId]]"
+      sfobject="{{_sfopportunity}}"></nuxeo-salesforce-connection>
+
+    <nuxeo-salesforce-object id="sfa"
+      callback="[[result.userAuthorizationURL]]"
+      clientid="[[result.clientId]]"
+      object-type="Account"
+      object-id="{{_sfopportunity.AccountId}}"
+      sfobject="{{_sfaccount}}"></nuxeo-salesforce-object>
+    <nuxeo-salesforce-object id="sfu"
+      callback="[[result.userAuthorizationURL]]"
+      clientid="[[result.clientId]]"
+      object-type="User"
+      object-id="{{sfopportunity.OwnerId}}"
+      sfobject="{{sfowner}}"></nuxeo-salesforce-object>
+
+    <!-- Other related info. -->
+    <nuxeo-salesforce-query id="sfco"
+      callback="[[result.userAuthorizationURL]]"
+      clientid="[[result.clientId]]"
+      sfobject="{{_sfcontacts}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfcp"
+      callback="[[result.userAuthorizationURL]]"
+      clientid="[[result.clientId]]"
+      sfobject="{{_sfcompetitors}}"></nuxeo-salesforce-query>
+
     <paper-header-panel mode="seam">
       <paper-toolbar class="tabsToolbar">
         <div class="logoButton">
-          <a href="/nuxeo" target="_blank">
-            <paper-icon-button class="verticalCenterAnything" src="[[_iconForApp()]]" title="Nuxeo"></paper-icon-button>
+          <a href="/nuxeo"
+            target="_blank">
+            <paper-icon-button class="verticalCenterAnything"
+              src="[[_iconForApp()]]"
+              title="Nuxeo"></paper-icon-button>
           </a>
         </div>
         <!-- This paper-tabs should be scrollable but it fails when used inside paper-toolbar.
                See https://github.com/PolymerElements/paper-tabs/issues/130 -->
-        <paper-tabs class="mainTabs" selected="{{selectedTab}}" on-tap="hideMetadata">
+        <paper-tabs class="mainTabs"
+          selected="{{selectedTab}}"
+          on-tap="hideMetadata">
           <paper-tab>Public Docs</paper-tab>
           <paper-tab>Internal Docs</paper-tab>
           <paper-tab>Templates</paper-tab>
@@ -109,38 +153,74 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     <div class="pageContainer">
       <iron-pages selected="{{selectedTab}}">
 
-        <div id="searchPublicPage" class="mustHaveHeight">
+        <div id="searchPublicPage"
+          class="mustHaveHeight">
           <paper-header-panel mode="waterfall">
-            <paper-toolbar id="searchPublicToolbar" class="embedded-toolbar">
-              <paper-input id="searchPublicInput" type=search class="searchBox" label="Search" bind-value="{{publicSearchTerms}}"></paper-input>
+            <paper-toolbar id="searchPublicToolbar"
+              class="embedded-toolbar">
+              <paper-input id="searchPublicInput"
+                type=search
+                class="searchBox"
+                label="Search"
+                bind-value="{{_publicSearchTerms}}"></paper-input>
             </paper-toolbar>
-            <nuxeo-page-provider auto id="publicPageProvider" query="[[_fetchPublic()]]" page-size="[[searchPageSize]]" current-page="{{publicDocs}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
-            <nuxeo-listing document-list="[[publicDocs]]" class="documentListContainer"></nuxeo-listing>
+            <nuxeo-page-provider id="publicPageProvider"
+              provider="AssetSearch"
+              page-size="[[searchPageSize]]"
+              current-page="{{publicDocs}}"
+              enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
+            <nuxeo-listing document-list="[[publicDocs]]"
+              class="documentListContainer"></nuxeo-listing>
           </paper-header-panel>
         </div>
 
-        <div id="searchInternalPage" class="mustHaveHeight">
+        <div id="searchInternalPage"
+          class="mustHaveHeight">
           <paper-header-panel mode="waterfall">
-            <paper-toolbar id="searchInternalToolbar" class="embedded-toolbar">
-              <paper-input id="searchInternalInput" type=search class="searchBox" label="Search" bind-value="{{internalSearchTerms}}"></paper-input>
+            <paper-toolbar id="searchInternalToolbar"
+              class="embedded-toolbar">
+              <paper-input id="searchInternalInput"
+                type=search
+                class="searchBox"
+                label="Search"
+                bind-value="{{_internalSearchTerms}}"></paper-input>
             </paper-toolbar>
-            <nuxeo-page-provider auto id="internalPageProvider" query="[[_fetchInternal()]]" page-size="[[searchPageSize]]" current-page="{{internalDocs}}" enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
-            <nuxeo-listing document-list="[[internalDocs]]" class="documentListContainer"></nuxeo-listing>
+            <nuxeo-page-provider id="internalPageProvider"
+              provider="AssetSearch"
+              page-size="[[searchPageSize]]"
+              current-page="{{internalDocs}}"
+              enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
+            <nuxeo-listing document-list="[[internalDocs]]"
+              class="documentListContainer"></nuxeo-listing>
           </paper-header-panel>
         </div>
 
-        <div id="searchTemplatesPage" class="mustHaveHeight">
+        <div id="searchTemplatesPage"
+          class="mustHaveHeight">
           <paper-header-panel mode="waterfall">
-            <paper-toolbar id="searchTemplatesToolbar" class="embedded-toolbar">
-              <paper-input id="searchTemplatesInput" type=search class="searchBox" label="Search" bind-value="{{templateSearchTerms}}"></paper-input>
+            <paper-toolbar id="searchTemplatesToolbar"
+              class="embedded-toolbar">
+              <paper-input id="searchTemplatesInput"
+                type=search
+                class="searchBox"
+                label="Search"
+                bind-value="{{_templateSearchTerms}}"></paper-input>
             </paper-toolbar>
-            <nuxeo-page-provider auto id="templatePageProvider" query="[[_fetchTemplates()]]" page-size="[[searchPageSize]]" enrichers="preview, documentURL, driveEditURL" current-page="{{templates}}"></nuxeo-page-provider>
-            <nuxeo-listing document-list="[[templates]]" class="documentListContainer"></nuxeo-listing>
+            <nuxeo-page-provider auto
+              id="templatePageProvider"
+              provider="AssetSearch"
+              query="[[_fetchTemplates()]]"
+              page-size="[[searchPageSize]]"
+              enrichers="preview, documentURL, driveEditURL"
+              current-page="{{templates}}"></nuxeo-page-provider>
+            <nuxeo-listing document-list="[[templates]]"
+              class="documentListContainer"></nuxeo-listing>
           </paper-header-panel>
         </div>
 
         <div id="docsPage">
-          <nuxeo-salesforce-folderish selected="{{selected}}" class="mustHaveHeight"></nuxeo-salesforce-folderish>
+          <nuxeo-salesforce-folderish selected="{{selected}}"
+            class="mustHaveHeight"></nuxeo-salesforce-folderish>
         </div>
 
       </iron-pages>
@@ -154,61 +234,139 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       is: 'nuxeo-salesforce-app',
 
       observers: [
-        '_fetchPublic(publicSearchTerms)',
-        '_fetchInternal(internalSearchTerms)',
-        '_fetchTemplates(templateSearchTerms)'
+        '_updateRelatedObjects(_sfopportunity)',
+        '_fetchPublic(_sfopportunity,_sfaccount)',
+        '_fetchPublic(_publicSearchTerms)',
+        '_fetchPublic(_sfcompetitors)',
+        '_fetchInternal(_sfopportunity,_sfaccount)',
+        '_fetchInternal(_internalSearchTerms)',
+        '_fetchInternal(_sfcompetitors)',
+        '_fetchTemplates(_templateSearchTerms)'
       ],
 
-      ready: function () {
+      ready: function() {
         this.searchTerm = '';
         this.selectedTab = 0;
         this.searchPageSize = 20;
       },
 
-      hideMetadata: function () {
+      hideMetadata: function() {
         0 == this.selectedTab ? $(".nuxeo-metadata").hide() : $(".nuxeo-metadata").show()
       },
 
-      _iconForApp: function () {
+      _iconForApp: function() {
         /* TODO: figure out how to load this icon from app-theme.html */
         return "images/aws_icon_24.png";
       },
 
-      _fetchPublic: function () {
-        var query = this._genericFilter("Document", this.publicSearchTerms) + " AND ecm:primaryType IN('File', 'Picture', 'Video')";
+      _fetchPublic: function() {
+        if (this._sfopportunity && this._sfopportunity.StageName && this._sfaccount && this._sfaccount.Industry) {
+          var query = this._genericFilter("Document", this._publicSearchTerms);
+          query = query + this._typeFilter();
+          query = query + this._publicFilter();
+          query = query + this._sfdcFilter();
 
-        this.debounce('publicPageProviderQuery', function () {
           this.$.publicPageProvider.query = query;
-        }.bind(this), 300);
+
+          this.debounce('publicPageProviderQuery', function() {
+            this.$.publicPageProvider.fetch();
+          }.bind(this), 300);
+        }
       },
 
-      _fetchInternal: function () {
-        var query = this._genericFilter("Document", this.internalSearchTerms) + " AND ecm:primaryType IN('File', 'Picture', 'Video')";
+      _fetchInternal: function() {
+        if (this._sfopportunity && this._sfopportunity.StageName && this._sfaccount && this._sfaccount.Industry) {
+          var query = this._genericFilter("Document", this._internalSearchTerms);
+          query = query + this._typeFilter();
+          query = query + this._internalFilter();
+          query = query + this._sfdcFilter();
 
-        this.debounce('internalPageProviderQuery', function () {
           this.$.internalPageProvider.query = query;
-        }.bind(this), 300);
+
+          this.debounce('internalPageProviderQuery', function() {
+            this.$.internalPageProvider.fetch();
+          }.bind(this), 300);
+        }
       },
 
-      _fetchTemplates: function () {
-        var query = this._genericFilter("TemplateSource", this.templateSearchTerms);
-
-        this.debounce('templatePageProviderQuery', function () {
-          this.$.templatePageProvider.query = query;
-        }.bind(this), 300);
+      _fetchTemplates: function() {
+        var query = this._genericFilter("TemplateSource", this._templateSearchTerms);
+        return query;
       },
 
-      _genericFilter: function (type, terms) {
+      _typeFilter: function() {
+        // Filter document types
+        return " AND ecm:primaryType IN('File', 'Picture', 'Video')";
+      },
+
+      _publicFilter: function() {
+        // Filter audience
+        return " AND sales:audience = 'Public'";
+      },
+
+      _internalFilter: function() {
+        // Filter audience
+        return " AND sales:audience = 'Internal'";
+      },
+
+      _sfdcFilter: function() {
+        var query = "";
+        if (this._sfaccount) {
+          // Filter industry
+          query = query + " AND sales:industry = '" + this._sfaccount.Industry + "'";
+        }
+        if (this._sfopportunity) {
+          // Filter stage
+          query = query + " AND sales:stage = '" + this._sfopportunity.StageName + "'";
+        }
+        // Filter with competitors
+        if (this._sfcompetitors) {
+          var terms = this._sfcompetitors.records.map(function(item) {
+            return item.CompetitorName;
+          }).join(" ");
+
+          if (terms) {
+            /* The `match` hint performs an OR so we can match a document containing
+               any of these instead of all. Note that the field is not important since
+               I am querying _all. */
+            query = query + " AND /*+ES: INDEX(_all) ANALYZER(fulltext) OPERATOR(match) */ dc:description = '" + terms + "'";
+          }
+        }
+        return query;
+      },
+
+      _genericFilter: function(type, terms) {
         var query = "SELECT * FROM " + type +
           " WHERE ecm:currentLifeCycleState != 'deleted' " +
           " AND ecm:isCheckedInVersion = 0 " +
           " AND ecm:mixinType != 'HiddenInNavigation' ";
         if (terms) {
-          query = query + " AND ecm:fulltext = '" + terms + "*'";
+          query = query + " AND ecm:fulltext = '" + terms + "'";
         }
 
         return query;
+      },
+
+      _updateRelatedObjects: function() {
+        if (this._sfopportunity) {
+          var id = this._sfopportunity.Id;
+
+          //Get contacts
+          {
+            var query = "SELECT Role, Contact.Name, Contact.email, Contact.phone, " +
+              "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode," +
+              " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '" + id + "'";
+            this.$.sfco.query = query;
+          }
+
+          //Get competitors
+          {
+            var query = "SELECT Id,CompetitorName,Strengths,Weaknesses FROM OpportunityCompetitor WHERE OpportunityId = '" + id + "'";
+            this.$.sfcp.query = query;
+          }
+        }
       }
     });
+
   </script>
 </dom-module>

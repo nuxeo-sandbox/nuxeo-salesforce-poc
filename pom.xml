@@ -15,8 +15,18 @@
 
   <modules>
     <module>nuxeo-salesforce-core</module>
+    <module>nuxeo-salesforce-ui</module>
     <module>nuxeo-salesforce-web</module>
+    <module>nuxeo-salesforce-mp</module>
   </modules>
+
+  <properties>
+    <nuxeo.project.version>${project.version}</nuxeo.project.version>
+    <nuxeo.version>7.10</nuxeo.version>
+    <nuxeo.distribution.version>7.10</nuxeo.distribution.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
 
   <repositories>
     <repository>

@@ -40,8 +40,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
         "org.nuxeo.template.manager.api",
         "org.nuxeo.template.manager",
         "org.nuxeo.template.manager.xdocreport",
-        "nuxeo-salesforce-core",
-        "studio.extensions.aws-sfdc"
+        "nuxeo-salesforce-core"
 })
 public class TestCreateSowOp {
 
@@ -53,8 +52,8 @@ public class TestCreateSowOp {
 
         //create opportunity
         DocumentModel opportunity = session.createDocumentModel("/", "Opportunity", "Folder");
-        opportunity.addFacet("salesforce");
-        opportunity.setPropertyValue("sf:objectId", "123");
+        opportunity.addFacet("SFDC_Opportunity");
+        opportunity.setPropertyValue("sfop:objectId", "123");
         opportunity = session.createDocument(opportunity);
         session.save();
 
@@ -78,7 +77,6 @@ public class TestCreateSowOp {
 
         Properties accountProps = new Properties();
         accountProps.put("Name", "Nuxeo");
-        accountProps.put("Name", "My opportunity");
         accountProps.put("BillingStreet", "46 Rene Clair");
         accountProps.put("BillingCity", "Paris");
         accountProps.put("BillingPostalCode", "75018");
@@ -98,6 +96,7 @@ public class TestCreateSowOp {
                 set("owner", userProps).
                 set("account", accountProps).
                 set("opportunity", opportunityProps).
+                set("contacts",new Properties()).
                 set("sections",sections);
 
         DocumentModel rendered = (DocumentModel) as.run(ctx, chain);

@@ -15,9 +15,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 Contributors:
-  Vladimir Pasquier <vpasquier@nuxeo.com>
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
+<link rel="import" href="nuxeo-listing-actions-behavior.html">
 <!--
 An element to display a list of Nuxeo documents.
 
@@ -97,23 +97,26 @@ Requires <nuxeo-connection> in order to get icons.
       white-space: nowrap;
     }
 
+    paper-dialog {
+      padding: 1%;
+    }
+
     paper-drawer-panel {
       --paper-drawer-panel-right-drawer-container: {
         background-color: var(--light-primary-color);
-      }
-      ;
+      };
     }
+
+    nuxeo-template-sections-selector {
+      --paper-dialog-button-color: var(--primary-text-color);
+      border-radius: 3px;
+    }
+
   </style>
 
   <template>
 
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
-    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfopportunity.AccountId}}" sfobject="{{sfaccount}}"></nuxeo-salesforce-object>
-    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfopportunity.OwnerId}}" sfobject="{{sfowner}}"></nuxeo-salesforce-object>
-    <nuxeo-operation id="render" op="Conversion.CreateSowOp" response="{{document}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-
 
     <paper-drawer-panel drawer-width="300px" right-drawer>
 
@@ -136,9 +139,11 @@ Requires <nuxeo-connection> in order to get icons.
               </div>
               <template is="dom-if" if="[[_isNotFolder(item)]]">
                 <div class="card-actions horizontal justified">
-                  <a href="[[_previewUrl(item)]]" target="_blank">
-                    <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
-                  </a>
+                  <template is="dom-if" if="[[_previewSupported(item)]]">
+                    <a href="[[_previewUrl(item)]]" target="_blank">
+                      <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+                    </a>
+                  </template>
                   <a href="[[_downloadURL(item)]]" target="_blank">
                     <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
                   </a>
@@ -148,30 +153,29 @@ Requires <nuxeo-connection> in order to get icons.
                   <a href="[[_driveEdit(item)]]">
                     <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
                   </a>
+                  <paper-icon-button icon="send" title="Send Document" on-click="_openEmailDialog"></paper-icon-button>
                   <template is="dom-if" if="[[_isLock(item)]]">
                     <paper-icon-button icon="lock"></paper-icon-button>
                   </template>
                   <template is="dom-if" if="[[_isTemplate(item)]]">
-                    <paper-icon-button icon="av:play-circle-outline" title="Render Template" on-click="_open"></paper-icon-button>
-                    <paper-dialog id="renderDialog">
-                      <nuxeo-template-sections-selector doc=[[doc]]></nuxeo-template-sections-selector>
-                    </paper-dialog>
+                    <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" on-click="_openRenditionDialog"></paper-icon-button>
                   </template>
                 </div>
               </template>
             </paper-card>
           </template>
-
         </div>
       </paper-header-panel>
-
     </paper-drawer-panel>
-
+    <nuxeo-email-dialog id="emailDialog" modal></nuxeo-email-dialog>
+   <nuxeo-template-sections-selector id="templateDialog" modal></nuxeo-template-sections-selector>
   </template>
 
   <script>
     Polymer({
       is: 'nuxeo-listing',
+
+      behaviors: [Nuxeo.NuxeoListingActionsBehavior],
 
       properties: {
         documentList: {
@@ -188,11 +192,11 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isEmpty: function (data) {
+      _isEmpty: function(data) {
         return data === null || data.resultsCount === 0;
       },
 
-      _select: function (e) {
+      _select: function(e) {
         var item = e.model.item;
         // if folder and already selected navigate to it (dbl click)
         if (this._isFolder(item)) {
@@ -204,82 +208,45 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isSame: function (item, selected) {
+      _isSame: function(item, selected) {
         return selected && selected.uid === item.uid;
       },
 
-      _iconFor: function (doc) {
+      _iconFor: function(doc) {
         if (doc && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
         }
       },
 
-      _previewUrl: function (doc) {
-        if (doc.contextParameters !== undefined) {
-          /* Note that doc.contextParameters.preview is the old previewer. My
-             assumption is that if the document can use the old previwer, it
-             can also use the new one. */
-          if (doc.contextParameters.preview !== undefined) {
-            return "//" + window.location.hostname + ":" + window.location.port + "/nuxeo/viewer/web/viewer.html?file=" + doc.properties["file:content"].data;
-          } else {
-            return doc.contextParameters.documentURL;
-          }
-        }
-      },
-
-      _isLock: function (doc) {
-        return doc.lockOwner !== undefined;
-      },
-
-      _docEditURL: function (doc) {
-        if (doc && doc.contextParameters !== undefined) {
-          return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
-        }
-      },
-
-      _driveEdit: function (doc) {
-        if (doc.contextParameters !== undefined) {
-          return doc.contextParameters.driveEditURL;
-        }
-      },
-
-      _downloadURL: function (doc) {
-        if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
-          return doc.properties["file:content"].data;
-        } else {
-          if (doc.contextParameters !== undefined) {
-            return doc.contextParameters.documentURL;
-          }
-        }
-      },
-
-
-      _isFolder: function (doc) {
-        return doc.facets.some(function (e) {
-          return e === 'Folderish';
-        });
-      },
-
-      _isNotFolder: function (doc) {
-        return doc.facets.indexOf("Folderish") < 0;
-      },
-
-      _isTemplate: function (doc) {
-        if (doc) {
-          if (doc.type == "TemplateSource") {
+      _isFolder: function(doc) {
+        if (doc && doc.facets) {
+          if ((doc.facets.indexOf("Folderish") >= 0) || (doc.facets.indexOf("Collection") >= 0)) {
             return true;
           }
         }
         return false;
       },
 
-      _open: function (e) {
-        var dialog = document.getElementById("renderDialog");
-        if (dialog) {
-          dialog.open();
+      _isNotFolder: function(doc) {
+        if (doc && doc.facets) {
+          if ((doc.facets.indexOf("Folderish") < 0) && (doc.facets.indexOf("Collection") < 0)) {
+            return true;
+          }
         }
-      }
+        return false;
+      },
 
+      _openEmailDialog: function(e) {
+        var item = e.model.item;
+        this.$.emailDialog.doc = item;
+        this.$.emailDialog.open();
+      },
+
+      _openRenditionDialog: function(e) {
+        var item = e.model.item;
+        this.$.templateDialog.doc = item;
+        this.$.templateDialog.open();
+      }
     });
   </script>
 </dom-module>

@@ -1,0 +1,109 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<!--
+An element to display a list of Nuxeo documents.
+
+Requires <nuxeo-connection> in order to get icons.
+-->
+<dom-module id="nuxeo-search-listing">
+
+  <template>
+
+    <style>
+      :host {
+        --paper-icon-button: {
+          color: var(--accent-color);
+        }
+        --paper-icon-button-ink-color: var(--placeholder-text-color);
+      }
+
+      nuxeo-search-hit {
+        padding: 5px;
+        display: block;
+      }
+
+      nuxeo-search-hit::content paper-material {
+        border-color: #ffffff;
+        border-style: solid;
+        border-width: thin;
+      }
+
+      nuxeo-search-hit[selected]::content paper-material {
+        border-color: var(--paper-card-selected-primary-color);
+      }
+
+      nuxeo-search-hit[selected]::content paper-material .titleBar {
+        font-weight: bold;
+      }
+
+    </style>
+
+    <paper-drawer-panel drawer-width="300px"
+      right-drawer>
+
+      <!-- Drawer Content -->
+      <template is="dom-if"
+        if="[[selected]]">
+        <nuxeo-search-metadata drawer
+          doc-id="{{selected._id}}"
+          drawer></nuxeo-search-metadata>
+      </template>
+
+      <div main>
+        <template is="dom-repeat"
+          items="[[documentList]]">
+          <nuxeo-search-hit doc-es=[[item]]
+            on-tap="_select"
+            selected$="[[_isSame(item, selected)]]"></nuxeo-search-hit>
+        </template>
+      </div>
+
+    </paper-drawer-panel>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'nuxeo-search-listing',
+
+      properties: {
+        documentList: {
+          type: Object,
+          notify: true
+        },
+        selected: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      _select: function(e) {
+        var item = e.model.item;
+        this.selected = item;
+      },
+
+      _isSame: function(item, selected) {
+        return selected && selected._id === item._id;
+      }
+    });
+
+  </script>
+</dom-module>

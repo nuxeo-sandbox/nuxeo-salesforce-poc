@@ -10,7 +10,10 @@ Bundle-SymbolicName: nuxeo-salesforce-core
 Nuxeo-WebModule: org.nuxeo.ecm.webengine.app.WebEngineModule;headless=true;name=salesforce;extends=api;package=org/nuxeo/salesforce
 Nuxeo-Component: OSGI-INF/automation-contrib.xml,
  OSGI-INF/schema-contrib.xml,
+ OSGI-INF/factory-contrib.xml,
  OSGI-INF/enricher-contrib.xml,
  OSGI-INF/web-request-controller-contrib.xml,
  OSGI-INF/theme-contrib.xml,
- OSGI-INF/operations-contrib.xml
+ OSGI-INF/operations-contrib.xml,
+ OSGI-INF/doctype-contrib.xml,
+ OSGI-INF/directory-contrib.xml

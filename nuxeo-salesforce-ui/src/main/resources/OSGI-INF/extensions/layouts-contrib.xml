@@ -1,0 +1,359 @@
+<?xml version="1.0"?>
+<component name="org.nuxeo.salesforce.ui.layouts">
+    <extension target="org.nuxeo.ecm.platform.forms.layout.WebLayoutManager" point="layouts">
+
+        <layout name="sectionsLayout@create">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>sections</widget>
+                </row>
+            </rows>
+            <widget name="sections" type="list">
+                <labels>
+                    <label mode="any">Sections</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sections:sections</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="orderable">true</property>
+                </properties>
+                <subWidgets>
+                    <widget name="sub0" type="text">
+                        <labels>
+                            <label mode="any"></label>
+                        </labels>
+                        <translated>false</translated>
+                        <fields>
+                            <field></field>
+                        </fields>
+                    </widget>
+                </subWidgets>
+            </widget>
+        </layout>
+        <layout name="sectionsLayout@edit">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>sections</widget>
+                </row>
+            </rows>
+            <widget name="sections" type="list">
+                <labels>
+                    <label mode="any">Sections</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sections:sections</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="orderable">true</property>
+                </properties>
+                <subWidgets>
+                    <widget name="sub0" type="text">
+                        <labels>
+                            <label mode="any"></label>
+                        </labels>
+                        <translated>false</translated>
+                        <fields>
+                            <field></field>
+                        </fields>
+                    </widget>
+                </subWidgets>
+            </widget>
+        </layout>
+        <layout name="sectionsLayout@view">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>sections</widget>
+                </row>
+            </rows>
+            <widget name="sections" type="list">
+                <labels>
+                    <label mode="any">Sections</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sections:sections</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="orderable">true</property>
+                </properties>
+                <subWidgets>
+                    <widget name="sub0" type="text">
+                        <labels>
+                            <label mode="any"></label>
+                        </labels>
+                        <translated>false</translated>
+                        <fields>
+                            <field></field>
+                        </fields>
+                    </widget>
+                </subWidgets>
+            </widget>
+        </layout>
+
+        <layout name="SalesLayout@create">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>audience</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>industry</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>stage</widget>
+                </row>
+            </rows>
+            <widget name="audience" type="suggestOneDirectory">
+                <labels>
+                    <label mode="any">Audience</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:audience</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">Audience</property>
+                </properties>
+            </widget>
+            <widget name="industry" type="suggestManyDirectory">
+                <labels>
+                    <label mode="any">Industry</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:industry</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">Industries</property>
+                </properties>
+            </widget>
+            <widget name="stage" type="suggestManyDirectory">
+                <labels>
+                    <label mode="any">Stage</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:stage</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">SalesStage</property>
+                </properties>
+            </widget>
+        </layout>
+        <layout name="SalesLayout@edit">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>audience</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>industry</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>stage</widget>
+                </row>
+            </rows>
+            <widget name="audience" type="suggestOneDirectory">
+                <labels>
+                    <label mode="any">Audience</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:audience</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">Audience</property>
+                </properties>
+            </widget>
+            <widget name="industry" type="suggestManyDirectory">
+                <labels>
+                    <label mode="any">Industry</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:industry</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">Industries</property>
+                </properties>
+            </widget>
+            <widget name="stage" type="suggestManyDirectory">
+                <labels>
+                    <label mode="any">Stage</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:stage</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">SalesStage</property>
+                </properties>
+            </widget>
+        </layout>
+        <layout name="SalesLayout@view">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>audience</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>industry</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>stage</widget>
+                </row>
+            </rows>
+            <widget name="audience" type="suggestOneDirectory">
+                <labels>
+                    <label mode="any">Audience</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:audience</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">Audience</property>
+                </properties>
+                <properties widgetMode="view">
+                    <property name="directoryName">Audience</property>
+                </properties>
+            </widget>
+            <widget name="industry" type="suggestManyDirectory">
+                <labels>
+                    <label mode="any">Industry</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:industry</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">Industries</property>
+                </properties>
+                <properties widgetMode="view">
+                    <property name="directoryName">Industries</property>
+                </properties>
+            </widget>
+            <widget name="stage" type="suggestManyDirectory">
+                <labels>
+                    <label mode="any">Stage</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:stage</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">SalesStage</property>
+                </properties>
+                <properties widgetMode="view">
+                    <property name="directoryName">SalesStage</property>
+                </properties>
+            </widget>
+        </layout>
+
+        <layout name="SalesTab@tabLayout">
+            <templates>
+                <template mode="any">/layouts/layout_default_template.xhtml</template>
+            </templates>
+            <rows>
+                <row>
+                    <widget>container</widget>
+                </row>
+            </rows>
+            <widget name="container" type="container">
+                <labels>
+                    <label mode="any"></label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field></field>
+                </fields>
+                <controls mode="any">
+                    <control name="handleLabels">true</control>
+                    <control name="gridStyleClass">gridStyle12</control>
+                </controls>
+                <subWidgets>
+                    <widget name="sub0" type="toggleableLayoutWithForms">
+                        <labels>
+                            <label mode="any">Sales Information</label>
+                        </labels>
+                        <translated>false</translated>
+                        <fields>
+                            <field></field>
+                        </fields>
+                        <properties widgetMode="view">
+                            <property name="initialLayoutName">
+                                #{layoutWidgetMode == 'edit'? 'SalesLayout@edit': (layoutWidgetMode == 'create'? 'SalesLayout@create': 'SalesLayout@view')}
+                            </property>
+                        </properties>
+                        <controls mode="any">
+                            <control name="handleLabels">true</control>
+                        </controls>
+                    </widget>
+                </subWidgets>
+            </widget>
+        </layout>
+    </extension>
+</component>

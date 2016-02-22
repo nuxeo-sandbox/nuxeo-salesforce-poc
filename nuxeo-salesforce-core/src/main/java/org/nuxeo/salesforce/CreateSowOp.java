@@ -31,7 +31,6 @@ import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.template.api.adapters.TemplateBasedDocument;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -59,6 +58,9 @@ public class CreateSowOp {
     @Param(name = "owner", required = true)
     protected Properties owner;
 
+    @Param(name = "contacts", required = true)
+    protected Properties contacts;
+
     @Param(name = "sections", required = true)
     protected List<String> sections;
 
@@ -68,7 +70,7 @@ public class CreateSowOp {
         // get opportunity folder
         DocumentModelList list =
                 session.query(
-                        "Select * From Document WHERE sf:objectId = '"+
+                        "Select * From Document WHERE sfop:objectId = '"+
                                 opportunity.get("Id")+"'");
 
         if (list.size()==0) return null;
@@ -84,6 +86,7 @@ public class CreateSowOp {
         //Map properties
         //opportunity
         sow.setPropertyValue("dc:title","SOW - "+opportunity.get("Name"));
+        sow.setPropertyValue("sfop:name",opportunity.get("Name"));
 
         //Account
         sow.setPropertyValue("sfa:name",account.get("Name"));

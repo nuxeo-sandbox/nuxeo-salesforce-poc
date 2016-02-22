@@ -1,0 +1,12 @@
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Manifest-Version: 1.0
+Bundle-Name: Nuxeo Salesforce UI
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Nuxeo
+Bundle-Version: 1.0.qualifier
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: nuxeo-salesforce-ui
+Nuxeo-Component: OSGI-INF/extensions/actions-contrib.xml,
+    OSGI-INF/extensions/layouts-contrib.xml,
+    OSGI-INF/extensions/types-contrib.xml

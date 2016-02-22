@@ -41,7 +41,6 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     }
 
     :host::content a {
-      color: var(--secondary-text-color);
       text-decoration: none;
     }
 
@@ -80,10 +79,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     <nuxeo-connection id="nx"></nuxeo-connection>
     <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
-    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="Account" object-id="{{sfobject.AccountId}}" sfobject="{{sfAccount}}"></nuxeo-salesforce-object>
-    <nuxeo-salesforce-object id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" object-type="User" object-id="{{sfobject.OwnerId}}" sfobject="{{sfUser}}"></nuxeo-salesforce-object>
-
-
+    
     <!-- Nuxeo resources -->
     <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-resource id="query" path="/query" response="{{documentList}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
@@ -95,7 +91,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
         <nuxeo-listing-parent current-parent="[[currentParent]]" refresh="{{refreshList}}" class="embedded-toolbar"></nuxeo-listing-parent>
         <paper-toolbar class="embedded-toolbar">
-          <paper-input id="searchDocsInput" class="searchBox" label="Search" bind-value="{{searchTerm}}"></paper-input>
+          <paper-input id="searchDocsInput" class="searchBox" type=search label="Search" bind-value="{{searchTerm}}"></paper-input>
         </paper-toolbar>
       </div>
       <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" parent-path="{{parentPath}}" class=" documentListContainer"></nuxeo-listing>

@@ -1,17 +1,10 @@
 <?xml version="1.0"?>
 <component name="org.nuxeo.salesforce.schema.contrib">
-  <require>org.nuxeo.ecm.core.CoreExtensions</require>
-  <extension target="org.nuxeo.ecm.core.schema.TypeService"
-      point="schema">
-    <schema name="salesforce" prefix="sf" src="schema/salesforce.xsd"/>
-  </extension>
-  <extension target="org.nuxeo.ecm.core.schema.TypeService"
-      point="doctype">
-    <facet name="salesforce">
-      <schema name="salesforce" />
-    </facet>
-    <doctype name="Workspace" append="true">
-      <facet name="salesforce"/>
-    </doctype>
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+    <schema name="sales" prefix="sales" override="true" src="data/schemas/sales.xsd"/>
+    <schema name="sections" prefix="sections" override="true" src="data/schemas/sections.xsd"/>
+    <schema name="sfaccount" prefix="sfa" override="true" src="data/schemas/sfaccount.xsd"/>
+    <schema name="sfopportunity" prefix="sfop" override="true" src="data/schemas/sfopportunity.xsd"/>
+    <schema name="sfuser" prefix="sfu" override="true" src="data/schemas/sfuser.xsd"/>
   </extension>
 </component>

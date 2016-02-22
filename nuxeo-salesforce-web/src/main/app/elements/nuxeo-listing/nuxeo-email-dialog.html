@@ -1,0 +1,224 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<!--
+An element to display a dialog for template rendering.
+-->
+<dom-module id="nuxeo-email-dialog">
+  <style include="paper-dialog-shared-styles"></style>
+
+  <style>
+    :host {
+      width: 380px;
+    }
+
+    paper-toggle-button {
+      padding: 2%;
+      --paper-toggle-button-label-color: black;
+      --paper-toggle-button-checked-bar-color: green;
+      --paper-toggle-button-checked-button-color: green;
+    }
+
+    .centered {
+      display: block;
+      margin: auto;
+    }
+
+    .titleContainer {
+      /* With paper-dialog-behavior you are technically supposed to use an <h2>
+      for the title but I didn't like the way it looked and there is no container
+      you can style. I tried to use paper-card but the title would not render.
+      So I'm just using plain divs. */
+      font-size: 160%;
+      margin-top: 0px;
+      height: 64px;
+      padding-left: 20px;
+      background: var(--dark-primary-color);
+      color: var(--secondary-text-color);
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+  </style>
+  <template>
+
+    <nuxeo-connection id="nx"></nuxeo-connection>
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfbcc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfbcc}}"></nuxeo-salesforce-query>
+    <nuxeo-operation id="send" op="SendDocument" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <template is="dom-if" if="[[_show_selection]]">
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Send Document</div>
+      </div>
+      <div class="content">
+             <paper-input name="subject" label="Subject" value="{{subject}}" required></paper-input>
+             <paper-dropdown-menu label="Recepient" name="recepient" required>
+                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{to}}">
+                  <template is="dom-repeat" items="[[sfcontacts.records]]">
+                     <paper-item value="[[item.Contact.Email]]">[[item.Contact.Name]] ([[item.Contact.Email]])</paper-item>
+                  </template>
+                </paper-menu>
+             </paper-dropdown-menu>
+            <paper-textarea name="message" label="Message" value="{{message}}"></paper-textarea>
+             <p>Attachment</p>
+             <nuxeo-template-document doc=[[doc]]></nuxeo-template-document>
+             <div>
+                <paper-button raised on-click="_send">Send</paper-button>
+                <paper-button raised dialog-confirm>Cancel</paper-button>
+             </div>
+    </template>
+
+    <template is="dom-if" if="[[_show_spinner]]">
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Sending.</div>
+      </div>
+      <div class="content">
+        <paper-spinner active class="centered"></paper-spinner>
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_show_result]]">
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Done</div>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-confirm raised>Close</paper-button>
+      </div>
+    </template>
+
+    <template is="dom-if" if="[[_show_error]]">
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">An Error Occured</div>
+      </div>
+      <div class="content">[[error]]</div>
+      <div class="buttons">
+        <paper-button dialog-confirm raised>Close</paper-button>
+      </div>
+    </template>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-email-dialog',
+
+      behaviors: [Polymer.PaperDialogBehavior],
+
+      properties: {
+        doc: {
+          type: Object,
+          notify: true
+        },
+        _show_spinner: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        _show_selection: {
+          type: Boolean,
+          value: true,
+          notify: true
+        },
+        _show_result: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        _show_error: {
+          type: Boolean,
+          value: false,
+          notify: true
+        },
+        _result: {
+          type: Object,
+          notify: true,
+          value: null
+        }
+      },
+
+      observers: [
+        '_updateRelatedObjects(sfopportunity)', '_updateResult(_result)', '_displayError(error)'
+      ],
+
+      ready: function () {
+        this.addEventListener('iron-overlay-opened', function () {
+          this._show_selection = true;
+          this._show_spinner = false;
+          this._show_result = false;
+          this._show_error = false;
+          this._result = null;
+        });
+
+      },
+
+      _updateRelatedObjects: function () {
+        if (this.sfopportunity === undefined)
+          return;
+        var id = this.sfopportunity.Id;
+        //Get contacts
+        {
+          var query = "SELECT Role, Contact.Name, Contact.email, Contact.phone, " +
+            "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode," +
+            " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '" + id + "'";
+          this.$.sfco.query = query;
+        }
+
+        {
+          var query = "Select Id, LocalPart, EmailDomainName From EmailServicesAddress WHERE RunAsUserId  = '" +
+            this.sfopportunity.OwnerId + "'";
+          this.$.sfbcc.query = query;
+        }
+      },
+
+      _updateResult: function () {
+        if (this._result === undefined) {
+          this._displayError();
+        } else if (this._result !== undefined && this._result !== null) {
+          this._show_spinner = false;
+          this._show_result = true;
+        }
+      },
+
+      _displayError: function () {
+        this._show_selection = false;
+        this._show_spinner = false;
+        this._show_result = false;
+        this._show_error = true;
+      },
+
+      _send: function (e) {
+         this.$.send.params = {
+           to: (this.to !== undefined ? this.to : ""),
+           bcc: (this.sfbcc !== undefined ? ""+ this.sfbcc.records[0].LocalPart+"@"+this.sfbcc.records[0].EmailDomainName : ""),
+           subject: (this.subject !== undefined ? this.subject : ""),
+           message: (this.message !== undefined ? this.message : ""),
+         };
+         this.$.send.input = this.doc.uid;
+         this.$.send.execute();
+         this._show_spinner = true;
+         this._show_selection = false;
+       }
+    });
+  </script>
+</dom-module>

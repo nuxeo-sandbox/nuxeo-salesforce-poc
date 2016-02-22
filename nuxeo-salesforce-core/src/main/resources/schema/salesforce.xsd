@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<xs:schema targetNamespace="http://www.nuxeo.org/ecm/schemas/salesforce/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="objectId" type="xs:string"/>
-  <xs:element name="objectType" type="xs:string"/>
-  <xs:element name="objectDescription" type="xs:string"/>
-  <xs:element name="objectAmount" type="xs:string"/>
-</xs:schema>
