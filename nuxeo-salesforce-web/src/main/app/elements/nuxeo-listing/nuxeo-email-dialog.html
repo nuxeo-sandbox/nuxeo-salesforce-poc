@@ -86,6 +86,7 @@ An element to display a dialog for template rendering.
       response="{{_result}}"
       success="{{success}}"
       error="{{error}}"></nuxeo-operation>
+
     <template is="dom-if"
       if="[[_show_selection]]">
       <div class="titleContainer">
@@ -113,12 +114,12 @@ An element to display a dialog for template rendering.
           value="{{message}}"></paper-textarea>
         <p>Attachment</p>
         <nuxeo-template-document doc=[[doc]]></nuxeo-template-document>
-        <div>
-          <paper-button raised
-            on-click="_send">Send</paper-button>
-          <paper-button raised
-            dialog-confirm>Cancel</paper-button>
-        </div>
+      </div>
+      <div class="buttons">
+        <paper-button raised
+          on-click="_send">Send</paper-button>
+        <paper-button raised
+          dialog-confirm>Cancel</paper-button>
       </div>
     </template>
 
