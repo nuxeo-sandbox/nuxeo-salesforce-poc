@@ -17,54 +17,28 @@ limitations under the License.
 Contributors:
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
-<link rel="import" href="nuxeo-listing-actions-behavior.html">
+<link rel="import"
+  href="nuxeo-listing-actions-behavior.html">
 <!--
 An element to display a list of Nuxeo documents.
 
 Requires <nuxeo-connection> in order to get icons.
 -->
-<dom-module id="nuxeo-listing" assetpath="nuxeo-listing/">
+<dom-module id="nuxeo-listing"
+  assetpath="nuxeo-listing/">
   <style>
-    .item {
+    paper-card {
       margin: 5px;
-      background: var(--paper-card-light-primary-color);
-      display: inherit;
-      overflow: hidden;
-      user-select: none;
-      @apply(--shadow-elevation-3dp);
-      float: left;
+      --paper-card-background-color: var(--paper-card-light-primary-color);
       border-color: var(--paper-card-light-primary-color);
       border-style: solid;
       border-width: thin;
-      min-height: 56px;
       width: 300px;
-      --paper-card-content: {}
     }
 
-    .item[selected] {
+    paper-card[selected] {
       font-weight: bold;
       border-color: var(--paper-card-selected-primary-color);
-    }
-
-    @media (max-width: 600px) {
-      h1.paper-font-display1 {
-        font-size: 24px;
-      }
-    }
-
-    .iconWithText {
-      padding-right: 5px;
-      vertical-align: text-top;
-    }
-
-    .listIconBox {
-      padding: 4px;
-      --iron-icon-width: 20px;
-      --iron-icon-height: 20px;
-    }
-
-    paper-card {
-      padding: 10px;
     }
 
     paper-icon-button {
@@ -81,20 +55,35 @@ Requires <nuxeo-connection> in order to get icons.
       @apply(--layout-justified);
     }
 
-    .docContainer {
+    .titleBar {
       display: table;
     }
 
-    .docTitleContainer {
+    .titleIconContainer {
       display: table-cell;
       vertical-align: middle;
     }
 
-    .docTitle {
+    .titleIcon {
+      padding-right: 5px;
+      --iron-icon-width: 20px;
+      --iron-icon-height: 20px;
+    }
+
+    .titleWrapper {
+      /* This is so that I can get dynamic support for the overflow/elipsis. */
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+      height: 100%;
+    }
+
+    .title {
+      display: table-cell;
+      vertical-align: middle;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      width: 280px;
-      white-space: nowrap;
     }
 
     paper-dialog {
@@ -104,7 +93,8 @@ Requires <nuxeo-connection> in order to get icons.
     paper-drawer-panel {
       --paper-drawer-panel-right-drawer-container: {
         background-color: var(--light-primary-color);
-      };
+      }
+      ;
     }
 
     nuxeo-template-sections-selector {
@@ -118,47 +108,75 @@ Requires <nuxeo-connection> in order to get icons.
 
     <nuxeo-connection id="nx"></nuxeo-connection>
 
-    <paper-drawer-panel drawer-width="300px" right-drawer>
+    <paper-drawer-panel drawer-width="300px"
+      right-drawer>
 
       <!-- Drawer Content -->
-      <template is="dom-if" if="[[selected]]">
-        <nuxeo-metadata doc="{{selected}}" drawer></nuxeo-metadata>
+      <template is="dom-if"
+        if="[[selected]]">
+        <nuxeo-metadata doc="{{selected}}"
+          drawer></nuxeo-metadata>
       </template>
 
-      <paper-header-panel main mode="waterfall">
+      <paper-header-panel main
+        mode="waterfall">
 
         <div>
 
-          <template is="dom-repeat" items="[[documentList]]">
-            <paper-card class="item" on-tap="_select" selected$="[[_isSame(item, selected)]]">
-              <div class="card-content docContainer">
-                <iron-icon src="[[_iconFor(item)]]" class="listIconBox iconWithText"></iron-icon>
-                <div class="docTitleContainer">
-                  <div class="docTitle">[[item.title]]</div>
+          <template is="dom-repeat"
+            items="[[documentList]]">
+            <paper-card class="item"
+              on-tap="_select"
+              selected$="[[_isSame(item, selected)]]">
+              <div class="card-content">
+                <div class="titleBar">
+                  <div class="titleIconContainer">
+                    <iron-icon src="[[_iconFor(item)]]"
+                      class="titleIcon"></iron-icon>
+                  </div>
+                  <div class="titleWrapper">
+                    <div class="title">[[item.title]]</div>
+                  </div>
                 </div>
               </div>
-              <template is="dom-if" if="[[_isNotFolder(item)]]">
+              <template is="dom-if"
+                if="[[_isNotFolder(item)]]">
                 <div class="card-actions horizontal justified">
-                  <template is="dom-if" if="[[_previewSupported(item)]]">
-                    <a href="[[_previewUrl(item)]]" target="_blank">
-                      <paper-icon-button icon="visibility" title="Full Preview"></paper-icon-button>
+                  <template is="dom-if"
+                    if="[[_previewSupported(item)]]">
+                    <a href="[[_previewUrl(item)]]"
+                      target="_blank">
+                      <paper-icon-button icon="visibility"
+                        title="Full Preview"></paper-icon-button>
                     </a>
                   </template>
-                  <a href="[[_downloadURL(item)]]" target="_blank">
-                    <paper-icon-button icon="file-download" title="Download"></paper-icon-button>
+                  <a href="[[_downloadURL(item)]]"
+                    target="_blank">
+                    <paper-icon-button icon="file-download"
+                      title="Download"></paper-icon-button>
                   </a>
-                  <a href="[[_docEditURL(item)]]" target="_blank">
-                    <paper-icon-button icon="assignment" title="Edit Metadata"></paper-icon-button>
+                  <a href="[[_docEditURL(item)]]"
+                    target="_blank">
+                    <paper-icon-button icon="assignment"
+                      title="Edit Metadata"></paper-icon-button>
                   </a>
                   <a href="[[_driveEdit(item)]]">
-                    <paper-icon-button icon="create" title="Edit Document"></paper-icon-button>
+                    <paper-icon-button icon="create"
+                      title="Edit Document"></paper-icon-button>
                   </a>
-                  <paper-icon-button icon="send" title="Send Document" on-click="_openEmailDialog"></paper-icon-button>
-                  <template is="dom-if" if="[[_isLock(item)]]">
+                  <paper-icon-button icon="send"
+                    title="Send Document"
+                    on-click="_openEmailDialog"></paper-icon-button>
+                  <template is="dom-if"
+                    if="[[_isLock(item)]]">
                     <paper-icon-button icon="lock"></paper-icon-button>
                   </template>
-                  <template is="dom-if" if="[[_isTemplate(item)]]">
-                    <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" on-click="_openRenditionDialog"></paper-icon-button>
+                  <template is="dom-if"
+                    if="[[_isTemplate(item)]]">
+                    <paper-icon-button icon="av:play-circle-outline"
+                      id="[[item.uid]]"
+                      title="Render Template"
+                      on-click="_openRenditionDialog"></paper-icon-button>
                   </template>
                 </div>
               </template>
@@ -167,8 +185,10 @@ Requires <nuxeo-connection> in order to get icons.
         </div>
       </paper-header-panel>
     </paper-drawer-panel>
-    <nuxeo-email-dialog id="emailDialog" modal></nuxeo-email-dialog>
-   <nuxeo-template-sections-selector id="templateDialog" modal></nuxeo-template-sections-selector>
+    <nuxeo-email-dialog id="emailDialog"
+      modal></nuxeo-email-dialog>
+    <nuxeo-template-sections-selector id="templateDialog"
+      modal></nuxeo-template-sections-selector>
   </template>
 
   <script>
@@ -248,5 +268,6 @@ Requires <nuxeo-connection> in order to get icons.
         this.$.templateDialog.open();
       }
     });
+
   </script>
 </dom-module>
