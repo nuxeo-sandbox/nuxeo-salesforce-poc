@@ -160,6 +160,7 @@ Requires <nuxeo-connection> in order to get icons.
                   <template is="dom-if" if="[[_isTemplate(item)]]">
                     <paper-icon-button icon="av:play-circle-outline" id="[[item.uid]]" title="Render Template" on-click="_openRenditionDialog"></paper-icon-button>
                   </template>
+                  <paper-icon-button icon="dashboard" title="Analytics" on-click="_openAnalyticsDialog"></paper-icon-button>
                 </div>
               </template>
             </paper-card>
@@ -168,6 +169,7 @@ Requires <nuxeo-connection> in order to get icons.
       </paper-header-panel>
     </paper-drawer-panel>
     <nuxeo-email-dialog id="emailDialog" modal></nuxeo-email-dialog>
+    <nuxeo-analytics-dialog id="analyticsDialog" modal></nuxeo-email-dialog>
    <nuxeo-template-sections-selector id="templateDialog" modal></nuxeo-template-sections-selector>
   </template>
 
@@ -240,6 +242,12 @@ Requires <nuxeo-connection> in order to get icons.
         var item = e.model.item;
         this.$.emailDialog.doc = item;
         this.$.emailDialog.open();
+      },
+
+      _openAnalyticsDialog: function(e) {
+        var item = e.model.item;
+        this.$.analyticsDialog.doc = item;
+        this.$.analyticsDialog.open();
       },
 
       _openRenditionDialog: function(e) {
