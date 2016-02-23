@@ -1,25 +1,27 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
 <dom-module id="nuxeo-metadata">
   <style>
-    .mainToolbar {
-      color: inherit;
-      background-color: var(--primary-background-color);
-    }
-
-    .card {
-      margin: 5px;
-      width: 100%;
-      display: inline-block;
-      @apply(--shadow-elevation-3dp);
-    }
-
-    .metaData {
-      padding: 5px;
-    }
-
     .property {
       margin: 5px;
       font-size: 14px;
-      display: block;
     }
 
     .property .label {
@@ -30,47 +32,50 @@
       font-weight: bold;
     }
 
-    .property .value {
-      margin-left: 0px;
-      flex: 1;
-    }
-
-    @media (max-width: 600px) {
-      h1.paper-font-display1 {
-        font-size: 24px;
-      }
-    }
-
-    .documentIcon {
-      padding-right: 5px;
-      vertical-align: text-top;
-    }
-
-    .iconSize {
-      max-width: 24px;
-      max-height: 24px;
-    }
-
-    #spacer {
-      display: table;
-      margin: 0 auto;
-    }
-
-    .docContainer {
+    .titleBar {
       display: table;
     }
 
-    .docTitleContainer {
+    .titleIconContainer {
       display: table-cell;
       vertical-align: middle;
     }
 
-    .docTitle {
+    .titleIcon {
+      padding-right: 5px;
+      --iron-icon-width: 20px;
+      --iron-icon-height: 20px;
+    }
+
+    .titleWrapper {
+      /* Fit the title to the available space */
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    .title {
+      display: table-cell;
+      vertical-align: middle;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      width: 210px;
-      white-space: nowrap;
     }
+
+    .actionsContainer {
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .actionsWrapper {
+      display: inline-flex;
+    }
+
+    .section {
+      padding: 5px;
+    }
+
   </style>
 
   <template>
@@ -79,57 +84,63 @@
 
     <paper-header-panel mode="waterfall">
 
-      <paper-toolbar class="mainToolbar">
-        <div class="docContainer">
-          <iron-icon src="[[icon]]" class="documentIcon iconSize"></iron-icon>
-          <div class="docTitleContainer">
-            <div class="docTitle">{{doc.title}}</div>
+      <paper-toolbar>
+        <div class="titleBar">
+          <div class="titleIconContainer">
+            <iron-icon src="[[icon]]"
+              class="titleIcon"></iron-icon>
+          </div>
+          <div class="titleWrapper">
+            <div class="title">{{doc.title}}</div>
           </div>
         </div>
-        <div id="spacer">
-          <!--This div pushes the action buttons to the right edge. -->
-        </div>
-        <div id="folderOpenExternal">
-          <a href="[[_docURL(doc)]]" target="_blank">
-            <paper-icon-button icon="icons:open-in-new" title="Access"></paper-icon-button>
-          </a>
+        <div class="actionsContainer">
+          <div class="actionsWrapper">
+            <a href="[[_docURL(doc)]]"
+              target="_blank">
+              <paper-icon-button icon="icons:open-in-new"
+                title="Access"></paper-icon-button>
+            </a>
+          </div>
         </div>
       </paper-toolbar>
 
       <div>
-        <template is="dom-if" if="[[thumbnail]]">
-          <div class="card">
-            <img src$="[[thumbnail]]" style="width:100%"></img>
+        <template is="dom-if"
+          if="[[thumbnail]]">
+          <div class="section">
+            <img src$="[[thumbnail]]"
+              style="width:100%">
           </div>
         </template>
 
-        <section id="common" class="card metaData">
+        <div class="section">
           <div class="property">
             <span class="label">Created at</span>
-            <span class="value">[[_date(doc, 'dc:created')]]</span>
+            <span>[[_date(doc, 'dc:created')]]</span>
           </div>
 
           <div class="property">
             <span class="label">Last modified</span>
-            <span class="value">[[_date(doc, 'dc:modified')]]</span>
+            <span>[[_date(doc, 'dc:modified')]]</span>
           </div>
 
           <div class="property">
             <span class="label">Author</span>
-            <span class="value">[[_prop(doc, 'dc:creator')]]</span>
+            <span>[[_prop(doc, 'dc:creator')]]</span>
           </div>
 
           <div class="property">
             <span class="label">Contributors</span>
-            <span class="value">[[_prop(doc, 'dc:creator')]]</span>
+            <span>[[_prop(doc, 'dc:creator')]]</span>
           </div>
 
           <div class="property">
             <span class="label">Last contributor</span>
-            <span class="value">[[_prop(doc, 'dc:creator')]]</span>
+            <span>[[_prop(doc, 'dc:creator')]]</span>
           </div>
 
-        </section>
+        </div>
       </div>
     </paper-header-panel>
 
@@ -137,7 +148,7 @@
   </template>
 
   <script>
-    (function () {
+    (function() {
       Polymer({
         is: 'nuxeo-metadata',
 
@@ -153,38 +164,38 @@
           }
         },
 
-        _icon: function (doc) {
+        _icon: function(doc) {
           if (doc && doc.properties['common:icon']) {
             return this.$.nx.client._baseURL + doc.properties['common:icon'];
           }
         },
 
-        _docURL: function (doc) {
+        _docURL: function(doc) {
           if (doc && doc.contextParameters !== undefined) {
             return doc.contextParameters.documentURL;
           }
         },
 
-        _thumbnail: function (doc) {
+        _thumbnail: function(doc) {
           if (doc && doc.properties['thumb:thumbnail']) {
             return doc.properties['thumb:thumbnail'].data;
           }
 
           if (doc && doc.properties['picture:views']) {
-            return doc.properties['picture:views'].find(function (view) {
+            return doc.properties['picture:views'].find(function(view) {
               return view.title === "Small";
             }).content.data;
           }
         },
 
-        _prop: function (doc, path) {
+        _prop: function(doc, path) {
           if (!doc || !doc.properties) {
             return;
           }
           return doc.properties[path];
         },
 
-        _date: function (doc, path) {
+        _date: function(doc, path) {
           if (!doc || !doc.properties) {
             return;
           }
@@ -193,6 +204,7 @@
 
       });
     })();
+
   </script>
 
 </dom-module>
