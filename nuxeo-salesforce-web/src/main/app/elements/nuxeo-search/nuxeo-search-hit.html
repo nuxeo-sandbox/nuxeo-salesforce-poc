@@ -145,36 +145,36 @@ Requires <nuxeo-connection> in order to get icons.
           </div>
         </div>
 
-          <div class="actionsContainer">
-            <div class="actionsWrapper">
-              <template is="dom-if"
-                if="[[_previewSupported(doc)]]">
-                <a href="[[_previewUrl(doc)]]"
-                  target="_blank">
-                  <paper-icon-button icon="visibility"
-                    title="Full Preview"></paper-icon-button>
-                </a>
-              </template>
-              <a href="[[_downloadURL(doc)]]"
+        <div class="actionsContainer">
+          <div class="actionsWrapper">
+            <template is="dom-if"
+              if="[[_previewSupported(doc)]]">
+              <a href="[[_previewUrl(doc)]]"
                 target="_blank">
-                <paper-icon-button icon="file-download"
-                  title="Download"></paper-icon-button>
+                <paper-icon-button icon="visibility"
+                  title="Full Preview"></paper-icon-button>
               </a>
-              <a href="[[_docEditURL(doc)]]"
-                target="_blank">
-                <paper-icon-button icon="assignment"
-                  title="Edit Metadata"></paper-icon-button>
-              </a>
-              <a href="[[_driveEdit(doc)]]">
-                <paper-icon-button icon="create"
-                  title="Edit Document"></paper-icon-button>
-              </a>
-              <template is="dom-if"
-                if="[[_isLock(doc)]]">
-                <paper-icon-button icon="lock"></paper-icon-button>
-              </template>
-            </div>
+            </template>
+            <a href="[[_downloadURL(doc)]]"
+              target="_blank">
+              <paper-icon-button icon="file-download"
+                title="Download"></paper-icon-button>
+            </a>
+            <a href="[[_docEditURL(doc)]]"
+              target="_blank">
+              <paper-icon-button icon="assignment"
+                title="Edit Metadata"></paper-icon-button>
+            </a>
+            <a href="[[_driveEdit(doc)]]">
+              <paper-icon-button icon="create"
+                title="Edit Document"></paper-icon-button>
+            </a>
+            <template is="dom-if"
+              if="[[_isLock(doc)]]">
+              <paper-icon-button icon="lock"></paper-icon-button>
+            </template>
           </div>
+        </div>
       </div>
 
       <template is="dom-if"
