@@ -33,6 +33,12 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       --paper-icon-button-ink-color: var(--placeholder-text-color);
     }
 
+    .parent {
+      /* A height is required in order for a paper-header-panel to display content.
+         See: https://elements.polymer-project.org/elements/paper-header-panel */
+      height: 100vh;
+    }
+
     .tabsToolbar {
       --paper-toolbar-background: var(--dark-primary-color);
     }
@@ -56,17 +62,6 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       height: 100%;
     }
 
-    .pageContainer {
-      position: relative;
-      height: 536px;
-      /* The height of the object in SFDC is 600. The toolbar above this is 64. */
-    }
-
-    .mustHaveHeight {
-      /* A height is required in order for a paper-header-panel to display content.
-         See: https://elements.polymer-project.org/elements/paper-header-panel */
-      height: 536px;
-    }
 
     .embedded-toolbar {
       background: var(--default-primary-color);
@@ -126,7 +121,8 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       clientid="[[result.clientId]]"
       sfobject="{{_sfcompetitors}}"></nuxeo-salesforce-query>
 
-    <paper-header-panel mode="seam">
+        <div class="parent">
+
       <paper-toolbar class="tabsToolbar">
         <div class="logoButton">
           <a href="/nuxeo"
@@ -147,14 +143,13 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           <paper-tab>My Docs</paper-tab>
         </paper-tabs>
       </paper-toolbar>
-    </paper-header-panel>
+
 
 
     <div class="pageContainer">
       <iron-pages selected="{{selectedTab}}">
 
-        <div id="searchPublicPage"
-          class="mustHaveHeight">
+        <div id="searchPublicPage" style="height: 100%;">
           <paper-header-panel mode="waterfall">
             <paper-toolbar id="searchPublicToolbar"
               class="embedded-toolbar">
@@ -174,8 +169,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           </paper-header-panel>
         </div>
 
-        <div id="searchInternalPage"
-          class="mustHaveHeight">
+        <div id="searchInternalPage">
           <paper-header-panel mode="waterfall">
             <paper-toolbar id="searchInternalToolbar"
               class="embedded-toolbar">
@@ -195,8 +189,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           </paper-header-panel>
         </div>
 
-        <div id="searchTemplatesPage"
-          class="mustHaveHeight">
+        <div id="searchTemplatesPage">
           <paper-header-panel mode="waterfall">
             <paper-toolbar id="searchTemplatesToolbar"
               class="embedded-toolbar">
@@ -220,13 +213,14 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
         <div id="docsPage">
           <nuxeo-salesforce-folderish selected="{{selected}}"
-            class="mustHaveHeight"></nuxeo-salesforce-folderish>
+            ></nuxeo-salesforce-folderish>
         </div>
 
       </iron-pages>
 
     </div>
 
+    </div>
   </template>
 
   <script>
