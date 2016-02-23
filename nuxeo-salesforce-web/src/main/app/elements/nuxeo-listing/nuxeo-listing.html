@@ -27,6 +27,25 @@ Requires <nuxeo-connection> in order to get icons.
 <dom-module id="nuxeo-listing"
   assetpath="nuxeo-listing/">
   <style>
+    paper-drawer-panel {
+      /* Allow the page to scroll if the content is too tall. */
+      overflow-y: scroll;
+    }
+
+    paper-drawer-panel::content div#main [main] {
+      /* By default paper-drawer-panel sets the height of the "main" element to 100%.
+           This creates a visible scrollbar when the parent has an overflow set to scroll
+           no matter how big the content is. Setting the height to auto shows the scrollbar
+           only when the content is tall enough. */
+      height: auto;
+    }
+
+    nuxeo-metadata {
+      --paper-toolbar-background: var(--nuxeo-metadata-toolbar-background);
+      --paper-toolbar-color: var(--nuxeo-metadata-toolbar-color);
+      position: fixed;
+    }
+
     paper-card {
       margin: 5px;
       --paper-card-background-color: var(--paper-card-light-primary-color);
@@ -86,15 +105,10 @@ Requires <nuxeo-connection> in order to get icons.
       text-overflow: ellipsis;
     }
 
-    paper-dialog {
-      padding: 1%;
-    }
-
     paper-drawer-panel {
       --paper-drawer-panel-right-drawer-container: {
         background-color: var(--light-primary-color);
       }
-      ;
     }
 
     nuxeo-template-sections-selector {
@@ -113,6 +127,11 @@ Requires <nuxeo-connection> in order to get icons.
       border-radius: 3px;
     }
 
+    nuxeo-metadata::content .titleWrapper {
+      /* The drawer is set to 300px so the title needs to be limited */
+      width: 203px;
+    }
+
   </style>
 
   <template>
@@ -126,74 +145,71 @@ Requires <nuxeo-connection> in order to get icons.
       <template is="dom-if"
         if="[[selected]]">
         <nuxeo-metadata doc="{{selected}}"
+          class="fixed"
           drawer></nuxeo-metadata>
       </template>
 
-      <paper-header-panel main
-        mode="waterfall">
+      <div main>
 
-        <div>
-
-          <template is="dom-repeat"
-            items="[[documentList]]">
-            <paper-card on-tap="_select"
-              selected$="[[_isSame(item, selected)]]">
-              <div class="card-content">
-                <div class="titleBar">
-                  <div class="titleIconContainer">
-                    <iron-icon src="[[_iconFor(item)]]"
-                      class="titleIcon"></iron-icon>
-                  </div>
-                  <div class="titleWrapper">
-                    <div class="title">[[item.title]]</div>
-                  </div>
+        <template is="dom-repeat"
+          items="[[documentList]]">
+          <paper-card on-tap="_select"
+            selected$="[[_isSame(item, selected)]]">
+            <div class="card-content">
+              <div class="titleBar">
+                <div class="titleIconContainer">
+                  <iron-icon src="[[_iconFor(item)]]"
+                    class="titleIcon"></iron-icon>
+                </div>
+                <div class="titleWrapper">
+                  <div class="title">[[item.title]]</div>
                 </div>
               </div>
-              <template is="dom-if"
-                if="[[_isNotFolder(item)]]">
-                <div class="card-actions horizontal justified">
-                  <template is="dom-if"
-                    if="[[_previewSupported(item)]]">
-                    <a href="[[_previewUrl(item)]]"
-                      target="_blank">
-                      <paper-icon-button icon="visibility"
-                        title="Full Preview"></paper-icon-button>
-                    </a>
-                  </template>
-                  <a href="[[_downloadURL(item)]]"
+            </div>
+            <template is="dom-if"
+              if="[[_isNotFolder(item)]]">
+              <div class="card-actions horizontal justified">
+                <template is="dom-if"
+                  if="[[_previewSupported(item)]]">
+                  <a href="[[_previewUrl(item)]]"
                     target="_blank">
-                    <paper-icon-button icon="file-download"
-                      title="Download"></paper-icon-button>
+                    <paper-icon-button icon="visibility"
+                      title="Full Preview"></paper-icon-button>
                   </a>
-                  <a href="[[_docEditURL(item)]]"
-                    target="_blank">
-                    <paper-icon-button icon="assignment"
-                      title="Edit Metadata"></paper-icon-button>
-                  </a>
-                  <a href="[[_driveEdit(item)]]">
-                    <paper-icon-button icon="create"
-                      title="Edit Document"></paper-icon-button>
-                  </a>
-                  <paper-icon-button icon="send"
-                    title="Send Document"
-                    on-click="_openEmailDialog"></paper-icon-button>
-                  <template is="dom-if"
-                    if="[[_isLock(item)]]">
-                    <paper-icon-button icon="lock"></paper-icon-button>
-                  </template>
-                  <template is="dom-if"
-                    if="[[_isTemplate(item)]]">
-                    <paper-icon-button icon="av:play-circle-outline"
-                      id="[[item.uid]]"
-                      title="Render Template"
-                      on-click="_openRenditionDialog"></paper-icon-button>
-                  </template>
-                </div>
-              </template>
-            </paper-card>
-          </template>
-        </div>
-      </paper-header-panel>
+                </template>
+                <a href="[[_downloadURL(item)]]"
+                  target="_blank">
+                  <paper-icon-button icon="file-download"
+                    title="Download"></paper-icon-button>
+                </a>
+                <a href="[[_docEditURL(item)]]"
+                  target="_blank">
+                  <paper-icon-button icon="assignment"
+                    title="Edit Metadata"></paper-icon-button>
+                </a>
+                <a href="[[_driveEdit(item)]]">
+                  <paper-icon-button icon="create"
+                    title="Edit Document"></paper-icon-button>
+                </a>
+                <paper-icon-button icon="send"
+                  title="Send Document"
+                  on-click="_openEmailDialog"></paper-icon-button>
+                <template is="dom-if"
+                  if="[[_isLock(item)]]">
+                  <paper-icon-button icon="lock"></paper-icon-button>
+                </template>
+                <template is="dom-if"
+                  if="[[_isTemplate(item)]]">
+                  <paper-icon-button icon="av:play-circle-outline"
+                    id="[[item.uid]]"
+                    title="Render Template"
+                    on-click="_openRenditionDialog"></paper-icon-button>
+                </template>
+              </div>
+            </template>
+          </paper-card>
+        </template>
+      </div>
     </paper-drawer-panel>
     <nuxeo-email-dialog id="emailDialog"
       modal></nuxeo-email-dialog>
