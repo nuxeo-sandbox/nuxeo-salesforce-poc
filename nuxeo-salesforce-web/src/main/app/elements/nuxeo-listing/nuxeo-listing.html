@@ -30,6 +30,10 @@ Requires <nuxeo-connection> in order to get icons.
     paper-drawer-panel {
       /* Allow the page to scroll if the content is too tall. */
       overflow-y: scroll;
+      /* Put a divider between the drawer and the main panel. */
+      --paper-drawer-panel-main-container: {
+        border-right: solid 1px var(--divider-color);
+      }
     }
 
     paper-drawer-panel::content div#main [main] {
@@ -120,6 +124,14 @@ Requires <nuxeo-connection> in order to get icons.
     }
 
     nuxeo-email-dialog {
+      --paper-dialog-button-color: var(--secondary-text-color);
+      --paper-button: {
+        background: var(--accent-color)
+      }
+      border-radius: 3px;
+    }
+
+    nuxeo-analytics-dialog {
       --paper-dialog-button-color: var(--secondary-text-color);
       --paper-button: {
         background: var(--accent-color)
