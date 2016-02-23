@@ -46,13 +46,15 @@ Behavior to manage the "actions" for a document.
           if (doc.properties["file:content"]["mime-type"] == "application/pdf") {
             // PDF's; use new previwer as is.
             return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-              "/nuxeo/viewer/web/viewer.html?file=" + doc.properties["file:content"].data;
+              "/nuxeo/track/web/viewer.html?file=" + doc.properties["file:content"].data+
+              "&uuid="+doc.uid;
           } else {
             // Other documents; use new previwer but convert to PDF first.
             return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-              "/nuxeo/viewer/web/viewer.html?file=" +
+              "/nuxeo/track/web/viewer.html?file=" +
               location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-              "/nuxeo/api/v1/id/" + doc.uid + "/%40blob/blobholder%3A0/%40convert%3Fformat%3Dpdf";
+              "/nuxeo/api/v1/id/" + doc.uid + "/%40blob/blobholder%3A0/%40convert%3Fformat%3Dpdf"+
+              "&uuid="+doc.uid;
           }
         } else {
           return doc.contextParameters.documentURL;

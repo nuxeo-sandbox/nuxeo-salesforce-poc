@@ -1,0 +1,176 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<!--
+An element to display a dialog for template rendering.
+-->
+<dom-module id="nuxeo-analytics-dialog">
+  <style include="paper-dialog-shared-styles"></style>
+
+  <style>
+    :host {
+      width: 380px;
+    }
+
+    .centered {
+      display: block;
+      margin: auto;
+    }
+
+    .titleContainer {
+      /* With paper-dialog-behavior you are technically supposed to use an <h2>
+      for the title but I didn't like the way it looked and there is no container
+      you can style. I tried to use paper-card but the title would not render.
+      So I'm just using plain divs. */
+      font-size: 160%;
+      margin-top: 0px;
+      height: 64px;
+      padding-left: 20px;
+      background: var(--dark-primary-color);
+      color: var(--secondary-text-color);
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+  </style>
+  <template>
+
+    <nuxeo-connection id="nx"></nuxeo-connection>
+    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
+    <nuxeo-es-search id='DocumentProvider' index="audit" query=[[query]] size="0" aggregates=[[aggregates]] aggregations={{aggregations}}></nuxeo-es-search>
+      <div class="titleContainer">
+        <div class="verticalCenterAnything">Analytics</div>
+      </div>
+      <div class="content">
+          <paper-dropdown-menu label="Contact" name="recepient" required>
+             <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{to}}">
+               <template is="dom-repeat" items="[[sfcontacts.records]]">
+                  <paper-item value="[[item.Contact.Email]]">[[item.Contact.Name]] ([[item.Contact.Email]])</paper-item>
+               </template>
+             </paper-menu>
+          </paper-dropdown-menu>
+          <table>
+             <tr>
+                <td>
+                   Page Number
+                </td>
+                <td>
+                   Time Spent (s)
+                </td>
+             </tr>
+          <template is="dom-repeat" items="[[aggregations.pageAgg.buckets]]">
+             <tr>
+                <td>
+                     [[item.key]]
+                </td>
+                <td>
+                     [[item.timeSpentSumAgg.value]]
+                </td>
+             </tr>
+         </template>
+            </table>
+          <div>
+             <paper-button raised dialog-confirm>Close</paper-button>
+          </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-analytics-dialog',
+
+      behaviors: [Polymer.PaperDialogBehavior],
+
+      properties: {
+        doc: {
+          type: Object,
+          notify: true
+       },
+
+       to: {
+          type: String,
+       }
+      },
+
+      observers: [
+        '_updateRelatedObjects(sfopportunity)','_updateStats(to)'
+      ],
+
+      _updateRelatedObjects: function () {
+        if (this.sfopportunity === undefined)
+          return;
+        var id = this.sfopportunity.Id;
+        //Get contacts
+          var query = "SELECT Role, Contact.Name, Contact.email, Contact.phone, " +
+            "Contact.MailingStreet, Contact.MailingCity, Contact.MailingPostalCode," +
+            " Contact.MailingState, Contact.MailingCountry FROM OpportunityContactRole where OpportunityId = '" + id + "'";
+          this.$.sfco.query = query;
+      },
+
+      _updateStats: function () {
+         this.query = {
+               filtered: {
+                 query: { "match_all": {} },
+                 filter: {
+                   bool: {
+                     must: [{
+                      term: {
+                         category:"Document Tracking"
+                      }
+                     }, {
+                      term: {
+                         docUUID: this.doc.uid
+                      }
+                     }]
+                   }
+                 }
+               }
+         };
+
+         this.aggregates = {
+            pageAgg : {
+             terms: {
+               field: "extended.pageNumber",
+               size: 10,
+               order: {
+                  timeSpentSumAgg: "desc"
+               }
+             },
+             aggs: {
+               timeSpentSumAgg: {
+                 sum: {
+                   field: "extended.timeSpentSeconds"
+                 }
+               }
+             }
+           }
+         };
+
+        this.$.DocumentProvider.execute();
+
+      }
+
+    });
+  </script>
+</dom-module>
