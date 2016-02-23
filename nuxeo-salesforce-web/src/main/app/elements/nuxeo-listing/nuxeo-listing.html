@@ -98,7 +98,18 @@ Requires <nuxeo-connection> in order to get icons.
     }
 
     nuxeo-template-sections-selector {
-      --paper-dialog-button-color: var(--primary-text-color);
+      --paper-dialog-button-color: var(--secondary-text-color);
+      --paper-button: {
+        background: var(--accent-color)
+      }
+      border-radius: 3px;
+    }
+
+    nuxeo-email-dialog {
+      --paper-dialog-button-color: var(--secondary-text-color);
+      --paper-button: {
+        background: var(--accent-color)
+      }
       border-radius: 3px;
     }
 

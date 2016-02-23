@@ -58,62 +58,102 @@ An element to display a dialog for template rendering.
       flex-direction: column;
       margin-bottom: 20px;
     }
+
   </style>
   <template>
 
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
-    <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
-    <nuxeo-salesforce-query id="sfbcc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfbcc}}"></nuxeo-salesforce-query>
-    <nuxeo-operation id="send" op="SendDocument" response="{{_result}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-    <template is="dom-if" if="[[_show_selection]]">
+    <nuxeo-resource id="oauth2directory"
+      path="/oauth2directory/salesforce"
+      response="{{result}}"
+      auto=""
+      success="{{success}}"
+      error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sfc"
+      callback="[[result.userAuthorizationURL]]"
+      clientid="[[result.clientId]]"
+      sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
+    <nuxeo-salesforce-query id="sfco"
+      callback="[[result.userAuthorizationURL]]"
+      clientid="[[result.clientId]]"
+      sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
+    <nuxeo-salesforce-query id="sfbcc"
+      callback="[[result.userAuthorizationURL]]"
+      clientid="[[result.clientId]]"
+      sfobject="{{sfbcc}}"></nuxeo-salesforce-query>
+    <nuxeo-operation id="send"
+      op="SendDocument"
+      response="{{_result}}"
+      success="{{success}}"
+      error="{{error}}"></nuxeo-operation>
+
+    <template is="dom-if"
+      if="[[_show_selection]]">
       <div class="titleContainer">
         <div class="verticalCenterAnything">Send Document</div>
       </div>
       <div class="content">
-             <paper-input name="subject" label="Subject" value="{{subject}}" required></paper-input>
-             <paper-dropdown-menu label="Recepient" name="recepient" required>
-                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{to}}">
-                  <template is="dom-repeat" items="[[sfcontacts.records]]">
-                     <paper-item value="[[item.Contact.Email]]">[[item.Contact.Name]] ([[item.Contact.Email]])</paper-item>
-                  </template>
-                </paper-menu>
-             </paper-dropdown-menu>
-            <paper-textarea name="message" label="Message" value="{{message}}"></paper-textarea>
-             <p>Attachment</p>
-             <nuxeo-template-document doc=[[doc]]></nuxeo-template-document>
-             <div>
-                <paper-button raised on-click="_send">Send</paper-button>
-                <paper-button raised dialog-confirm>Cancel</paper-button>
-             </div>
+        <paper-input name="subject"
+          label="Subject"
+          value="{{subject}}"
+          required></paper-input>
+        <paper-dropdown-menu label="Recepient"
+          name="recepient"
+          required>
+          <paper-menu class="dropdown-content"
+            attr-for-selected="value"
+            selected="{{to}}">
+            <template is="dom-repeat"
+              items="[[sfcontacts.records]]">
+              <paper-item value="[[item.Contact.Email]]">[[item.Contact.Name]] ([[item.Contact.Email]])</paper-item>
+            </template>
+          </paper-menu>
+        </paper-dropdown-menu>
+        <paper-textarea name="message"
+          label="Message"
+          value="{{message}}"></paper-textarea>
+        <p>Attachment</p>
+        <nuxeo-template-document doc=[[doc]]></nuxeo-template-document>
+      </div>
+      <div class="buttons">
+        <paper-button raised
+          on-click="_send">Send</paper-button>
+        <paper-button raised
+          dialog-confirm>Cancel</paper-button>
+      </div>
     </template>
 
-    <template is="dom-if" if="[[_show_spinner]]">
+    <template is="dom-if"
+      if="[[_show_spinner]]">
       <div class="titleContainer">
         <div class="verticalCenterAnything">Sending.</div>
       </div>
       <div class="content">
-        <paper-spinner active class="centered"></paper-spinner>
+        <paper-spinner active
+          class="centered"></paper-spinner>
       </div>
     </template>
 
-    <template is="dom-if" if="[[_show_result]]">
+    <template is="dom-if"
+      if="[[_show_result]]">
       <div class="titleContainer">
         <div class="verticalCenterAnything">Done</div>
       </div>
       <div class="buttons">
-        <paper-button dialog-confirm raised>Close</paper-button>
+        <paper-button dialog-confirm
+          raised>Close</paper-button>
       </div>
     </template>
 
-    <template is="dom-if" if="[[_show_error]]">
+    <template is="dom-if"
+      if="[[_show_error]]">
       <div class="titleContainer">
         <div class="verticalCenterAnything">An Error Occured</div>
       </div>
       <div class="content">[[error]]</div>
       <div class="buttons">
-        <paper-button dialog-confirm raised>Close</paper-button>
+        <paper-button dialog-confirm
+          raised>Close</paper-button>
       </div>
     </template>
 
@@ -161,8 +201,8 @@ An element to display a dialog for template rendering.
         '_updateRelatedObjects(sfopportunity)', '_updateResult(_result)', '_displayError(error)'
       ],
 
-      ready: function () {
-        this.addEventListener('iron-overlay-opened', function () {
+      ready: function() {
+        this.addEventListener('iron-overlay-opened', function() {
           this._show_selection = true;
           this._show_spinner = false;
           this._show_result = false;
@@ -172,7 +212,7 @@ An element to display a dialog for template rendering.
 
       },
 
-      _updateRelatedObjects: function () {
+      _updateRelatedObjects: function() {
         if (this.sfopportunity === undefined)
           return;
         var id = this.sfopportunity.Id;
@@ -191,7 +231,7 @@ An element to display a dialog for template rendering.
         }
       },
 
-      _updateResult: function () {
+      _updateResult: function() {
         if (this._result === undefined) {
           this._displayError();
         } else if (this._result !== undefined && this._result !== null) {
@@ -200,25 +240,26 @@ An element to display a dialog for template rendering.
         }
       },
 
-      _displayError: function () {
+      _displayError: function() {
         this._show_selection = false;
         this._show_spinner = false;
         this._show_result = false;
         this._show_error = true;
       },
 
-      _send: function (e) {
-         this.$.send.params = {
-           to: (this.to !== undefined ? this.to : ""),
-           bcc: (this.sfbcc !== undefined ? ""+ this.sfbcc.records[0].LocalPart+"@"+this.sfbcc.records[0].EmailDomainName : ""),
-           subject: (this.subject !== undefined ? this.subject : ""),
-           message: (this.message !== undefined ? this.message : ""),
-         };
-         this.$.send.input = this.doc.uid;
-         this.$.send.execute();
-         this._show_spinner = true;
-         this._show_selection = false;
-       }
+      _send: function(e) {
+        this.$.send.params = {
+          to: (this.to !== undefined ? this.to : ""),
+          bcc: (this.sfbcc !== undefined ? "" + this.sfbcc.records[0].LocalPart + "@" + this.sfbcc.records[0].EmailDomainName : ""),
+          subject: (this.subject !== undefined ? this.subject : ""),
+          message: (this.message !== undefined ? this.message : ""),
+        };
+        this.$.send.input = this.doc.uid;
+        this.$.send.execute();
+        this._show_spinner = true;
+        this._show_selection = false;
+      }
     });
+
   </script>
 </dom-module>
