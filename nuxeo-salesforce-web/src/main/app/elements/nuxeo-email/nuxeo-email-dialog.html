@@ -59,9 +59,10 @@ An element to display a dialog for template rendering.
       margin-bottom: 20px;
     }
 
-    .attachmentContainer{
+    .attachmentContainer {
       text-align: center;
     }
+
   </style>
   <template>
 
@@ -116,7 +117,9 @@ An element to display a dialog for template rendering.
           label="Message"
           value="{{message}}"></paper-textarea>
         <p>Attachment</p>
-        <div class="attachmentContainer"><nuxeo-template-document doc=[[doc]]></nuxeo-template-document></div>
+        <div class="attachmentContainer">
+          <nuxeo-template-document doc=[[doc]]></nuxeo-template-document>
+        </div>
       </div>
       <div class="buttons">
         <paper-button raised
