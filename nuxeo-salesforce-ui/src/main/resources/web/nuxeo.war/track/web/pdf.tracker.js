@@ -17,11 +17,9 @@
            urlParams[decode(match[1])] = decode(match[2]);
     })();
 
+
     document.addEventListener('pagechange', function(e) {
       if (e.pageNumber !== e.previousPageNumber) {
-
-        console.log('page changed from ' + e.previousPageNumber + ' to ' + e.pageNumber);
-
         var timecurrent = Date.now();
         var diff = timecurrent - timeref;
         timeref = timecurrent;
@@ -31,6 +29,8 @@
         } else {
             diff= Math.floor(diff /1000);
         }
+
+        console.log("Watched page "+e.previousPageNumber+" for "+diff+" seconds");
 
         client.operation('ExtendedAuditLogOp')
           .params({
@@ -46,7 +46,6 @@
               // something went wrong
               throw error;
             }
-
             console.log('Event Logged ');
           });
       }
@@ -70,6 +69,7 @@
             console.log('Tab is hidden ');
           } else {
             console.log('Tab is displayed ');
+            timeref = Date.now();
           }
           document_hidden = document[hidden];
         }
