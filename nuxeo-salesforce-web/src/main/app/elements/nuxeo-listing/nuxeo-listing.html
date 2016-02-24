@@ -24,129 +24,94 @@ An element to display a list of Nuxeo documents.
 
 Requires <nuxeo-connection> in order to get icons.
 -->
-<dom-module id="nuxeo-listing"
-  assetpath="nuxeo-listing/">
-  <style>
-    paper-drawer-panel {
-      /* Allow the page to scroll if the content is too tall. */
-      overflow-y: scroll;
-      /* Put a divider between the drawer and the main panel. */
-      --paper-drawer-panel-main-container: {
-        border-right: solid 1px var(--divider-color);
-      }
-    }
+<dom-module id="nuxeo-listing">
+  <link rel="import"
+    type="css"
+    href="nuxeo-listing-shared-styles.css">
 
-    paper-drawer-panel::content div#main [main] {
-      /* By default paper-drawer-panel sets the height of the "main" element to 100%.
+  <template>
+
+    <style>
+      paper-drawer-panel {
+        /* Allow the page to scroll if the content is too tall. */
+        overflow-y: scroll;
+        /* Put a divider between the drawer and the main panel. */
+        --paper-drawer-panel-main-container: {
+          border-right: solid 1px var(--divider-color);
+        }
+      }
+
+      paper-drawer-panel::content div#main [main] {
+        /* By default paper-drawer-panel sets the height of the "main" element to 100%.
            This creates a visible scrollbar when the parent has an overflow set to scroll
            no matter how big the content is. Setting the height to auto shows the scrollbar
            only when the content is tall enough. */
-      height: auto;
-    }
-
-    nuxeo-metadata {
-      --paper-toolbar-background: var(--nuxeo-metadata-toolbar-background);
-      --paper-toolbar-color: var(--nuxeo-metadata-toolbar-color);
-      position: fixed;
-    }
-
-    paper-card {
-      margin: 5px;
-      --paper-card-background-color: var(--paper-card-light-primary-color);
-      border-color: var(--paper-card-light-primary-color);
-      border-style: solid;
-      border-width: thin;
-      width: 300px;
-    }
-
-    paper-card[selected] {
-      font-weight: bold;
-      border-color: var(--paper-card-selected-primary-color);
-    }
-
-    paper-icon-button {
-      padding: 4px;
-      width: 28px;
-      height: 28px;
-    }
-
-    .horizontal {
-      @apply(--layout-horizontal);
-    }
-
-    .justified {
-      @apply(--layout-justified);
-    }
-
-    .titleBar {
-      display: table;
-    }
-
-    .titleIconContainer {
-      display: table-cell;
-      vertical-align: middle;
-    }
-
-    .titleIcon {
-      padding-right: 5px;
-      --iron-icon-width: 20px;
-      --iron-icon-height: 20px;
-    }
-
-    .titleWrapper {
-      /* This is so that I can get dynamic support for the overflow/elipsis. */
-      display: table;
-      table-layout: fixed;
-      width: 100%;
-      height: 100%;
-    }
-
-    .title {
-      display: table-cell;
-      vertical-align: middle;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    paper-drawer-panel {
-      --paper-drawer-panel-right-drawer-container: {
-        background-color: var(--light-primary-color);
+        height: auto;
       }
-    }
 
-    nuxeo-template-sections-selector {
-      --paper-dialog-button-color: var(--secondary-text-color);
-      --paper-button: {
-        background: var(--accent-color)
+      nuxeo-metadata {
+        --paper-toolbar-background: var(--nuxeo-metadata-toolbar-background);
+        --paper-toolbar-color: var(--nuxeo-metadata-toolbar-color);
+        position: fixed;
       }
-      border-radius: 3px;
-    }
 
-    nuxeo-email-dialog {
-      --paper-dialog-button-color: var(--secondary-text-color);
-      --paper-button: {
-        background: var(--accent-color)
+      paper-card {
+        margin: 5px;
+        --paper-card-background-color: var(--paper-card-light-primary-color);
+        border-color: var(--paper-card-light-primary-color);
+        border-style: solid;
+        border-width: thin;
+        width: 300px;
       }
-      border-radius: 3px;
-    }
 
-    nuxeo-analytics-dialog {
-      --paper-dialog-button-color: var(--secondary-text-color);
-      --paper-button: {
-        background: var(--accent-color)
+      paper-card[selected] {
+        font-weight: bold;
+        border-color: var(--paper-card-selected-primary-color);
       }
-      border-radius: 3px;
-    }
 
-    nuxeo-metadata::content .titleWrapper {
-      /* The drawer is set to 300px so the title needs to be limited */
-      width: 203px;
-    }
+      paper-icon-button {
+        padding: 4px;
+        width: 28px;
+        height: 28px;
+      }
 
-  </style>
+      paper-drawer-panel {
+        --paper-drawer-panel-right-drawer-container: {
+          background-color: var(--light-primary-color);
+        }
+      }
 
-  <template>
+      nuxeo-template-sections-selector {
+        --paper-dialog-button-color: var(--secondary-text-color);
+        --paper-button: {
+          background: var(--accent-color)
+        }
+        border-radius: 3px;
+      }
+
+      nuxeo-email-dialog {
+        --paper-dialog-button-color: var(--secondary-text-color);
+        --paper-button: {
+          background: var(--accent-color)
+        }
+        border-radius: 3px;
+      }
+
+      nuxeo-analytics-dialog {
+        --paper-dialog-button-color: var(--secondary-text-color);
+        --paper-button: {
+          background: var(--accent-color)
+        }
+        border-radius: 3px;
+      }
+
+      nuxeo-metadata::content .titleWrapper {
+        /* The drawer is set to 300px so the title needs to be limited */
+        width: 203px;
+      }
+
+    </style>
+
 
     <nuxeo-connection id="nx"></nuxeo-connection>
 

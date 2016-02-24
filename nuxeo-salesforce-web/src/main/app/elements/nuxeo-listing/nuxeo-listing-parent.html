@@ -24,50 +24,29 @@ For example the name of the folder and a link to access it in Nuxeo.
 -->
 <dom-module id="nuxeo-listing-parent" assetpath="nuxeo-listing/">
   <style>
-    .mainToolbar {
-      color: inherit;
-      background-color: inherit;
+
+
+    .embedded-toolbar {
+      background: var(--default-primary-color);
     }
 
-    @media (max-width: 600px) {
-      h1.paper-font-display1 {
-        font-size: 24px;
-      }
+    .searchBox {
+      width: 25em;
     }
 
-    #spacer {
-      display: table;
-      margin: 0 auto;
+    .documentListContainer {
+      margin: 5px;
     }
 
-    .iconWithText {
-      padding-right: 5px;
-      vertical-align: text-top;
-    }
-
-    .listIconBox {
-      padding: 5px;
-      --iron-icon-width: 24px;
-      --iron-icon-height: 24px;
-    }
-
-    .docTitle {
-      font-size: 180%;
-    }
-
-    .docContainer {
-      display: table;
-    }
-
-    .docTitleContainer {
-      display: table-cell;
-      vertical-align: middle;
+    nuxeo-listing::content paper-drawer-panel::content div#drawer [drawer] {
+      /* Because nuxeo-listing sets nuxeo-metadata to "fixed", I need to override the height. By default the height when "fixed" is 100% of the screen. Since I have two paper-toolbars, I need to subtract 64px for each */
+      height: calc(100vh - 128px);
     }
   </style>
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
 
-    <paper-toolbar class="mainToolbar">
+    <paper-toolbar class="embedded-toolbar">
       <div class="docContainer">
         <iron-icon src="[[_iconFor(currentParent)]]" class="listIconBox iconWithText"></iron-icon>
         <div class="docTitleContainer">
