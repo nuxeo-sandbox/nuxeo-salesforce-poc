@@ -25,13 +25,14 @@ An element to display a list of Nuxeo documents.
 Requires <nuxeo-connection> in order to get icons.
 -->
 <dom-module id="nuxeo-listing">
-  <link rel="import"
-    type="css"
-    href="nuxeo-listing-shared-styles.css">
 
   <template>
 
     <style>
+      .document-toolbar {
+        --paper-toolbar-height: 21px;
+      }
+
       paper-drawer-panel {
         /* Allow the page to scroll if the content is too tall. */
         overflow-y: scroll;
@@ -112,7 +113,6 @@ Requires <nuxeo-connection> in order to get icons.
 
     </style>
 
-
     <nuxeo-connection id="nx"></nuxeo-connection>
 
     <paper-drawer-panel drawer-width="300px"
@@ -132,17 +132,16 @@ Requires <nuxeo-connection> in order to get icons.
           items="[[documentList]]">
           <paper-card on-tap="_select"
             selected$="[[_isSame(item, selected)]]">
-            <div class="card-content">
-              <div class="titleBar">
-                <div class="titleIconContainer">
-                  <iron-icon src="[[_iconFor(item)]]"
-                    class="titleIcon"></iron-icon>
-                </div>
-                <div class="titleWrapper">
-                  <div class="title">[[item.title]]</div>
-                </div>
-              </div>
-            </div>
+
+            <paper-toolbar class="document-toolbar">
+              <a href="[[_docURL(item)]]"
+                target="_blank">
+                <paper-icon-button src="[[_iconFor(item)]]"
+                  title="Nuxeo"></paper-icon-button>
+              </a>
+              <div class="title">[[item.title]]</div>
+            </paper-toolbar>
+
             <template is="dom-if"
               if="[[_isNotFolder(item)]]">
               <div class="card-actions horizontal justified">
@@ -243,7 +242,7 @@ Requires <nuxeo-connection> in order to get icons.
       },
 
       _iconFor: function(doc) {
-        if (doc && doc.properties['common:icon']) {
+        if (doc && doc.properties && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
         }
       },
@@ -286,4 +285,5 @@ Requires <nuxeo-connection> in order to get icons.
     });
 
   </script>
+
 </dom-module>
