@@ -241,6 +241,7 @@ Requires <nuxeo-connection> in order to get icons.
         return selected && selected.uid === item.uid;
       },
 
+      /* The only reason this is not in nuxeo-listing-actions-behavior is because it uses a nuxeo-connection to get the base URL. */
       _iconFor: function(doc) {
         if (doc && doc.properties && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
