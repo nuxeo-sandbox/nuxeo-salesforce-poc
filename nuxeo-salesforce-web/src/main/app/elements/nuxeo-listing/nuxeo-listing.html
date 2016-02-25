@@ -30,18 +30,19 @@ Requires <nuxeo-connection> in order to get icons.
 
     <style>
       .document-toolbar {
-        --paper-toolbar-height: 21px;
+        --paper-toolbar-height: 25px;
         --paper-toolbar-background: var(--default-primary-color);
         --paper-toolbar-color: var(--primary-text-color);
         --paper-toolbar-title: {
           margin-left: 5px;
+          margin-right: 5px;
         }
         margin: 5px;
       }
 
       paper-toolbar::content #topBar {
-        padding-left: 0px;
-        padding-right: 0px;
+        padding-left: 3px;
+        padding-right: 3px;
       }
 
       paper-drawer-panel {
@@ -153,6 +154,7 @@ Requires <nuxeo-connection> in order to get icons.
               <div class="title">[[item.title]]</div>
             </paper-toolbar>
 
+            <div class="card-content">Here's some content</div>
             <template is="dom-if"
               if="[[_isNotFolder(item)]]">
               <div class="card-actions horizontal justified">
