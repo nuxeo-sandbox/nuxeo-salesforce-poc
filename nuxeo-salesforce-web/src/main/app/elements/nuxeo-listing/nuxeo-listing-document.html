@@ -88,52 +88,87 @@ Requires <nuxeo-connection> in order to get icons.
         <div class="title">[[doc.title]]</div>
       </paper-toolbar>
 
-      <template is="dom-if"
-        if="[[_isNotFolder(doc)]]">
-        <div class="card-actions horizontal justified">
-          <template is="dom-if"
-            if="[[_previewSupported(doc)]]">
-            <a href="[[_previewUrl(doc)]]"
-              target="_blank">
-              <paper-icon-button icon="visibility"
-                title="Full Preview"></paper-icon-button>
-            </a>
-          </template>
-          <a href="[[_downloadURL(doc)]]"
-            target="_blank">
-            <paper-icon-button icon="file-download"
-              title="Download"></paper-icon-button>
-          </a>
+      <div class="card-actions horizontal justified">
+
+        <template is="dom-if"
+          if="[[showActionEdit]]">
           <a href="[[_docEditURL(doc)]]"
             target="_blank">
             <paper-icon-button icon="assignment"
               title="Edit Metadata"></paper-icon-button>
           </a>
-          <a href="[[_driveEdit(doc)]]">
-            <paper-icon-button icon="create"
-              title="Edit Document"></paper-icon-button>
-          </a>
-          <paper-icon-button icon="send"
-            title="Send Document"
-            on-click="_onEmailClick"></paper-icon-button>
-          <template is="dom-if"
-            if="[[_isLock(doc)]]">
-            <paper-icon-button icon="lock"></paper-icon-button>
-          </template>
-          <template is="dom-if"
-            if="[[_isTemplate(doc)]]">
-            <paper-icon-button icon="av:play-circle-outline"
-              id="[[doc.uid]]"
-              title="Render Template"
-              on-click="_onTemplateClick"></paper-icon-button>
-          </template>
-          <paper-icon-button icon="dashboard"
-            title="Analytics"
-            on-click="_onAnalyticsClick"></paper-icon-button>
-        </div>
-      </template>
-    </paper-card>
+        </template>
 
+        <template is="dom-if"
+          if="[[_isNotFolder(doc)]]">
+
+          <template is="dom-if"
+            if="[[showActionPreview]]">
+            <template is="dom-if"
+              if="[[_previewSupported(doc)]]">
+              <a href="[[_previewUrl(doc)]]"
+                target="_blank">
+                <paper-icon-button icon="visibility"
+                  title="Full Preview"></paper-icon-button>
+              </a>
+            </template>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionDownload]]">
+            <a href="[[_downloadURL(doc)]]"
+              target="_blank">
+              <paper-icon-button icon="file-download"
+                title="Download"></paper-icon-button>
+            </a>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionDirectEdit]]">
+            <a href="[[_driveEdit(doc)]]">
+              <paper-icon-button icon="create"
+                title="Edit Document"></paper-icon-button>
+            </a>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionShare]]">
+            <paper-icon-button icon="send"
+              title="Send Document"
+              on-click="_onEmailClick"></paper-icon-button>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionTemplate]]">
+            <template is="dom-if"
+              if="[[_isTemplate(doc)]]">
+              <paper-icon-button icon="av:play-circle-outline"
+                id="[[doc.uid]]"
+                title="Render Template"
+                on-click="_onTemplateClick"></paper-icon-button>
+            </template>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionAnalytics]]">
+            <paper-icon-button icon="dashboard"
+              title="Analytics"
+              on-click="_onAnalyticsClick"></paper-icon-button>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionLock]]">
+            <template is="dom-if"
+              if="[[_isLock(doc)]]">
+              <paper-icon-button icon="lock"></paper-icon-button>
+            </template>
+          </template>
+
+        </template>
+
+      </div>
+
+    </paper-card>
 
   </template>
 
@@ -154,6 +189,38 @@ Requires <nuxeo-connection> in order to get icons.
         selectedDocument: {
           type: Object,
           notify: true
+        },
+        showActionPreview: {
+          type: Boolean,
+          value: false
+        },
+        showActionDownload: {
+          type: Boolean,
+          value: false
+        },
+        showActionEdit: {
+          type: Boolean,
+          value: false
+        },
+        showActionDirectEdit: {
+          type: Boolean,
+          value: false
+        },
+        showActionShare: {
+          type: Boolean,
+          value: false
+        },
+        showActionTemplate: {
+          type: Boolean,
+          value: false
+        },
+        showActionAnalytics: {
+          type: Boolean,
+          value: false
+        },
+        showActionLock: {
+          type: Boolean,
+          value: true
         }
       },
 
