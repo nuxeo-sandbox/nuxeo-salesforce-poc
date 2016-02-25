@@ -25,19 +25,25 @@ Behavior to manage the "actions" for a document.
 
   Nuxeo.NuxeoListingActionsBehavior = {
 
+    _docURL: function(doc) {
+      if (doc && doc.contextParameters && doc.contextParameters.documentURL) {
+        return doc.contextParameters.documentURL;
+      }
+    },
+
     _previewSupported: function(doc) {
-      if (doc && doc.facets.indexOf("Video") > -1) {
+      if (doc && doc.facets && doc.facets.indexOf("Video") > -1) {
         return false;
       }
       return true;
     },
 
     _previewUrl: function(doc) {
-      if (doc && doc.contextParameters !== undefined) {
+      if (doc && doc.contextParameters) {
         /* Note that doc.contextParameters.preview is the old previewer. My
            assumption is that if the document can use the old previwer, it
            can also use the new one. */
-        if (doc.contextParameters.preview !== undefined) {
+        if (doc.contextParameters.preview) {
 
           if (doc.facets.indexOf("Picture") > -1) {
             // Pictures; use REST previewer.
@@ -46,15 +52,15 @@ Behavior to manage the "actions" for a document.
           if (doc.properties["file:content"]["mime-type"] == "application/pdf") {
             // PDF's; use new previwer as is.
             return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-              "/nuxeo/track/web/viewer.html?file=" + doc.properties["file:content"].data+
-              "&uuid="+doc.uid;
+              "/nuxeo/track/web/viewer.html?file=" + doc.properties["file:content"].data +
+              "&uuid=" + doc.uid;
           } else {
             // Other documents; use new previwer but convert to PDF first.
             return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
               "/nuxeo/track/web/viewer.html?file=" +
               location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-              "/nuxeo/api/v1/id/" + doc.uid + "/%40blob/blobholder%3A0/%40convert%3Fformat%3Dpdf"+
-              "&uuid="+doc.uid;
+              "/nuxeo/api/v1/id/" + doc.uid + "/%40blob/blobholder%3A0/%40convert%3Fformat%3Dpdf" +
+              "&uuid=" + doc.uid;
           }
         } else {
           return doc.contextParameters.documentURL;
@@ -68,23 +74,23 @@ Behavior to manage the "actions" for a document.
     },
 
     _docEditURL: function(doc) {
-      if (doc && doc.contextParameters !== undefined) {
+      if (doc && doc.contextParameters && doc.contextParameters.documentURL) {
         return doc.contextParameters.documentURL + "?tabIds=:TAB_EDIT";
       }
     },
 
     _driveEdit: function(doc) {
-      if (doc && doc.contextParameters !== undefined) {
+      if (doc && doc.contextParameters && doc.contextParameters.driveEditURL) {
         return doc.contextParameters.driveEditURL;
       }
     },
 
     _downloadURL: function(doc) {
-      if (doc) {
-        if (doc.properties["file:content"] !== undefined && doc.properties["file:content"] !== null) {
+      if (doc && doc.properties) {
+        if (doc.properties["file:content"]) {
           return doc.properties["file:content"].data;
         } else {
-          if (doc.contextParameters !== undefined) {
+          if (doc.contextParameters) {
             return doc.contextParameters.documentURL;
           }
         }
@@ -92,7 +98,7 @@ Behavior to manage the "actions" for a document.
     },
 
     _isTemplate: function(doc) {
-      if (doc) {
+      if (doc && doc.type) {
         if (doc.type == "TemplateSource") {
           return true;
         }
