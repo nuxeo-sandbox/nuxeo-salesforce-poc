@@ -133,9 +133,12 @@ Requires <nuxeo-connection> in order to get icons.
 
           <template is="dom-if"
             if="[[showActionShare]]">
-            <paper-icon-button icon="send"
-              title="Send Document"
-              on-click="_onEmailClick"></paper-icon-button>
+            <template is="dom-if"
+              if="[[!_isTemplate(doc)]]">
+              <paper-icon-button icon="send"
+                title="Send Document"
+                on-click="_onEmailClick"></paper-icon-button>
+            </template>
           </template>
 
           <template is="dom-if"
@@ -151,9 +154,12 @@ Requires <nuxeo-connection> in order to get icons.
 
           <template is="dom-if"
             if="[[showActionAnalytics]]">
-            <paper-icon-button icon="dashboard"
-              title="Analytics"
-              on-click="_onAnalyticsClick"></paper-icon-button>
+            <template is="dom-if"
+              if="[[!_isTemplate(doc)]]">
+              <paper-icon-button icon="dashboard"
+                title="Analytics"
+                on-click="_onAnalyticsClick"></paper-icon-button>
+            </template>
           </template>
 
           <template is="dom-if"
