@@ -147,8 +147,12 @@ Requires <nuxeo-connection> in order to get icons.
         doc: {
           type: Object,
         },
-        action: {
+        selectedAction: {
           type: String,
+          notify: true
+        },
+        selectedDocument: {
+          type: Object,
           notify: true
         }
       },
@@ -169,16 +173,25 @@ Requires <nuxeo-connection> in order to get icons.
         return false;
       },
 
-      _onEmailClick: function() {
-        this.action = "email";
+      _onEmailClick: function(e) {
+        this.selectedAction = "email";
+        this._setSelectedDocument(e);
+
       },
 
-      _onTemplateClick: function() {
-        this.action = "template";
+      _onTemplateClick: function(e) {
+        this.selectedAction = "template";
+        this._setSelectedDocument(e);
       },
 
-      _onAnalyticsClick: function() {
-        this.action = "analytics";
+      _onAnalyticsClick: function(e) {
+        this.selectedAction = "analytics";
+        this._setSelectedDocument(e);
+      },
+
+      _setSelectedDocument: function(e) {
+        var item = e.model.item;
+        this.selectedDocument = this.doc;
       }
 
     });
