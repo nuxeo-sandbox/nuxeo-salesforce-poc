@@ -31,9 +31,17 @@ Requires <nuxeo-connection> in order to get icons.
     <style>
       .document-toolbar {
         --paper-toolbar-height: 21px;
+        --paper-toolbar-background: var(--default-primary-color);
+        --paper-toolbar-color: var(--primary-text-color);
         --paper-toolbar-title: {
           margin-left: 5px;
         }
+        margin: 5px;
+      }
+
+      paper-toolbar::content #topBar {
+        padding-left: 0px;
+        padding-right: 0px;
       }
 
       paper-drawer-panel {
