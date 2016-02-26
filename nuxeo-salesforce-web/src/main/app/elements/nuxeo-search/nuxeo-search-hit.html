@@ -122,6 +122,10 @@ Requires <nuxeo-connection> in order to get icons.
         overflow: hidden;
       }
 
+      .rating {
+         display:inline-block;
+      }
+
     </style>
 
     <nuxeo-connection id="nx"></nuxeo-connection>
@@ -186,6 +190,11 @@ Requires <nuxeo-connection> in order to get icons.
         </div>
       </template>
 
+      <template is="dom-if" if="{{_docHasRatedFacet(doc)}}">
+                  <nuxeo-star-rating class="rating" rating="[[doc.properties.rated:avg]]"></nuxeo-star-rating>
+                  <div class="rating">([[doc.properties.rated:count]])</div>
+      </template>
+
       <template is="dom-if"
         if="[[_docHasPills(doc)]]">
         <div class="documentPills">
@@ -246,7 +255,11 @@ Requires <nuxeo-connection> in order to get icons.
           return true;
         }
         return false;
-      }
+     },
+
+      _docHasRatedFacet: function(doc) {
+        return doc && doc.facets && doc.facets.indexOf('Rated')!==-1;
+     }
 
     });
 

@@ -38,19 +38,13 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
         background: #059EBD;
       }
 
-      paper-material {
-        margin-top: 10px;
-        margin-left: 20px;
-        margin-right: 20px;
-      }
-
       .inline {
         display: inline-block;
       }
 
     </style>
 
-    <paper-material>
+    <paper-material elevation="0">
       <template is="dom-if" if="[[displayDropDown]]">
          <paper-dropdown-menu label="Sort" name="properties" required>
            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{selected}}">
