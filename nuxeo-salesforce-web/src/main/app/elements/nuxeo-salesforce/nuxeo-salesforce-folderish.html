@@ -55,7 +55,11 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       height: calc(100vh - 228px);
     }
 
-    .embedded-toolbar {
+    paper-toolbar {
+      --paper-toolbar-background: var(--default-primary-color);
+    }
+
+    nuxeo-listing-parent::content paper-toolbar {
       background: var(--default-primary-color);
     }
 
@@ -123,9 +127,8 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
           <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]"
             new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
           <nuxeo-listing-parent current-parent="[[currentParent]]"
-            refresh="{{refreshList}}"
-            class="embedded-toolbar"></nuxeo-listing-parent>
-          <paper-toolbar class="embedded-toolbar">
+            refresh="{{refreshList}}"></nuxeo-listing-parent>
+          <paper-toolbar>
             <paper-input id="searchDocsInput"
               class="searchBox"
               type=search
