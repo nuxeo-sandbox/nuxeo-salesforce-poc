@@ -19,9 +19,12 @@ Contributors:
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
 
-<link rel="import" href="../nuxeo-listing/nuxeo-listing.html">
-<link rel="import" href="../nuxeo-listing/nuxeo-listing-breadcrumb.html">
-<link rel="import" href="../nuxeo-listing/nuxeo-listing-parent.html">
+<link rel="import"
+  href="../nuxeo-listing/nuxeo-listing.html">
+<link rel="import"
+  href="../nuxeo-listing/nuxeo-listing-breadcrumb.html">
+<link rel="import"
+  href="../nuxeo-listing/nuxeo-listing-parent.html">
 
 <!--
 An element to list the contents of a Nuxeo folder within SFDC.
@@ -30,7 +33,8 @@ Includes a path breadcrumb and features for the folder.
 
 Includes the ability to upload a file to Nuxeo from the "Docs" tab.
 -->
-<dom-module id="nuxeo-salesforce-folderish" assetpath="nuxeo-salesforce/">
+<dom-module id="nuxeo-salesforce-folderish"
+  assetpath="nuxeo-salesforce/">
   <style>
     :host {
       display: block;
@@ -40,28 +44,18 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       --paper-icon-button-ink-color: var(--placeholder-text-color);
     }
 
-    :host::content a {
-      text-decoration: none;
-    }
-
-    @media (max-width: 600px) {
-      h1.paper-font-display1 {
-        font-size: 24px;
-      }
+    .tabBodyContainer {
+      /* A height is required in order for a paper-header-panel to display content.
+         See: https://elements.polymer-project.org/elements/paper-header-panel */
+      height: calc(100vh - 64px);
     }
 
     .embedded-toolbar {
       background: var(--default-primary-color);
-      color: var(--primary-text-color);
     }
 
     .documentListContainer {
       margin: 5px;
-      float: left;
-      /* This is hard coded bacause I couldn't find a way to get the div to fill the remaining space.
-      This is an appropriate height for the size of our SFDC app. */
-      height: 362px;
-      width: 100%;
     }
 
     .hover {
@@ -71,34 +65,78 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     .searchBox {
       width: 25em;
     }
+
   </style>
 
   <template>
 
     <!-- Nuxeo and Salesforce connections -->
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
-    
+    <nuxeo-resource id="oauth2directory"
+      path="/oauth2directory/salesforce"
+      response="{{result}}"
+      auto=""
+      success="{{success}}"
+      error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sf"
+      callback="[[result.userAuthorizationURL]]"
+      clientid="[[result.clientId]]"
+      sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
+
     <!-- Nuxeo resources -->
-    <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-resource id="query" path="/query" response="{{documentList}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.uid]]" enrichers="preview, documentURL, driveEditURL" response="{{documentList}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <nuxeo-resource id="parentResource"
+      response="{{currentParent}}"
+      success="{{success}}"
+      error="{{error}}"></nuxeo-resource>
+    <nuxeo-resource id="query"
+      path="/query"
+      response="{{documentList}}"
+      enrichers="preview, documentURL, driveEditURL"
+      success="{{success}}"
+      error="{{error}}"></nuxeo-resource>
+    <nuxeo-operation id="fetchSFObject"
+      op="javascript.FetchSFObject"
+      enrichers="documentURL"
+      params="[[params]]"
+      response="{{currentParent}}"
+      success="{{success}}"
+      error="{{error}}"></nuxeo-operation>
+    <nuxeo-operation id="getChildren"
+      op="javascript.SFGetChildren"
+      input="[[currentParent.uid]]"
+      enrichers="preview, documentURL, driveEditURL"
+      response="{{documentList}}"
+      success="{{success}}"
+      error="{{error}}"></nuxeo-operation>
+    <div id="searchPublicPage"
+      class="tabBodyContainer">
+      <paper-header-panel mode="waterfall">
 
-    <paper-header-panel mode="waterfall">
-      <div class="paper-header">
-        <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
-        <nuxeo-listing-parent current-parent="[[currentParent]]" refresh="{{refreshList}}" class="embedded-toolbar"></nuxeo-listing-parent>
-        <paper-toolbar class="embedded-toolbar">
-          <paper-input id="searchDocsInput" class="searchBox" type=search label="Search" bind-value="{{searchTerm}}"></paper-input>
-        </paper-toolbar>
-      </div>
-      <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" parent-path="{{parentPath}}" class=" documentListContainer"></nuxeo-listing>
-    </paper-header-panel>
+        <div class="paper-header">
+          <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]"
+            new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
+          <nuxeo-listing-parent current-parent="[[currentParent]]"
+            refresh="{{refreshList}}"
+            class="embedded-toolbar"></nuxeo-listing-parent>
+          <paper-toolbar class="embedded-toolbar">
+            <paper-input id="searchDocsInput"
+              class="searchBox"
+              type=search
+              label="Search"
+              bind-value="{{searchTerm}}"></paper-input>
+          </paper-toolbar>
+        </div>
 
+        <nuxeo-listing id="dropZone"
+          document-list="[[documentList.entries]]"
+          parent-path="{{parentPath}}"
+          class="documentListContainer"></nuxeo-listing>
 
-    <paper-dialog id="modalWarning" class="folder-box">
+      </paper-header-panel>
+    </div>
+
+    <paper-dialog id="modalWarning"
+      class="folder-box">
       <h3>Warning</h3>
       <div id="modalWarningContent">
       </div>
@@ -141,15 +179,15 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       },
 
       observers: [
-          '_fetch(searchTerm)',
-          '_fetchParent(parentPath)',
-          '_displayCanvasApp(sfobject)',
-          '_displayErrorCanvasApp(success, error)',
-          '_displayErrorCanvasApp(success)',
-          '_executeOp(sfobject)',
-          '_getChildren(currentParent)',
-          '_refresh(refreshList)'
-        ],
+        '_fetch(searchTerm)',
+        '_fetchParent(parentPath)',
+        '_displayCanvasApp(sfobject)',
+        '_displayErrorCanvasApp(success, error)',
+        '_displayErrorCanvasApp(success)',
+        '_executeOp(sfobject)',
+        '_getChildren(currentParent)',
+        '_refresh(refreshList)'
+      ],
 
       listeners: {
         'dropZone.dragover': '_onDragOver',
@@ -158,7 +196,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         'dropZone.dragleave': '_onDragLeave'
       },
 
-      _displayCanvasApp: function () {
+      _displayCanvasApp: function() {
         if (this.sfobject) {
           $(".fullbleed").show();
         } else {
@@ -166,7 +204,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         }
       },
 
-      _displayErrorCanvasApp: function () {
+      _displayErrorCanvasApp: function() {
         if (this.success) {
           $("#authorized").show();
           $("#error_content").hide();
@@ -178,7 +216,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       },
 
 
-      _executeOp: function () {
+      _executeOp: function() {
         if (this.sfobject) {
           this.params.sfObject = this.sfobject;
           this.$.fetchSFObject.execute();
@@ -186,25 +224,25 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       },
 
 
-      _fetchParent: function () {
+      _fetchParent: function() {
         this.$.parentResource.path = '/path' + this.parentPath;
         return this.$.parentResource.get();
       },
 
-      _fetch: function (searchTerm) {
+      _fetch: function(searchTerm) {
         if (this.currentParent) {
           this.$.query.params = this._getQueryParams(this.currentParent.uid, searchTerm);
           this.$.query.get();
         }
       },
 
-      _getChildren: function () {
+      _getChildren: function() {
         if (this.currentParent) {
           this.$.getChildren.execute();
         }
       },
 
-      _getQueryParams: function (parentId, searchTerm) {
+      _getQueryParams: function(parentId, searchTerm) {
         var query = 'SELECT * FROM Document WHERE ecm:currentLifeCycleState != \'deleted\' ' +
           ' AND ecm:isCheckedInVersion = 0 ' +
           ' AND ecm:mixinType != \'HiddenInNavigation\' ';
@@ -221,31 +259,31 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         };
       },
 
-      _onDragOver: function (e) {
+      _onDragOver: function(e) {
         // prevent default to allow drop
         e.preventDefault();
       },
-      _onDragEnter: function (e) {
+      _onDragEnter: function(e) {
         if (e.target.id === "dropZone") {
           this.toggleClass('hover', true, e.target);
         }
       },
-      _onDrop: function (e) {
+      _onDrop: function(e) {
         e.preventDefault();
         this.toggleClass('hover', false, e.target);
-        this._upload(e.dataTransfer.files).then(function (docs) {
+        this._upload(e.dataTransfer.files).then(function(docs) {
           // refresh and select last file uploaded
-          return this.$.getChildren.execute().then(function () {
+          return this.$.getChildren.execute().then(function() {
             this.selected = docs.entries.pop();
           }.bind(this));
         }.bind(this));
         return false;
       },
-      _onDragLeave: function (e) {
+      _onDragLeave: function(e) {
         this.toggleClass('hover', false, e.target);
       },
 
-      _upload: function (files) {
+      _upload: function(files) {
         var uploader = this.$.nx.client
           .operation('FileManager.Import')
           .context({
@@ -255,12 +293,12 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         var uploads = [];
         for (var i = 0; i < files.length; i++) {
           uploads.push(
-            new Promise(function (resolve, reject) {
-              uploader.uploadFile(files[i], function (data) {
+            new Promise(function(resolve, reject) {
+              uploader.uploadFile(files[i], function(data) {
                 resolve(data);
               });
             })
-            .catch(function (reason) {
+            .catch(function(reason) {
               console.log(reason);
               var content = document.getElementById('modalWarningContent');
               if (content) {
@@ -274,14 +312,14 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
           );
         }
         return Promise.all(uploads)
-          .then(function () {
-            return new Promise(function (resolve, reject) {
-              uploader.execute(function (error, data) {
+          .then(function() {
+            return new Promise(function(resolve, reject) {
+              uploader.execute(function(error, data) {
                 (error) ? reject(error): resolve(data);
               });
             });
           })
-          .catch(function (reason) {
+          .catch(function(reason) {
             console.log(reason);
             var content = document.getElementById('modalWarningContent');
             if (content) {
@@ -294,7 +332,7 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
           });
       },
 
-      _refresh: function () {
+      _refresh: function() {
         if (this.refreshList == true) {
           this.refreshList = false;
 
@@ -305,5 +343,6 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       }
 
     });
+
   </script>
 </dom-module>
