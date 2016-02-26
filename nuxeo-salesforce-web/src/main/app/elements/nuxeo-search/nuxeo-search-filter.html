@@ -62,6 +62,7 @@ Lesser General Public License for more details.
       post_filter=[[post_filter]]
       aggregates=[[aggregates]]
       hits={{hits}}
+      sort={{sort}}
       aggregations={{aggregations}}
       suggest=[[suggest]]
       suggestions={{suggestions}}></nuxeo-es-search>
@@ -117,19 +118,31 @@ Lesser General Public License for more details.
         suggestions: {
           type: Object,
           notify: true
-        }
+       },
+       sortProperties: {
+         type: Array,
+         notify: true,
       },
-
+      sort: {
+        type: Array,
+        notify: true,
+       }
+      },
       observers: [
         'resetFacets(fulltext)',
         'updateQuery(industryAgg,stageAgg,diffusionAgg)',
-        'updateParameter(response)'
+        'updateParameter(response)',
+        'updateSort(sortProperties.splices)'
       ],
 
       resetFacets: function() {
         this.industryAgg = [];
         this.stageAgg = [];
         this.diffusionAgg = [];
+      },
+
+      updateSort: function(changeRecord) {
+         this.updateQuery();
       },
 
       updateQuery: function() {
@@ -327,6 +340,17 @@ Lesser General Public License for more details.
             }
           }
         };
+
+        //build sorting
+        if (this.sort!==undefined) this.splice('sort',0,this.sort.length);
+        if (this.sortProperties!==undefined) {
+           for (var i=0;i<this.sortProperties.length;i++) {
+             var current = this.sortProperties[i];
+             var entry = {};
+             entry[current.value] = current.order;
+             this.sort.push(entry);
+           }
+        }
 
         this.debounce('autoQuery', function() {
           this.$.DocumentProvider.execute();
