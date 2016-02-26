@@ -64,20 +64,17 @@ For example the name of the folder and a link to access it in Nuxeo.
         }
       },
 
-
       _iconFor: function(doc) {
         if (doc && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
         }
       },
 
-
       _docURL: function(doc) {
         if (doc && doc.contextParameters !== undefined) {
           return doc.contextParameters.documentURL;
         }
       },
-
 
       _refresh: function() {
         this.refresh = true;
