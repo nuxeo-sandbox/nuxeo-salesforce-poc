@@ -33,6 +33,12 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       --paper-icon-button-ink-color: var(--placeholder-text-color);
     }
 
+    .tabBodyContainer {
+      /* A height is required in order for a paper-header-panel to display content.
+         See: https://elements.polymer-project.org/elements/paper-header-panel */
+      height: calc(100vh - 64px);
+    }
+
     .tabsToolbar {
       --paper-toolbar-background: var(--dark-primary-color);
     }
@@ -56,18 +62,6 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       height: 100%;
     }
 
-    .pageContainer {
-      position: relative;
-      height: 536px;
-      /* The height of the object in SFDC is 600. The toolbar above this is 64. */
-    }
-
-    .mustHaveHeight {
-      /* A height is required in order for a paper-header-panel to display content.
-         See: https://elements.polymer-project.org/elements/paper-header-panel */
-      height: 536px;
-    }
-
     .embedded-toolbar {
       background: var(--default-primary-color);
     }
@@ -78,11 +72,11 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     .documentListContainer {
       margin: 5px;
-      float: left;
-      /* This is hard coded bacause I couldn't find a way to get the div to fill the remaining space.
-      This is an appropriate height for the size of our SFDC app. */
-      height: 362px;
-      width: 100%;
+    }
+
+    nuxeo-listing::content paper-drawer-panel::content div#drawer [drawer] {
+      /* Because nuxeo-listing sets nuxeo-metadata to "fixed", I need to override the height. By default the height when "fixed" is 100% of the screen. Since I have two paper-toolbars, I need to subtract 64px for each */
+      height: calc(100vh - 128px);
     }
 
   </style>
@@ -126,106 +120,105 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       clientid="[[result.clientId]]"
       sfobject="{{_sfcompetitors}}"></nuxeo-salesforce-query>
 
-    <paper-header-panel mode="seam">
-      <paper-toolbar class="tabsToolbar">
-        <div class="logoButton">
-          <a href="/nuxeo"
-            target="_blank">
-            <paper-icon-button class="verticalCenterAnything"
-              src="[[_iconForApp()]]"
-              title="Nuxeo"></paper-icon-button>
-          </a>
-        </div>
-        <!-- This paper-tabs should be scrollable but it fails when used inside paper-toolbar.
+
+    <paper-toolbar class="tabsToolbar">
+      <div class="logoButton">
+        <a href="/nuxeo"
+          target="_blank">
+          <paper-icon-button class="verticalCenterAnything"
+            src="[[_iconForApp()]]"
+            title="Nuxeo"></paper-icon-button>
+        </a>
+      </div>
+      <!-- This paper-tabs should be scrollable but it fails when used inside paper-toolbar.
                See https://github.com/PolymerElements/paper-tabs/issues/130 -->
-        <paper-tabs class="mainTabs"
-          selected="{{selectedTab}}"
-          on-tap="hideMetadata">
-          <paper-tab>Public Docs</paper-tab>
-          <paper-tab>Internal Docs</paper-tab>
-          <paper-tab>Templates</paper-tab>
-          <paper-tab>My Docs</paper-tab>
-        </paper-tabs>
-      </paper-toolbar>
-    </paper-header-panel>
+      <paper-tabs class="mainTabs"
+        selected="{{selectedTab}}"
+        on-tap="hideMetadata">
+        <paper-tab>Public Docs</paper-tab>
+        <paper-tab>Internal Docs</paper-tab>
+        <paper-tab>Templates</paper-tab>
+        <paper-tab>My Docs</paper-tab>
+      </paper-tabs>
+    </paper-toolbar>
 
 
-    <div class="pageContainer">
-      <iron-pages selected="{{selectedTab}}">
 
-        <div id="searchPublicPage"
-          class="mustHaveHeight">
-          <paper-header-panel mode="waterfall">
-            <paper-toolbar id="searchPublicToolbar"
-              class="embedded-toolbar">
-              <paper-input id="searchPublicInput"
-                type=search
-                class="searchBox"
-                label="Search"
-                bind-value="{{_publicSearchTerms}}"></paper-input>
-            </paper-toolbar>
-            <nuxeo-page-provider id="publicPageProvider"
-              provider="AssetSearch"
-              page-size="[[searchPageSize]]"
-              current-page="{{publicDocs}}"
-              enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
-            <nuxeo-listing document-list="[[publicDocs]]"
-              class="documentListContainer"></nuxeo-listing>
-          </paper-header-panel>
-        </div>
+    <iron-pages selected="{{selectedTab}}">
 
-        <div id="searchInternalPage"
-          class="mustHaveHeight">
-          <paper-header-panel mode="waterfall">
-            <paper-toolbar id="searchInternalToolbar"
-              class="embedded-toolbar">
-              <paper-input id="searchInternalInput"
-                type=search
-                class="searchBox"
-                label="Search"
-                bind-value="{{_internalSearchTerms}}"></paper-input>
-            </paper-toolbar>
-            <nuxeo-page-provider id="internalPageProvider"
-              provider="AssetSearch"
-              page-size="[[searchPageSize]]"
-              current-page="{{internalDocs}}"
-              enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
-            <nuxeo-listing document-list="[[internalDocs]]"
-              class="documentListContainer"></nuxeo-listing>
-          </paper-header-panel>
-        </div>
+      <div id="searchPublicPage"
+        class="tabBodyContainer">
+        <nuxeo-page-provider id="publicPageProvider"
+          provider="AssetSearch"
+          page-size="[[searchPageSize]]"
+          current-page="{{publicDocs}}"
+          enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
+        <paper-header-panel mode="waterfall">
+          <paper-toolbar id="searchPublicToolbar"
+            class="embedded-toolbar">
+            <paper-input id="searchPublicInput"
+              type=search
+              class="searchBox"
+              label="Search"
+              bind-value="{{_publicSearchTerms}}"></paper-input>
+          </paper-toolbar>
+          <nuxeo-listing document-list="[[publicDocs]]"
+            class="documentListContainer"></nuxeo-listing>
+        </paper-header-panel>
+      </div>
 
-        <div id="searchTemplatesPage"
-          class="mustHaveHeight">
-          <paper-header-panel mode="waterfall">
-            <paper-toolbar id="searchTemplatesToolbar"
-              class="embedded-toolbar">
-              <paper-input id="searchTemplatesInput"
-                type=search
-                class="searchBox"
-                label="Search"
-                bind-value="{{_templateSearchTerms}}"></paper-input>
-            </paper-toolbar>
-            <nuxeo-page-provider auto
-              id="templatePageProvider"
-              provider="AssetSearch"
-              query="[[_fetchTemplates()]]"
-              page-size="[[searchPageSize]]"
-              enrichers="preview, documentURL, driveEditURL"
-              current-page="{{templates}}"></nuxeo-page-provider>
-            <nuxeo-listing document-list="[[templates]]"
-              class="documentListContainer"></nuxeo-listing>
-          </paper-header-panel>
-        </div>
+      <div id="searchInternalPage"
+        class="tabBodyContainer">
+        <nuxeo-page-provider id="internalPageProvider"
+          provider="AssetSearch"
+          page-size="[[searchPageSize]]"
+          current-page="{{internalDocs}}"
+          enrichers="preview, documentURL, driveEditURL"></nuxeo-page-provider>
+        <paper-header-panel mode="waterfall">
+          <paper-toolbar id="searchInternalToolbar"
+            class="embedded-toolbar">
+            <paper-input id="searchInternalInput"
+              type=search
+              class="searchBox"
+              label="Search"
+              bind-value="{{_internalSearchTerms}}"></paper-input>
+          </paper-toolbar>
 
-        <div id="docsPage">
-          <nuxeo-salesforce-folderish selected="{{selected}}"
-            class="mustHaveHeight"></nuxeo-salesforce-folderish>
-        </div>
+          <nuxeo-listing document-list="[[internalDocs]]"
+            class="documentListContainer"></nuxeo-listing>
+        </paper-header-panel>
+      </div>
 
-      </iron-pages>
+      <div id="searchTemplatesPage"
+        class="tabBodyContainer">
+        <nuxeo-page-provider auto
+          id="templatePageProvider"
+          provider="AssetSearch"
+          query="[[_fetchTemplates()]]"
+          page-size="[[searchPageSize]]"
+          enrichers="preview, documentURL, driveEditURL"
+          current-page="{{templates}}"></nuxeo-page-provider>
+        <paper-header-panel mode="waterfall">
+          <paper-toolbar id="searchTemplatesToolbar"
+            class="embedded-toolbar">
+            <paper-input id="searchTemplatesInput"
+              type=search
+              class="searchBox"
+              label="Search"
+              bind-value="{{_templateSearchTerms}}"></paper-input>
+          </paper-toolbar>
 
-    </div>
+          <nuxeo-listing document-list="[[templates]]"
+            class="documentListContainer"></nuxeo-listing>
+        </paper-header-panel>
+      </div>
+
+      <div id="docsPage">
+        <nuxeo-salesforce-folderish selected="{{selected}}"></nuxeo-salesforce-folderish>
+      </div>
+
+    </iron-pages>
+
 
   </template>
 

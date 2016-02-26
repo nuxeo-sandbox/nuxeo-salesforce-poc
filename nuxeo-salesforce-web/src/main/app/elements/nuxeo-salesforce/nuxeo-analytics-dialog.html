@@ -70,6 +70,8 @@ An element to display a dialog for template rendering.
                </template>
              </paper-menu>
           </paper-dropdown-menu>
+
+        <template is="dom-if" if="[[to]]">
           <table>
              <tr>
                 <td>
@@ -90,7 +92,9 @@ An element to display a dialog for template rendering.
              </tr>
          </template>
             </table>
-          <div>
+  </template>
+    </div>
+              <div class="buttons">
              <paper-button raised dialog-confirm>Close</paper-button>
           </div>
 

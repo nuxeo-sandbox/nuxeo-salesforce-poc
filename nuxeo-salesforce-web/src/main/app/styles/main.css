@@ -22,14 +22,6 @@ paper-dialog.folder-box {
   height: 200px
 }
 
-.row_actions {
-  float: right
-}
-
-paper-button.colorful {
-  color: #3372DF;
-}
-
 .verticalCenterAnything {
   position: relative;
   top: 50%;
@@ -53,13 +45,4 @@ div.sweet-material-table-item {
 #table.sweet-material-table .thead.sweet-material-table .tr.sweet-material-table .th.sweet-material-table,
 #table.sweet-material-table .tbody.sweet-material-table .tr.sweet-material-table .td.sweet-material-table {
   padding-right: 1em;
-}
-
-paper-fab.blue {
-  background: #3372DF;
-}
-
-paper-fab.floatingRight {
-  position: fixed;
-  bottom: 10px;
 }

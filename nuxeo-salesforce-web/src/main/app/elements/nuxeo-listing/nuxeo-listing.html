@@ -17,105 +17,83 @@ limitations under the License.
 Contributors:
   Josh Fletcher <jfletcher@nuxeo.com>
 -->
-<link rel="import"
-  href="nuxeo-listing-actions-behavior.html">
 <!--
 An element to display a list of Nuxeo documents.
 
 Requires <nuxeo-connection> in order to get icons.
 -->
-<dom-module id="nuxeo-listing"
-  assetpath="nuxeo-listing/">
-  <style>
-    paper-card {
-      margin: 5px;
-      --paper-card-background-color: var(--paper-card-light-primary-color);
-      border-color: var(--paper-card-light-primary-color);
-      border-style: solid;
-      border-width: thin;
-      width: 300px;
-    }
-
-    paper-card[selected] {
-      font-weight: bold;
-      border-color: var(--paper-card-selected-primary-color);
-    }
-
-    paper-icon-button {
-      padding: 4px;
-      width: 28px;
-      height: 28px;
-    }
-
-    .horizontal {
-      @apply(--layout-horizontal);
-    }
-
-    .justified {
-      @apply(--layout-justified);
-    }
-
-    .titleBar {
-      display: table;
-    }
-
-    .titleIconContainer {
-      display: table-cell;
-      vertical-align: middle;
-    }
-
-    .titleIcon {
-      padding-right: 5px;
-      --iron-icon-width: 20px;
-      --iron-icon-height: 20px;
-    }
-
-    .titleWrapper {
-      /* This is so that I can get dynamic support for the overflow/elipsis. */
-      display: table;
-      table-layout: fixed;
-      width: 100%;
-      height: 100%;
-    }
-
-    .title {
-      display: table-cell;
-      vertical-align: middle;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    paper-dialog {
-      padding: 1%;
-    }
-
-    paper-drawer-panel {
-      --paper-drawer-panel-right-drawer-container: {
-        background-color: var(--light-primary-color);
-      }
-      ;
-    }
-
-    nuxeo-template-sections-selector {
-      --paper-dialog-button-color: var(--secondary-text-color);
-      --paper-button: {
-        background: var(--accent-color)
-      }
-      border-radius: 3px;
-    }
-
-    nuxeo-email-dialog {
-      --paper-dialog-button-color: var(--secondary-text-color);
-      --paper-button: {
-        background: var(--accent-color)
-      }
-      border-radius: 3px;
-    }
-
-  </style>
+<dom-module id="nuxeo-listing">
 
   <template>
+
+    <style>
+      paper-drawer-panel {
+        /* Allow the page to scroll if the content is too tall. */
+        overflow-y: scroll;
+        /* Put a divider between the drawer and the main panel. */
+        --paper-drawer-panel-main-container: {
+          border-right: solid 1px var(--divider-color);
+        }
+      }
+
+      paper-drawer-panel::content div#main [main] {
+        /* By default paper-drawer-panel sets the height of the "main" element to 100%.
+           This creates a visible scrollbar when the parent has an overflow set to scroll
+           no matter how big the content is. Setting the height to auto shows the scrollbar
+           only when the content is tall enough. */
+        height: auto;
+      }
+
+      nuxeo-metadata {
+        --paper-toolbar-background: var(--nuxeo-metadata-toolbar-background);
+        --paper-toolbar-color: var(--nuxeo-metadata-toolbar-color);
+        position: fixed;
+      }
+
+      nuxeo-listing-document[selected]::content paper-card {
+        border-color: var(--paper-card-selected-primary-color);
+      }
+
+      nuxeo-listing-document[selected]::content paper-card paper-toolbar .title {
+        font-weight: bold;
+      }
+
+      paper-drawer-panel {
+        --paper-drawer-panel-right-drawer-container: {
+          background-color: var(--light-primary-color);
+        }
+      }
+
+      nuxeo-template-sections-selector {
+        --paper-dialog-button-color: var(--secondary-text-color);
+        --paper-button: {
+          background: var(--accent-color)
+        }
+        border-radius: 3px;
+      }
+
+      nuxeo-email-dialog {
+        --paper-dialog-button-color: var(--secondary-text-color);
+        --paper-button: {
+          background: var(--accent-color)
+        }
+        border-radius: 3px;
+      }
+
+      nuxeo-analytics-dialog {
+        --paper-dialog-button-color: var(--secondary-text-color);
+        --paper-button: {
+          background: var(--accent-color)
+        }
+        border-radius: 3px;
+      }
+
+      nuxeo-metadata::content .titleWrapper {
+        /* The drawer is set to 300px so the title needs to be limited */
+        width: 203px;
+      }
+
+    </style>
 
     <nuxeo-connection id="nx"></nuxeo-connection>
 
@@ -126,91 +104,44 @@ Requires <nuxeo-connection> in order to get icons.
       <template is="dom-if"
         if="[[selected]]">
         <nuxeo-metadata doc="{{selected}}"
+          class="fixed"
           drawer></nuxeo-metadata>
       </template>
 
-      <paper-header-panel main
-        mode="waterfall">
+      <div main>
+        <template is="dom-repeat"
+          items="[[documentList]]">
+          <nuxeo-listing-document doc=[[item]]
+            selected-action={{selectedAction}}
+            selected-document={{docForAction}}
+            on-tap="_select"
+            selected$="[[_isSame(item, selected)]]"
+            show-action-edit
+            show-action-download
+            show-action-direct-edit
+            show-action-share
+            show-action-template
+            show-action-analytics
+            show-action-lock></nuxeo-listing-document>
+        </template>
+      </div>
 
-        <div>
-
-          <template is="dom-repeat"
-            items="[[documentList]]">
-            <paper-card on-tap="_select"
-              selected$="[[_isSame(item, selected)]]">
-              <div class="card-content">
-                <div class="titleBar">
-                  <div class="titleIconContainer">
-                    <iron-icon src="[[_iconFor(item)]]"
-                      class="titleIcon"></iron-icon>
-                  </div>
-                  <div class="titleWrapper">
-                    <div class="title">[[item.title]]</div>
-                  </div>
-                </div>
-              </div>
-              <template is="dom-if"
-                if="[[_isNotFolder(item)]]">
-                <div class="card-actions horizontal justified">
-                  <template is="dom-if"
-                    if="[[_previewSupported(item)]]">
-                    <a href="[[_previewUrl(item)]]"
-                      target="_blank">
-                      <paper-icon-button icon="visibility"
-                        title="Full Preview"></paper-icon-button>
-                    </a>
-                  </template>
-                  <a href="[[_downloadURL(item)]]"
-                    target="_blank">
-                    <paper-icon-button icon="file-download"
-                      title="Download"></paper-icon-button>
-                  </a>
-                  <a href="[[_docEditURL(item)]]"
-                    target="_blank">
-                    <paper-icon-button icon="assignment"
-                      title="Edit Metadata"></paper-icon-button>
-                  </a>
-                  <a href="[[_driveEdit(item)]]">
-                    <paper-icon-button icon="create"
-                      title="Edit Document"></paper-icon-button>
-                  </a>
-                  <paper-icon-button icon="send"
-                    title="Send Document"
-                    on-click="_openEmailDialog"></paper-icon-button>
-                  <template is="dom-if"
-                    if="[[_isLock(item)]]">
-                    <paper-icon-button icon="lock"></paper-icon-button>
-                  </template>
-                  <template is="dom-if"
-                    if="[[_isTemplate(item)]]">
-                    <paper-icon-button icon="av:play-circle-outline"
-                      id="[[item.uid]]"
-                      title="Render Template"
-                      on-click="_openRenditionDialog"></paper-icon-button>
-                  </template>
-                  <paper-icon-button icon="dashboard"
-                    title="Analytics"
-                    on-click="_openAnalyticsDialog"></paper-icon-button>
-                </div>
-              </template>
-            </paper-card>
-          </template>
-        </div>
-      </paper-header-panel>
     </paper-drawer-panel>
-    <nuxeo-email-dialog id="emailDialog"
-      modal></nuxeo-email-dialog>
-    <nuxeo-analytics-dialog id="analyticsDialog"
-      modal></nuxeo-analytics-dialog>
-    <nuxeo-template-sections-selector id="templateDialog"
-      modal></nuxeo-template-sections-selector>
+
+    <nuxeo-email-dialog modal
+      id="emailDialog"></nuxeo-email-dialog>
+
+    <nuxeo-analytics-dialog modal
+      id="analyticsDialog"></nuxeo-analytics-dialog>
+
+    <nuxeo-template-sections-selector modal
+      id="templateDialog"></nuxeo-template-sections-selector>
+
   </template>
 
   <script>
     Polymer({
       is: 'nuxeo-listing',
-
-      behaviors: [Nuxeo.NuxeoListingActionsBehavior],
 
       properties: {
         documentList: {
@@ -227,9 +158,9 @@ Requires <nuxeo-connection> in order to get icons.
         }
       },
 
-      _isEmpty: function(data) {
-        return data === null || data.resultsCount === 0;
-      },
+      observers: [
+        '_onActionClick(selectedAction,docForAction)'
+      ],
 
       _select: function(e) {
         var item = e.model.item;
@@ -245,12 +176,6 @@ Requires <nuxeo-connection> in order to get icons.
 
       _isSame: function(item, selected) {
         return selected && selected.uid === item.uid;
-      },
-
-      _iconFor: function(doc) {
-        if (doc && doc.properties['common:icon']) {
-          return this.$.nx.client._baseURL + doc.properties['common:icon'];
-        }
       },
 
       _isFolder: function(doc) {
@@ -271,24 +196,36 @@ Requires <nuxeo-connection> in order to get icons.
         return false;
       },
 
-      _openEmailDialog: function(e) {
-        var item = e.model.item;
-        this.$.emailDialog.doc = item;
+      _onActionClick: function() {
+        switch (this.selectedAction) {
+          case "email":
+            this._openEmailDialog(this.docForAction);
+            break;
+          case "template":
+            this._openRenditionDialog(this.docForAction);
+            break;
+          case "analytics":
+            this._openAnalyticsDialog(this.docForAction);
+            break;
+        }
+      },
+
+      _openEmailDialog: function(doc) {
+        this.$.emailDialog.doc = doc;
         this.$.emailDialog.open();
       },
 
-      _openAnalyticsDialog: function(e) {
-        var item = e.model.item;
-        this.$.analyticsDialog.doc = item;
+      _openAnalyticsDialog: function(doc) {
+        this.$.analyticsDialog.doc = doc;
         this.$.analyticsDialog.open();
       },
 
-      _openRenditionDialog: function(e) {
-        var item = e.model.item;
-        this.$.templateDialog.doc = item;
+      _openRenditionDialog: function(doc) {
+        this.$.templateDialog.doc = doc;
         this.$.templateDialog.open();
       }
     });
 
   </script>
+
 </dom-module>

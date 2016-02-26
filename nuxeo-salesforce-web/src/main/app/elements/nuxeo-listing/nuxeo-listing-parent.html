@@ -22,69 +22,40 @@ Contributors:
 An element to display information and features for a Nuxeo folder.
 For example the name of the folder and a link to access it in Nuxeo.
 -->
-<dom-module id="nuxeo-listing-parent" assetpath="nuxeo-listing/">
-  <style>
-    .mainToolbar {
-      color: inherit;
-      background-color: inherit;
-    }
+<dom-module id="nuxeo-listing-parent">
 
-    @media (max-width: 600px) {
-      h1.paper-font-display1 {
-        font-size: 24px;
+  <style>
+    paper-toolbar {
+      --paper-toolbar-title: {
+        margin-left: 5px;
+        margin-right: 5px;
       }
     }
 
-    #spacer {
-      display: table;
-      margin: 0 auto;
+    .searchBox {
+      width: 25em;
     }
 
-    .iconWithText {
-      padding-right: 5px;
-      vertical-align: text-top;
+    .documentListContainer {
+      margin: 5px;
     }
 
-    .listIconBox {
-      padding: 5px;
-      --iron-icon-width: 24px;
-      --iron-icon-height: 24px;
-    }
-
-    .docTitle {
-      font-size: 180%;
-    }
-
-    .docContainer {
-      display: table;
-    }
-
-    .docTitleContainer {
-      display: table-cell;
-      vertical-align: middle;
-    }
   </style>
+
   <template>
+
     <nuxeo-connection id="nx"></nuxeo-connection>
 
-    <paper-toolbar class="mainToolbar">
-      <div class="docContainer">
-        <iron-icon src="[[_iconFor(currentParent)]]" class="listIconBox iconWithText"></iron-icon>
-        <div class="docTitleContainer">
-          <span class="paper-font-title docTitle">{{currentParent.title}}</span>
-        </div>
-      </div>
-      <div id="spacer">
-        <!--This div pushes the action buttons to the right edge. -->
-      </div>
-      <div id="folderOpenExternal">
-        <a href="[[_docURL(currentParent)]]" target="_blank">
-          <paper-icon-button icon="icons:open-in-new" title="Access"></paper-icon-button>
-        </a>
-      </div>
-      <div id="folderRefresh">
-        <paper-icon-button icon="notification:sync" title="Refresh" on-tap="_refresh"></paper-icon-button>
-      </div>
+    <paper-toolbar>
+      <a href="[[_docURL(currentParent)]]"
+        target="_blank">
+        <paper-icon-button src="[[_iconFor(currentParent)]]"
+          title="Nuxeo"></paper-icon-button>
+      </a>
+      <div class="title">{{currentParent.title}}</div>
+      <paper-icon-button icon="notification:sync"
+        title="Refresh"
+        on-tap="_refresh"></paper-icon-button>
     </paper-toolbar>
 
   </template>
@@ -104,25 +75,26 @@ For example the name of the folder and a link to access it in Nuxeo.
       },
 
 
-      _iconFor: function (doc) {
+      _iconFor: function(doc) {
         if (doc && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
         }
       },
 
 
-      _docURL: function (doc) {
+      _docURL: function(doc) {
         if (doc && doc.contextParameters !== undefined) {
           return doc.contextParameters.documentURL;
         }
       },
 
 
-      _refresh: function () {
+      _refresh: function() {
         this.refresh = true;
       }
 
-
     });
+
   </script>
+
 </dom-module>
