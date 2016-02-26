@@ -34,32 +34,21 @@ For example the name of the folder and a link to access it in Nuxeo.
     }
 
   </style>
+
   <template>
+
     <nuxeo-connection id="nx"></nuxeo-connection>
 
     <paper-toolbar>
-      <div class="docContainer">
-        <iron-icon src="[[_iconFor(currentParent)]]"
-          class="listIconBox iconWithText"></iron-icon>
-        <div class="docTitleContainer">
-          <span class="paper-font-title docTitle">{{currentParent.title}}</span>
-        </div>
-      </div>
-      <div id="spacer">
-        <!--This div pushes the action buttons to the right edge. -->
-      </div>
-      <div id="folderOpenExternal">
-        <a href="[[_docURL(currentParent)]]"
-          target="_blank">
-          <paper-icon-button icon="icons:open-in-new"
-            title="Access"></paper-icon-button>
-        </a>
-      </div>
-      <div id="folderRefresh">
-        <paper-icon-button icon="notification:sync"
-          title="Refresh"
-          on-tap="_refresh"></paper-icon-button>
-      </div>
+      <a href="[[_docURL(currentParent)]]"
+        target="_blank">
+        <paper-icon-button src="[[_iconFor(currentParent)]]"
+          title="Nuxeo"></paper-icon-button>
+      </a>
+      <div class="title">{{currentParent.title}}</div>
+      <paper-icon-button icon="notification:sync"
+        title="Refresh"
+        on-tap="_refresh"></paper-icon-button>
     </paper-toolbar>
 
   </template>
@@ -97,8 +86,8 @@ For example the name of the folder and a link to access it in Nuxeo.
         this.refresh = true;
       }
 
-
     });
 
   </script>
+
 </dom-module>
