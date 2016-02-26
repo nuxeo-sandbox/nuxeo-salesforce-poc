@@ -22,7 +22,10 @@ Lesser General Public License for more details.
       }
 
       nuxeo-fulltext-suggester {
-        margin-top: 10px;
+        margin-left: 20px;
+      }
+
+      nuxeo-search-sort {
         margin-left: 20px;
         margin-right: 20px;
       }
@@ -42,8 +45,8 @@ Lesser General Public License for more details.
     </style>
 
     <div class="mainContainer">
-      <nuxeo-fulltext-suggester text={{fulltext}}
-        suggestions={{suggestions}}></nuxeo-fulltext-suggester>
+      <nuxeo-fulltext-suggester text={{fulltext}} suggestions={{suggestions}}></nuxeo-fulltext-suggester>
+      <nuxeo-search-sort sort-properties={{sort}}>Sort</nuxeo-search-sort>
       <nuxeo-search-listing document-list=[[hits.hits]]></nuxeo-search-listing>
     </div>
 
@@ -66,7 +69,11 @@ Lesser General Public License for more details.
         suggestions: {
           type: Object,
           notify: true
-        }
+       },
+       sort: {
+         type: Array,
+         notify: true
+       }
       },
 
       ready: function() {

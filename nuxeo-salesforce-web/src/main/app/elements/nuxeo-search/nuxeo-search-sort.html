@@ -1,0 +1,193 @@
+<!--
+@license
+(C) Copyright 2015 Nuxeo SA (http://nuxeo.com/) and contributors.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the GNU Lesser General Public License
+(LGPL) version 2.1 which accompanies this distribution, and is available at
+http://www.gnu.org/licenses/lgpl.html
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+Lesser General Public License for more details.
+@Contributors:
+Fred Vadon <fvadon@nuxeo.com>
+
+A data element providing a search result layout. input a list of articles
+Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-search-results>
+@group Nuxeo Elements
+@element nuxeo-article-search-results
+@demo app/index.html
+-->
+
+<dom-module id="nuxeo-search-sort">
+
+  <template>
+
+    <style>
+      .documentPills {
+        display: inline-flex;
+      }
+
+      .documentPill {
+        border-radius: 5px;
+        padding: 5px;
+        margin-right: 5px;
+        font-size: 80%;
+        font-weight: bold;
+        color: var(--secondary-text-color);
+        background: #059EBD;
+      }
+
+      .inline {
+        display: inline-block;
+      }
+
+    </style>
+
+    <paper-material elevation="0">
+      <template is="dom-if" if="[[displayDropDown]]">
+         <paper-dropdown-menu label="Sort" name="properties" required>
+           <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{selected}}">
+             <template is="dom-repeat"  items="[[availableProperties]]">
+               <paper-item value="[[item]]">[[_getLabel(item)]]</paper-item>
+             </template>
+           </paper-menu>
+         </paper-dropdown-menu>
+      </template>
+      <div class="documentPills">
+        <template is="dom-repeat"  items="[[sortProperties]]">
+          <div class="documentPill">
+            <iron-icon class="inline" icon="close" on-click="_removeSort"></iron-icon>
+            <div class="inline">[[item.label]]</div>
+            <iron-icon class="inline" icon="[[item.icon]]" on-click="_invertOrder"></iron-icon>
+          </div>
+        </template>
+      </div>
+    </paper-material>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'nuxeo-search-sort',
+
+      properties: {
+         sortProperties: {
+            type: Array,
+            notify:true,
+            value: function() {
+              return []
+            }
+         },
+
+         selected: {
+            type: Number,
+            value: 0,
+            observer: '_selectedChanged'
+        },
+
+         availableProperties: {
+            type: Number,
+            value: 0,
+            value: function() {
+              return ['rated:avg','rated:count','dc:modified']
+            }
+        },
+
+        displayDropDown: {
+           type: Boolean,
+           value: true
+        }
+      },
+
+      _getIconForOrder: function(typeRec) {
+        switch (typeRec) {
+          case 'desc':
+            return 'arrow-drop-down';
+            break;
+
+          case 'asc':
+            return 'arrow-drop-up';
+            break;
+
+          default:
+            return 'arrow-drop-down';
+            break;
+        }
+      },
+
+      _getLabel: function(typeRec) {
+        switch (typeRec) {
+          case 'dc:modified':
+            return 'Recent';
+            break;
+
+          case 'rated:avg':
+            return 'Rating';
+            break;
+
+         case 'rated:count':
+             return '#votes';
+             break;
+
+          default:
+            return 'none';
+            break;
+        }
+      },
+
+
+      _selectedChanged: function(newValue, oldValue) {
+          if (newValue === undefined || newValue === 0) return;
+          var item = {};
+          item.value = newValue;
+          item.order = "desc";
+          item.icon = this._getIconForOrder("desc");
+          item.label = this._getLabel(item.value);
+          this.push('sortProperties', item);
+          var index =  this.availableProperties.indexOf(newValue);
+          this.splice('availableProperties', index, 1);
+          this.displayDropDown = this.availableProperties.length>0 ? true : false;
+       },
+
+       _invertOrder: function(e) {
+         var item = e.model.item;
+         var property = item.value
+          item.icon = this._getIconForOrder(item.order);
+          for (var i=0;i<this.sortProperties.length;i++) {
+             var current = this.sortProperties[i];
+             var newItem = {};
+             newItem.value = current.value;
+             if (current.value ===  property) {
+                if (current.order === "desc") {
+                   newItem.order = "asc";
+                } else {
+                   newItem.order = "desc";
+                }
+                newItem.icon = this._getIconForOrder(newItem.order);
+                newItem.label = this._getLabel(newItem.value);
+                this.splice('sortProperties',i,1,newItem);
+             }
+          }
+       },
+
+       _removeSort: function(e) {
+          var item = e.model.item;
+          var property = item.value
+         for (var i=0;i<this.sortProperties.length;i++) {
+           var current = this.sortProperties[i];
+           if (current.value ===  property) {
+              current.order = item.order;
+              current.icon = item.icon;
+              this.splice('sortProperties',i,1);
+           }
+         }
+         this.push('availableProperties',property);
+         this.displayDropDown = true;
+        },
+
+    });
+
+  </script>
+</dom-module>
