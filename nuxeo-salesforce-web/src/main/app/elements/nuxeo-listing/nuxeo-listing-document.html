@@ -1,0 +1,274 @@
+<!--
+@license
+(C) Copyright 2014 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<link rel="import"
+  href="nuxeo-listing-actions-behavior.html">
+<!--
+An element to display a list of Nuxeo documents.
+
+Requires <nuxeo-connection> in order to get icons.
+-->
+<dom-module id="nuxeo-listing-document">
+
+  <template>
+
+    <style>
+      .horizontal {
+        @apply(--layout-horizontal);
+      }
+
+      .justified {
+        @apply(--layout-justified);
+      }
+
+      paper-card {
+        margin: 5px;
+        --paper-card-background-color: var(--paper-card-light-primary-color);
+        border-color: var(--paper-card-light-primary-color);
+        border-style: solid;
+        border-width: thin;
+        width: 300px;
+      }
+
+      paper-card[selected] {
+        font-weight: bold;
+        border-color: var(--paper-card-selected-primary-color);
+      }
+
+      paper-toolbar {
+        --paper-toolbar-height: 25px;
+        --paper-toolbar-background: var(--default-primary-color);
+        --paper-toolbar-color: var(--primary-text-color);
+        --paper-toolbar-title: {
+          margin-left: 5px;
+          margin-right: 5px;
+        }
+        margin: 5px;
+      }
+
+      paper-toolbar::content #topBar {
+        padding-left: 3px;
+        padding-right: 3px;
+      }
+
+      paper-icon-button {
+        padding: 4px;
+        width: 28px;
+        height: 28px;
+      }
+
+    </style>
+
+    <nuxeo-connection id="nx"></nuxeo-connection>
+
+    <paper-card>
+
+      <paper-toolbar class="document-toolbar">
+        <a href="[[_docURL(doc)]]"
+          target="_blank">
+          <paper-icon-button src="[[_iconFor(doc)]]"
+            title="Nuxeo"></paper-icon-button>
+        </a>
+        <div class="title">[[doc.title]]</div>
+      </paper-toolbar>
+
+      <div class="card-actions horizontal justified">
+
+        <template is="dom-if"
+          if="[[showActionEdit]]">
+          <a href="[[_docEditURL(doc)]]"
+            target="_blank">
+            <paper-icon-button icon="assignment"
+              title="Edit Metadata"></paper-icon-button>
+          </a>
+        </template>
+
+        <template is="dom-if"
+          if="[[_isNotFolder(doc)]]">
+
+          <template is="dom-if"
+            if="[[showActionPreview]]">
+            <template is="dom-if"
+              if="[[_previewSupported(doc)]]">
+              <a href="[[_previewUrl(doc)]]"
+                target="_blank">
+                <paper-icon-button icon="visibility"
+                  title="Full Preview"></paper-icon-button>
+              </a>
+            </template>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionDownload]]">
+            <a href="[[_downloadURL(doc)]]"
+              target="_blank">
+              <paper-icon-button icon="file-download"
+                title="Download"></paper-icon-button>
+            </a>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionDirectEdit]]">
+            <a href="[[_driveEdit(doc)]]">
+              <paper-icon-button icon="create"
+                title="Edit Document"></paper-icon-button>
+            </a>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionShare]]">
+            <template is="dom-if"
+              if="[[!_isTemplate(doc)]]">
+              <paper-icon-button icon="send"
+                title="Send Document"
+                on-click="_onEmailClick"></paper-icon-button>
+            </template>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionTemplate]]">
+            <template is="dom-if"
+              if="[[_isTemplate(doc)]]">
+              <paper-icon-button icon="av:play-circle-outline"
+                id="[[doc.uid]]"
+                title="Render Template"
+                on-click="_onTemplateClick"></paper-icon-button>
+            </template>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionAnalytics]]">
+            <template is="dom-if"
+              if="[[!_isTemplate(doc)]]">
+              <paper-icon-button icon="dashboard"
+                title="Analytics"
+                on-click="_onAnalyticsClick"></paper-icon-button>
+            </template>
+          </template>
+
+          <template is="dom-if"
+            if="[[showActionLock]]">
+            <template is="dom-if"
+              if="[[_isLock(doc)]]">
+              <paper-icon-button icon="lock"></paper-icon-button>
+            </template>
+          </template>
+
+        </template>
+
+      </div>
+
+    </paper-card>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-listing-document',
+
+      behaviors: [Nuxeo.NuxeoListingActionsBehavior],
+
+      properties: {
+        doc: {
+          type: Object,
+        },
+        selectedAction: {
+          type: String,
+          notify: true
+        },
+        selectedDocument: {
+          type: Object,
+          notify: true
+        },
+        showActionPreview: {
+          type: Boolean,
+          value: false
+        },
+        showActionDownload: {
+          type: Boolean,
+          value: false
+        },
+        showActionEdit: {
+          type: Boolean,
+          value: false
+        },
+        showActionDirectEdit: {
+          type: Boolean,
+          value: false
+        },
+        showActionShare: {
+          type: Boolean,
+          value: false
+        },
+        showActionTemplate: {
+          type: Boolean,
+          value: false
+        },
+        showActionAnalytics: {
+          type: Boolean,
+          value: false
+        },
+        showActionLock: {
+          type: Boolean,
+          value: true
+        }
+      },
+
+      /* The only reason this is not in nuxeo-listing-actions-behavior is because it uses a nuxeo-connection to get the base URL. */
+      _iconFor: function(doc) {
+        if (doc && doc.properties && doc.properties['common:icon']) {
+          return this.$.nx.client._baseURL + doc.properties['common:icon'];
+        }
+      },
+
+      _isNotFolder: function(doc) {
+        if (doc && doc.facets) {
+          if ((doc.facets.indexOf("Folderish") < 0) && (doc.facets.indexOf("Collection") < 0)) {
+            return true;
+          }
+        }
+        return false;
+      },
+
+      _onEmailClick: function(e) {
+        this.selectedAction = "email";
+        this._setSelectedDocument(e);
+
+      },
+
+      _onTemplateClick: function(e) {
+        this.selectedAction = "template";
+        this._setSelectedDocument(e);
+      },
+
+      _onAnalyticsClick: function(e) {
+        this.selectedAction = "analytics";
+        this._setSelectedDocument(e);
+      },
+
+      _setSelectedDocument: function(e) {
+        var item = e.model.item;
+        this.selectedDocument = this.doc;
+      }
+
+    });
+
+  </script>
+
+</dom-module>
