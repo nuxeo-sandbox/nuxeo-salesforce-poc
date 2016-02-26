@@ -25,13 +25,6 @@ For example the name of the folder and a link to access it in Nuxeo.
 <dom-module id="nuxeo-listing-parent">
 
   <style>
-    paper-toolbar {
-      --paper-toolbar-title: {
-        margin-left: 5px;
-        margin-right: 5px;
-      }
-    }
-
     .searchBox {
       width: 25em;
     }
@@ -47,11 +40,8 @@ For example the name of the folder and a link to access it in Nuxeo.
     <nuxeo-connection id="nx"></nuxeo-connection>
 
     <paper-toolbar>
-      <a href="[[_docURL(currentParent)]]"
-        target="_blank">
-        <paper-icon-button src="[[_iconFor(currentParent)]]"
-          title="Nuxeo"></paper-icon-button>
-      </a>
+      <paper-icon-button src="[[_iconFor(currentParent)]]"
+        title="Nuxeo"></paper-icon-button>
       <div class="title">{{currentParent.title}}</div>
       <paper-icon-button icon="notification:sync"
         title="Refresh"
