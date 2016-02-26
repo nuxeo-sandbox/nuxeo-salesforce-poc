@@ -25,11 +25,6 @@ For example the name of the folder and a link to access it in Nuxeo.
 <dom-module id="nuxeo-listing-parent" assetpath="nuxeo-listing/">
   <style>
 
-
-    .embedded-toolbar {
-      background: var(--default-primary-color);
-    }
-
     .searchBox {
       width: 25em;
     }
@@ -38,15 +33,11 @@ For example the name of the folder and a link to access it in Nuxeo.
       margin: 5px;
     }
 
-    nuxeo-listing::content paper-drawer-panel::content div#drawer [drawer] {
-      /* Because nuxeo-listing sets nuxeo-metadata to "fixed", I need to override the height. By default the height when "fixed" is 100% of the screen. Since I have two paper-toolbars, I need to subtract 64px for each */
-      height: calc(100vh - 128px);
-    }
   </style>
   <template>
     <nuxeo-connection id="nx"></nuxeo-connection>
 
-    <paper-toolbar class="embedded-toolbar">
+    <paper-toolbar>
       <div class="docContainer">
         <iron-icon src="[[_iconFor(currentParent)]]" class="listIconBox iconWithText"></iron-icon>
         <div class="docTitleContainer">
