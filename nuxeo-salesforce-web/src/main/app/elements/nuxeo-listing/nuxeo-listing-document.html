@@ -81,26 +81,12 @@ Requires <nuxeo-connection> in order to get icons.
 
     <paper-card>
 
-      <template is="dom-if"
-        if="[[_isNotFolder(doc)]]">
-        <paper-toolbar class="document-toolbar">
-          <paper-icon-button src="[[_iconFor(doc)]]"
-            title="Nuxeo"
-            on-tap="_openDocumentInNuxeo">
-          </paper-icon-button>
-          <div class="title">[[doc.title]]</div>
-        </paper-toolbar>
-      </template>
-
-      <template is="dom-if"
-        if="[[!_isNotFolder(doc)]]">
-        <paper-toolbar class="document-toolbar">
-          <paper-icon-button src="[[_iconFor(doc)]]"
-            title="Nuxeo">
-          </paper-icon-button>
-          <div class="title">[[doc.title]]</div>
-        </paper-toolbar>
-      </template>
+      <paper-toolbar class="document-toolbar">
+        <paper-icon-button src="[[_iconFor(doc)]]"
+          title="Nuxeo">
+        </paper-icon-button>
+        <div class="title">[[doc.title]]</div>
+      </paper-toolbar>
 
       <div class="card-actions horizontal justified">
 
@@ -279,10 +265,6 @@ Requires <nuxeo-connection> in order to get icons.
       _setSelectedDocument: function(e) {
         var item = e.model.item;
         this.selectedDocument = this.doc;
-      },
-
-      _openDocumentInNuxeo: function(e) {
-        window.open(this._docURL(this.doc));
       }
 
     });
