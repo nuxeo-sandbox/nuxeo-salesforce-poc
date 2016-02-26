@@ -22,9 +22,9 @@ Contributors:
 An element to display information and features for a Nuxeo folder.
 For example the name of the folder and a link to access it in Nuxeo.
 -->
-<dom-module id="nuxeo-listing-parent" assetpath="nuxeo-listing/">
+<dom-module id="nuxeo-listing-parent"
+  assetpath="nuxeo-listing/">
   <style>
-
     .searchBox {
       width: 25em;
     }
@@ -39,7 +39,8 @@ For example the name of the folder and a link to access it in Nuxeo.
 
     <paper-toolbar>
       <div class="docContainer">
-        <iron-icon src="[[_iconFor(currentParent)]]" class="listIconBox iconWithText"></iron-icon>
+        <iron-icon src="[[_iconFor(currentParent)]]"
+          class="listIconBox iconWithText"></iron-icon>
         <div class="docTitleContainer">
           <span class="paper-font-title docTitle">{{currentParent.title}}</span>
         </div>
@@ -48,12 +49,16 @@ For example the name of the folder and a link to access it in Nuxeo.
         <!--This div pushes the action buttons to the right edge. -->
       </div>
       <div id="folderOpenExternal">
-        <a href="[[_docURL(currentParent)]]" target="_blank">
-          <paper-icon-button icon="icons:open-in-new" title="Access"></paper-icon-button>
+        <a href="[[_docURL(currentParent)]]"
+          target="_blank">
+          <paper-icon-button icon="icons:open-in-new"
+            title="Access"></paper-icon-button>
         </a>
       </div>
       <div id="folderRefresh">
-        <paper-icon-button icon="notification:sync" title="Refresh" on-tap="_refresh"></paper-icon-button>
+        <paper-icon-button icon="notification:sync"
+          title="Refresh"
+          on-tap="_refresh"></paper-icon-button>
       </div>
     </paper-toolbar>
 
@@ -74,25 +79,26 @@ For example the name of the folder and a link to access it in Nuxeo.
       },
 
 
-      _iconFor: function (doc) {
+      _iconFor: function(doc) {
         if (doc && doc.properties['common:icon']) {
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
         }
       },
 
 
-      _docURL: function (doc) {
+      _docURL: function(doc) {
         if (doc && doc.contextParameters !== undefined) {
           return doc.contextParameters.documentURL;
         }
       },
 
 
-      _refresh: function () {
+      _refresh: function() {
         this.refresh = true;
       }
 
 
     });
+
   </script>
 </dom-module>
