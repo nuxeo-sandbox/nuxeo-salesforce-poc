@@ -44,10 +44,15 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       --paper-icon-button-ink-color: var(--placeholder-text-color);
     }
 
-    .tabBodyContainer {
+    .header-panel-container {
       /* A height is required in order for a paper-header-panel to display content.
          See: https://elements.polymer-project.org/elements/paper-header-panel */
       height: calc(100vh - 64px);
+    }
+
+    nuxeo-listing::content paper-drawer-panel::content div#drawer [drawer] {
+      /* Because nuxeo-listing sets nuxeo-metadata to "fixed", I need to override the height. By default the height when "fixed" is 100% of the screen. Since I have several paper-toolbars, I need to subtract 64px for each as well as the breadcrumb */
+      height: calc(100vh - 228px);
     }
 
     .embedded-toolbar {
@@ -108,8 +113,10 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       response="{{documentList}}"
       success="{{success}}"
       error="{{error}}"></nuxeo-operation>
+
     <div id="searchPublicPage"
-      class="tabBodyContainer">
+      class="header-panel-container">
+
       <paper-header-panel mode="waterfall">
 
         <div class="paper-header">
