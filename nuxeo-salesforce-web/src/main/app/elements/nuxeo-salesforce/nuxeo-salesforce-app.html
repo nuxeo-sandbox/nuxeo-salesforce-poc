@@ -122,14 +122,10 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
 
     <paper-toolbar class="tabsToolbar">
-      <div class="logoButton">
-        <a href="/nuxeo"
-          target="_blank">
-          <paper-icon-button class="verticalCenterAnything"
-            src="[[_iconForApp()]]"
-            title="Nuxeo"></paper-icon-button>
-        </a>
-      </div>
+
+      <paper-icon-button src="[[_iconForApp()]]"
+        title="Nuxeo"></paper-icon-button>
+
       <!-- This paper-tabs should be scrollable but it fails when used inside paper-toolbar.
                See https://github.com/PolymerElements/paper-tabs/issues/130 -->
       <paper-tabs class="mainTabs"
