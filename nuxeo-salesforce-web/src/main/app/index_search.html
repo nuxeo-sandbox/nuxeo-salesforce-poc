@@ -99,20 +99,18 @@ Contributors:
 <body unresolved
   class="fullbleed layout vertical">
 
-  <style is="custom-style">
-    body {
-      background: #ffffff;
-    }
-  </style>
+  <span id="browser-sync-binding"></span>
 
-  <div id="authorized">
-    <span id="browser-sync-binding"></span>
+  <template is="dom-bind"
+    id="app">
+
     <nuxeo-connection id="nx"
       url="https://aws-sfdc.cloud.nuxeo.com/nuxeo"
       username="Administrator"
       password="Administrator"></nuxeo-connection>
     <nuxeo-search></nuxeo-search>
-  </div>
+
+  </template>
 
   <div id="error_content"
     style="text-align:center; margin:3em; display:none">

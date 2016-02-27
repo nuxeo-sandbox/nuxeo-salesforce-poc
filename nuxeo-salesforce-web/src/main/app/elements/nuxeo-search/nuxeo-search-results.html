@@ -16,18 +16,10 @@ Lesser General Public License for more details.
   <template>
 
     <style>
-      .mainContainer {
-        display: flex;
-        flex-direction: column;
-      }
-
-      nuxeo-fulltext-suggester {
-        margin-left: 20px;
-      }
-
-      nuxeo-search-sort {
-        margin-left: 20px;
-        margin-right: 20px;
+      .header-panel-container {
+        /* A height is required in order for a paper-header-panel to display content.
+         See: https://elements.polymer-project.org/elements/paper-header-panel */
+        height: calc(100vh - 64px);
       }
 
       nuxeo-fulltext-suggester::content > paper-card {
@@ -35,19 +27,30 @@ Lesser General Public License for more details.
         background: var(--default-primary-color);
       }
 
-      nuxeo-search-listing {
-        margin-top: 10px;
-        margin-left: 15px;
-        position: relative;
-        height: 900px;
+      .documentListContainer {
+        margin: 5px;
+      }
+
+      nuxeo-search-listing::content paper-drawer-panel::content div#drawer [drawer] {
+        /* Because nuxeo-search-listing sets nuxeo-metadata to "fixed", I need to override the height. By default the height when "fixed" is 100% of the screen. Since I have two paper-toolbars, I need to subtract 64px for each */
+        height: calc(100vh - 128px);
       }
 
     </style>
 
-    <div class="mainContainer">
-      <nuxeo-fulltext-suggester text={{fulltext}} suggestions={{suggestions}}></nuxeo-fulltext-suggester>
-      <nuxeo-search-sort sort-properties={{sort}}>Sort</nuxeo-search-sort>
-      <nuxeo-search-listing document-list=[[hits.hits]]></nuxeo-search-listing>
+    <div class="header-panel-container">
+
+      <paper-header-panel mode="waterfall">
+
+        <div class="paper-header">
+          <nuxeo-fulltext-suggester text={{fulltext}}
+            suggestions={{suggestions}}></nuxeo-fulltext-suggester>
+          <nuxeo-search-sort sort-properties={{sort}}>Sort</nuxeo-search-sort>
+        </div>
+
+        <nuxeo-search-listing document-list=[[hits.hits]]
+          class="documentListContainer"></nuxeo-search-listing>
+      </paper-header-panel>
     </div>
 
   </template>
@@ -69,11 +72,11 @@ Lesser General Public License for more details.
         suggestions: {
           type: Object,
           notify: true
-       },
-       sort: {
-         type: Array,
-         notify: true
-       }
+        },
+        sort: {
+          type: Array,
+          notify: true
+        }
       },
 
       ready: function() {
