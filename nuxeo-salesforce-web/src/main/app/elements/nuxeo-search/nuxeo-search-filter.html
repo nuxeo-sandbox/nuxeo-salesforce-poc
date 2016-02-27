@@ -52,6 +52,22 @@ Lesser General Public License for more details.
           value="{{stageAgg}}"></nuxeo-checkbox-aggregation>
       </template>
 
+      <template is="dom-if"
+        if="[[aggregations]]">
+        <div class="filterItemLabel">Products</div>
+        <nuxeo-checkbox-aggregation name='tags_agg'
+          aggregations='[[aggregations]]'
+          value="{{tagsAgg}}"></nuxeo-checkbox-aggregation>
+      </template>
+
+      <template is="dom-if"
+        if="[[aggregations]]">
+        <div class="filterItemLabel">Diffusion</div>
+        <nuxeo-checkbox-aggregation name='diffusion_agg'
+          aggregations='[[aggregations]]'
+          value="{{diffusionAgg}}"></nuxeo-checkbox-aggregation>
+      </template>
+
     </div>
 
     <nuxeo-es-search id='DocumentProvider'
@@ -94,8 +110,7 @@ Lesser General Public License for more details.
         fields: {
           type: Array,
           value: function() {
-            return ['_id', 'dc:title', 'dc:modified',
-              'ecm:uuid'
+            return ['_source'
             ];
           }
         },
@@ -126,11 +141,14 @@ Lesser General Public License for more details.
       sort: {
         type: Array,
         notify: true,
+        value: function() {
+          return [];
+        }
        }
       },
       observers: [
         'resetFacets(fulltext)',
-        'updateQuery(industryAgg,stageAgg,diffusionAgg)',
+        'updateQuery(industryAgg,stageAgg,diffusionAgg,tagsAgg)',
         'updateParameter(response)',
         'updateSort(sortProperties.splices)'
       ],
@@ -138,6 +156,7 @@ Lesser General Public License for more details.
       resetFacets: function() {
         this.industryAgg = [];
         this.stageAgg = [];
+        this.tagsAgg = [];
         this.diffusionAgg = [];
       },
 
@@ -228,10 +247,17 @@ Lesser General Public License for more details.
         };
 
         var postFilters = [];
+
         var stageAggFilter = {
           match_all: {}
         };
         var industryAggFilter = {
+          match_all: {}
+        };
+        var diffusionAggFilter = {
+          match_all: {}
+        };
+        var tagsAggFilter = {
           match_all: {}
         };
 
@@ -267,6 +293,23 @@ Lesser General Public License for more details.
             }
           };
         }
+
+        if (this.tagsAgg !== undefined && this.tagsAgg.length > 0) {
+          postFilters.push({
+            terms: {
+              "ecm:tag": this.tagsAgg
+            }
+          });
+        }
+
+        if (this.diffusionAgg !== undefined && this.diffusionAgg.length > 0) {
+          postFilters.push({
+            terms: {
+             "sales:audience": this.diffusionAgg
+            }
+          });
+        }
+
         if (postFilters.length > 0) {
           this.post_filter = {
             and: {
@@ -299,6 +342,32 @@ Lesser General Public License for more details.
               stage_agg: {
                 terms: {
                   field: "sales:stage",
+                  order: {
+                    _count: "desc"
+                  }
+                }
+              }
+            }
+          },
+          diffusion_agg_filter: {
+            filter: diffusionAggFilter,
+            aggregations: {
+              diffusion_agg: {
+                terms: {
+                  field: "sales:audience",
+                  order: {
+                    _count: "desc"
+                  }
+                }
+              }
+            }
+          },
+          tags_agg_filter: {
+            filter: tagsAggFilter,
+            aggregations: {
+              tags_agg: {
+                terms: {
+                  field: "ecm:tag",
                   order: {
                     _count: "desc"
                   }
