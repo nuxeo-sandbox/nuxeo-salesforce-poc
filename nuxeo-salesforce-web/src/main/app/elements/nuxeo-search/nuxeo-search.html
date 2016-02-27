@@ -28,6 +28,7 @@ Example: <nuxeo-article-search></nuxeo-article-search>
     <style>
       :host {
         display: block;
+        background: var(--default-primary-color);
         --paper-icon-button: {
           color: var(--accent-color);
         }
@@ -35,32 +36,25 @@ Example: <nuxeo-article-search></nuxeo-article-search>
         --paper-icon-button-ink-color: var(--placeholder-text-color);
       }
 
-      .mainToolBar {
-        --paper-toolbar-background: var(--dark-primary-color);
-        --paper-toolbar-title: {
-          margin-left: 10px;
-          line-height: inherit;
-        }
-        ;
-      }
-
-      .mustHaveHeight {
+      .paper-header-panel-container {
         /* A height is required in order for a paper-header-panel to display content.
          See: https://elements.polymer-project.org/elements/paper-header-panel */
-        height: 900px;
+        height: 100vh;
+      }
+
+      .mainToolBar {
+        --paper-toolbar-background: var(--dark-primary-color);
       }
 
     </style>
 
-
-    <div class="mustHaveHeight">
+    <div class="paper-header-panel-container">
 
       <paper-header-panel mode="waterfall">
 
         <paper-toolbar class="mainToolBar">
-
-            <paper-icon-button src="[[_iconForApp()]]"
-              title="Nuxeo"></paper-icon-button>
+          <paper-icon-button src="[[_iconForApp()]]"
+            title="Nuxeo"></paper-icon-button>
           <div class="title">Content Search</div>
         </paper-toolbar>
 
