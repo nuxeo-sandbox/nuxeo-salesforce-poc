@@ -1,4 +1,4 @@
- <!--
+<!--
 (C) Copyright 2015 Nuxeo SA (http://nuxeo.com/) and contributors.
 
 All rights reserved. This program and the accompanying materials
@@ -38,10 +38,10 @@ Lesser General Public License for more details.
 
       <template is="dom-if"
         if="[[aggregations]]">
-        <div class="filterItemLabel">Industry</div>
-        <nuxeo-checkbox-aggregation name='industry_agg'
+        <div class="filterItemLabel">Products</div>
+        <nuxeo-checkbox-aggregation name='tags_agg'
           aggregations='[[aggregations]]'
-          value="{{industryAgg}}"></nuxeo-checkbox-aggregation>
+          value="{{tagsAgg}}"></nuxeo-checkbox-aggregation>
       </template>
 
       <template is="dom-if"
@@ -52,20 +52,21 @@ Lesser General Public License for more details.
           value="{{stageAgg}}"></nuxeo-checkbox-aggregation>
       </template>
 
+
       <template is="dom-if"
         if="[[aggregations]]">
-        <div class="filterItemLabel">Products</div>
-        <nuxeo-checkbox-aggregation name='tags_agg'
+        <div class="filterItemLabel">Visibility</div>
+        <nuxeo-checkbox-aggregation name='diffusion_agg'
           aggregations='[[aggregations]]'
-          value="{{tagsAgg}}"></nuxeo-checkbox-aggregation>
+          value="{{diffusionAgg}}"></nuxeo-checkbox-aggregation>
       </template>
 
       <template is="dom-if"
         if="[[aggregations]]">
-        <div class="filterItemLabel">Diffusion</div>
-        <nuxeo-checkbox-aggregation name='diffusion_agg'
+        <div class="filterItemLabel">Industry</div>
+        <nuxeo-checkbox-aggregation name='industry_agg'
           aggregations='[[aggregations]]'
-          value="{{diffusionAgg}}"></nuxeo-checkbox-aggregation>
+          value="{{industryAgg}}"></nuxeo-checkbox-aggregation>
       </template>
 
     </div>
@@ -110,8 +111,7 @@ Lesser General Public License for more details.
         fields: {
           type: Array,
           value: function() {
-            return ['_source'
-            ];
+            return ['_source'];
           }
         },
         aggregates: {
@@ -133,18 +133,18 @@ Lesser General Public License for more details.
         suggestions: {
           type: Object,
           notify: true
-       },
-       sortProperties: {
-         type: Array,
-         notify: true,
-      },
-      sort: {
-        type: Array,
-        notify: true,
-        value: function() {
-          return [];
+        },
+        sortProperties: {
+          type: Array,
+          notify: true,
+        },
+        sort: {
+          type: Array,
+          notify: true,
+          value: function() {
+            return [];
+          }
         }
-       }
       },
       observers: [
         'resetFacets(fulltext)',
@@ -161,7 +161,7 @@ Lesser General Public License for more details.
       },
 
       updateSort: function(changeRecord) {
-         this.updateQuery();
+        this.updateQuery();
       },
 
       updateQuery: function() {
@@ -305,7 +305,7 @@ Lesser General Public License for more details.
         if (this.diffusionAgg !== undefined && this.diffusionAgg.length > 0) {
           postFilters.push({
             terms: {
-             "sales:audience": this.diffusionAgg
+              "sales:audience": this.diffusionAgg
             }
           });
         }
@@ -411,14 +411,14 @@ Lesser General Public License for more details.
         };
 
         //build sorting
-        if (this.sort!==undefined) this.splice('sort',0,this.sort.length);
-        if (this.sortProperties!==undefined) {
-           for (var i=0;i<this.sortProperties.length;i++) {
-             var current = this.sortProperties[i];
-             var entry = {};
-             entry[current.value] = current.order;
-             this.sort.push(entry);
-           }
+        if (this.sort !== undefined) this.splice('sort', 0, this.sort.length);
+        if (this.sortProperties !== undefined) {
+          for (var i = 0; i < this.sortProperties.length; i++) {
+            var current = this.sortProperties[i];
+            var entry = {};
+            entry[current.value] = current.order;
+            this.sort.push(entry);
+          }
         }
 
         this.debounce('autoQuery', function() {
