@@ -22,32 +22,36 @@ Example: <nuxeo-article-search></nuxeo-article-search>
 @demo app/index.html
 -->
 <dom-module id="nuxeo-search">
-  <style>
-    :host {
-      display: block;
-      --paper-icon-button: {
-        color: var(--accent-color);
-     };
-      --paper-icon-button-ink-color: var(--placeholder-text-color);
-    }
-
-    .mainToolBar {
-      --paper-toolbar-background: var(--dark-primary-color);
-      --paper-toolbar-title: {
-        margin-left: 10px;
-        line-height: inherit;
-     };
-    }
-
-    .mustHaveHeight {
-      /* A height is required in order for a paper-header-panel to display content.
-         See: https://elements.polymer-project.org/elements/paper-header-panel */
-      height: 900px;
-    }
-
-  </style>
 
   <template>
+
+    <style>
+      :host {
+        display: block;
+        --paper-icon-button: {
+          color: var(--accent-color);
+        }
+        ;
+        --paper-icon-button-ink-color: var(--placeholder-text-color);
+      }
+
+      .mainToolBar {
+        --paper-toolbar-background: var(--dark-primary-color);
+        --paper-toolbar-title: {
+          margin-left: 10px;
+          line-height: inherit;
+        }
+        ;
+      }
+
+      .mustHaveHeight {
+        /* A height is required in order for a paper-header-panel to display content.
+         See: https://elements.polymer-project.org/elements/paper-header-panel */
+        height: 900px;
+      }
+
+    </style>
+
 
     <div class="mustHaveHeight">
 
@@ -66,11 +70,13 @@ Example: <nuxeo-article-search></nuxeo-article-search>
           <nuxeo-search-filter drawer
             fulltext={{fulltext}}
             hits={{hits}}
-            suggestions={{suggestions}} sort-properties={{sort}}></nuxeo-search-filter>
+            suggestions={{suggestions}}
+            sort-properties={{sort}}></nuxeo-search-filter>
           <nuxeo-search-results main
             fulltext={{fulltext}}
             hits={{hits}}
-            suggestions={{suggestions}} sort={{sort}}></nuxeo-search-results>
+            suggestions={{suggestions}}
+            sort={{sort}}></nuxeo-search-results>
         </paper-drawer-panel>
 
       </paper-header-panel>
