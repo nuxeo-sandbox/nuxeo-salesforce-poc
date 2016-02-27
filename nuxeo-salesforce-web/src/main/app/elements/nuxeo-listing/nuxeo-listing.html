@@ -50,6 +50,11 @@ Requires <nuxeo-connection> in order to get icons.
         position: fixed;
       }
 
+      nuxeo-metadata::content .titleWrapper {
+        /* The drawer is set to 300px so the title needs to be limited */
+        width: 203px;
+      }
+
       nuxeo-listing-document[selected]::content paper-card {
         border-color: var(--paper-card-selected-primary-color);
       }
@@ -86,11 +91,6 @@ Requires <nuxeo-connection> in order to get icons.
           background: var(--accent-color)
         }
         border-radius: 3px;
-      }
-
-      nuxeo-metadata::content .titleWrapper {
-        /* The drawer is set to 300px so the title needs to be limited */
-        width: 203px;
       }
 
     </style>
