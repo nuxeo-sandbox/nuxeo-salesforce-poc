@@ -84,25 +84,15 @@ Contributors:
 
     <paper-header-panel mode="waterfall">
 
-      <paper-toolbar>
-        <div class="titleBar">
-          <div class="titleIconContainer">
-            <iron-icon src="[[icon]]"
-              class="titleIcon"></iron-icon>
-          </div>
-          <div class="titleWrapper">
-            <div class="title">{{doc.title}}</div>
-          </div>
-        </div>
-        <div class="actionsContainer">
-          <div class="actionsWrapper">
-            <a href="[[_docURL(doc)]]"
-              target="_blank">
-              <paper-icon-button icon="icons:open-in-new"
-                title="Access"></paper-icon-button>
-            </a>
-          </div>
-        </div>
+      <paper-toolbar class="mainToolBar">
+        <paper-icon-button src="[[icon]]"
+          title="Nuxeo"></paper-icon-button>
+        <div class="title">{{doc.title}}</div>
+        <a href="[[_docURL(doc)]]"
+          target="_blank">
+          <paper-icon-button icon="icons:open-in-new"
+            title="Access"></paper-icon-button>
+        </a>
       </paper-toolbar>
 
       <div>
