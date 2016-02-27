@@ -42,10 +42,16 @@ Lesser General Public License for more details.
         height: 900px;
       }
 
+      nuxeo-search-listing::content paper-drawer-panel::content div#drawer [drawer] {
+        /* Because nuxeo-search-listing sets nuxeo-metadata to "fixed", I need to override the height. By default the height when "fixed" is 100% of the screen. Since I have two paper-toolbars, I need to subtract 64px for each */
+        height: calc(100vh - 128px);
+      }
+
     </style>
 
     <div class="mainContainer">
-      <nuxeo-fulltext-suggester text={{fulltext}} suggestions={{suggestions}}></nuxeo-fulltext-suggester>
+      <nuxeo-fulltext-suggester text={{fulltext}}
+        suggestions={{suggestions}}></nuxeo-fulltext-suggester>
       <nuxeo-search-sort sort-properties={{sort}}>Sort</nuxeo-search-sort>
       <nuxeo-search-listing document-list=[[hits.hits]]></nuxeo-search-listing>
     </div>
@@ -69,11 +75,11 @@ Lesser General Public License for more details.
         suggestions: {
           type: Object,
           notify: true
-       },
-       sort: {
-         type: Array,
-         notify: true
-       }
+        },
+        sort: {
+          type: Array,
+          notify: true
+        }
       },
 
       ready: function() {

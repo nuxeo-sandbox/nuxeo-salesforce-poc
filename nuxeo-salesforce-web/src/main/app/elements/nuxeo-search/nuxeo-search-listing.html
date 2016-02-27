@@ -27,11 +27,30 @@ Requires <nuxeo-connection> in order to get icons.
   <template>
 
     <style>
-      :host {
-        --paper-icon-button: {
-          color: var(--accent-color);
-        }
-        --paper-icon-button-ink-color: var(--placeholder-text-color);
+      paper-drawer-panel {
+        /* Allow the page to scroll if the content is too tall. */
+        overflow-y: scroll;
+      }
+
+      paper-drawer-panel::content div#main [main] {
+        /* By default paper-drawer-panel sets the height of the "main" element to 100%.
+           This creates a visible scrollbar when the parent has an overflow set to scroll
+           no matter how big the content is. Setting the height to auto shows the scrollbar
+           only when the content is tall enough. */
+        height: auto;
+      }
+
+      nuxeo-metadata {
+        --paper-toolbar-background: var(--nuxeo-metadata-toolbar-background);
+        --paper-toolbar-color: var(--nuxeo-metadata-toolbar-color);
+        /* Put a divider between the drawer and the main panel. */
+        border-left: solid 1px var(--divider-color);
+        position: fixed;
+      }
+
+      nuxeo-metadata::content paper-header-panel {
+        /* The drawer is set to 300px so the preview needs to be limited */
+        width: 300px;
       }
 
       nuxeo-search-hit {
@@ -61,9 +80,13 @@ Requires <nuxeo-connection> in order to get icons.
       <!-- Drawer Content -->
       <template is="dom-if"
         if="[[selected]]">
-        <nuxeo-search-metadata drawer
-          doc-id="{{selected._id}}"
-          drawer></nuxeo-search-metadata>
+        <nuxeo-resource auto
+          path="/id/[[selected._id]]"
+          response="{{doc}}"
+          enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
+        <nuxeo-metadata doc="{{doc}}"
+          class="fixed"
+          drawer></nuxeo-metadata>
       </template>
 
       <div main>
