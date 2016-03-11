@@ -50,7 +50,7 @@ Requires <nuxeo-connection> in order to get icons.
         position: fixed;
       }
 
-       nuxeo-metadata::content paper-header-panel {
+      nuxeo-metadata::content paper-header-panel {
         /* The drawer is set to 300px so the preview needs to be limited */
         width: 300px;
       }
@@ -115,6 +115,7 @@ Requires <nuxeo-connection> in order to get icons.
             selected-document={{docForAction}}
             on-tap="_select"
             selected$="[[_isSame(item, selected)]]"
+            show-action-preview
             show-action-edit
             show-action-download
             show-action-direct-edit
