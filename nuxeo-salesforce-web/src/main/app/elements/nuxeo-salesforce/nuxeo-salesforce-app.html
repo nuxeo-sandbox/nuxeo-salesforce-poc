@@ -25,58 +25,58 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
   <template>
 
-  <style>
-    :host {
-      display: block;
-      --paper-icon-button: {
-        color: var(--accent-color);
+    <style>
+      :host {
+        display: block;
+        --paper-icon-button: {
+          color: var(--accent-color);
+        }
+        --paper-icon-button-ink-color: var(--placeholder-text-color);
       }
-      --paper-icon-button-ink-color: var(--placeholder-text-color);
-    }
 
-    .tabBodyContainer {
-      /* A height is required in order for a paper-header-panel to display content.
+      .tabBodyContainer {
+        /* A height is required in order for a paper-header-panel to display content.
          See: https://elements.polymer-project.org/elements/paper-header-panel */
-      height: calc(100vh - 64px);
-    }
-
-    .tabsToolbar {
-      --paper-toolbar-background: var(--dark-primary-color);
-    }
-
-    .mainTabs {
-      font-size: 130%;
-      color: var(--primary-text-color);
-      font-weight: normal;
-      --paper-tabs-selection-bar-color: var(--accent-color);
-    }
-
-    .mainTabs paper-tab {
-      --paper-tab-ink: var(--accent-color);
-      --paper-tab-content: {
-        color: var(--secondary-text-color)
+        height: calc(100vh - 64px);
       }
-      width: 110px;
-    }
 
-    .embedded-toolbar {
-      background: var(--default-primary-color);
-    }
+      .tabsToolbar {
+        --paper-toolbar-background: var(--dark-primary-color);
+      }
 
-    .searchBox {
-      width: 25em;
-    }
+      .mainTabs {
+        font-size: 130%;
+        color: var(--primary-text-color);
+        font-weight: normal;
+        --paper-tabs-selection-bar-color: var(--accent-color);
+      }
 
-    .documentListContainer {
-      margin: 5px;
-    }
+      .mainTabs paper-tab {
+        --paper-tab-ink: var(--accent-color);
+        --paper-tab-content: {
+          color: var(--secondary-text-color)
+        }
+        width: 110px;
+      }
 
-    nuxeo-listing::content paper-drawer-panel::content div#drawer [drawer] {
-      /* Because nuxeo-listing sets nuxeo-metadata to "fixed", I need to override the height. By default the height when "fixed" is 100% of the screen. Since I have two paper-toolbars, I need to subtract 64px for each */
-      height: calc(100vh - 128px);
-    }
+      .embedded-toolbar {
+        background: var(--default-primary-color);
+      }
 
-  </style>
+      .searchBox {
+        width: 25em;
+      }
+
+      .documentListContainer {
+        margin: 5px;
+      }
+
+      nuxeo-listing::content paper-drawer-panel::content div#drawer [drawer] {
+        /* Because nuxeo-listing sets nuxeo-metadata to "fixed", I need to override the height. By default the height when "fixed" is 100% of the screen. Since I have two paper-toolbars, I need to subtract 64px for each */
+        height: calc(100vh - 128px);
+      }
+
+    </style>
 
 
     <nuxeo-connection id="nx"></nuxeo-connection>
@@ -211,7 +211,6 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     </iron-pages>
 
-
   </template>
 
   <script>
@@ -219,6 +218,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       is: 'nuxeo-salesforce-app',
 
       observers: [
+        '_displayCanvasApp(sfobject)',
+        '_displayErrorCanvasApp(success, error)',
+        '_displayErrorCanvasApp(success)',
         '_updateRelatedObjects(_sfopportunity)',
         '_fetchPublic(_sfopportunity,_sfaccount)',
         '_fetchPublic(_publicSearchTerms)',
@@ -233,6 +235,25 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         this.searchTerm = '';
         this.selectedTab = 0;
         this.searchPageSize = 20;
+      },
+
+      _displayCanvasApp: function() {
+        if (this.sfobject) {
+          $(".fullbleed").show();
+        } else {
+          $(".fullbleed").hide();
+        }
+      },
+
+      _displayErrorCanvasApp: function() {
+        if (this.success) {
+          $("#authorized").show();
+          $("#error_content").hide();
+        } else {
+          $("#authorized").hide();
+          $("#error_content").show();
+          document.getElementById("message_error").innerHTML = this.error;
+        }
       },
 
       hideMetadata: function() {

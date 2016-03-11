@@ -183,9 +183,6 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
       observers: [
         '_fetch(searchTerm)',
         '_fetchParent(parentPath)',
-        '_displayCanvasApp(sfobject)',
-        '_displayErrorCanvasApp(success, error)',
-        '_displayErrorCanvasApp(success)',
         '_executeOp(sfobject)',
         '_getChildren(currentParent)',
         '_refresh(refreshList)'
@@ -196,25 +193,6 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         'dropZone.dragenter': '_onDragEnter',
         'dropZone.drop': '_onDrop',
         'dropZone.dragleave': '_onDragLeave'
-      },
-
-      _displayCanvasApp: function() {
-        if (this.sfobject) {
-          $(".fullbleed").show();
-        } else {
-          $(".fullbleed").hide();
-        }
-      },
-
-      _displayErrorCanvasApp: function() {
-        if (this.success) {
-          $("#authorized").show();
-          $("#error_content").hide();
-        } else {
-          $("#authorized").hide();
-          $("#error_content").show();
-          document.getElementById("message_error").innerHTML = this.error;
-        }
       },
 
 
