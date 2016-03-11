@@ -44,7 +44,7 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
 
     </style>
 
-    <paper-material elevation="0">
+    <div>
       <template is="dom-if" if="[[displayDropDown]]">
          <paper-dropdown-menu label="Sort" name="properties" required>
            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{selected}}">
@@ -63,7 +63,7 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
           </div>
         </template>
       </div>
-    </paper-material>
+    </div>
 
   </template>
 
@@ -128,7 +128,7 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
             break;
 
          case 'rated:count':
-             return '#votes';
+             return 'Votes';
              break;
 
           default:
