@@ -25,13 +25,14 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
 
     <style>
       .mainContainer {
-        height: 60px;
-        display: table-cell;
-        vertical-align: middle
+        height: 64px;
+        display: flex;
       }
 
       .documentPills {
         display: inline-flex;
+        margin-top: auto;
+        margin-bottom: auto;
       }
 
       .documentPill {
@@ -41,7 +42,7 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
         font-size: 80%;
         font-weight: bold;
         color: var(--secondary-text-color);
-        background: #059EBD;
+        background: var(--accent-color);
       }
 
       .inline {
@@ -50,7 +51,7 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
 
     </style>
 
-    <div>
+    <div class="mainContainer">
       <template is="dom-if"
         if="[[displayDropDown]]">
         <paper-dropdown-menu label="Sort"
