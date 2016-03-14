@@ -367,6 +367,9 @@
                     <property name="hideHelpLabel">true</property>
                     <property name="directoryName">CustStage</property>
                 </properties>
+                <properties widgetMode="view">
+                    <property name="directoryName">CustStage</property>
+                </properties>
             </widget>
         </layout>
 
