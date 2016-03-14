@@ -218,7 +218,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       is: 'nuxeo-salesforce-app',
 
       observers: [
-        '_displayCanvasApp(sfobject)',
+        '_displayCanvasApp(_sfopportunity)',
         '_displayErrorCanvasApp(success, error)',
         '_displayErrorCanvasApp(success)',
         '_updateRelatedObjects(_sfopportunity)',
@@ -238,7 +238,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       },
 
       _displayCanvasApp: function() {
-        if (this.sfobject) {
+        if (this._sfopportunity) {
           $(".fullbleed").show();
         } else {
           $(".fullbleed").hide();
