@@ -134,6 +134,12 @@
                     </properties>
                     <widget>stage</widget>
                 </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>custstage</widget>
+                </row>
             </rows>
             <widget name="audience" type="suggestOneDirectory">
                 <labels>
@@ -211,6 +217,12 @@
                     </properties>
                     <widget>stage</widget>
                 </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>custstage</widget>
+                </row>
             </rows>
             <widget name="audience" type="suggestOneDirectory">
                 <labels>
@@ -287,6 +299,12 @@
                         <property name="nxl_colspan_0">1</property>
                     </properties>
                     <widget>stage</widget>
+                </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>custstage</widget>
                 </row>
             </rows>
             <widget name="audience" type="suggestOneDirectory">
