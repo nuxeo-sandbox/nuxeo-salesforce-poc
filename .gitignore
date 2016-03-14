@@ -38,3 +38,4 @@ node_modules
 nuxeo-salesforce-web/build.sh
 
 nuxeo-salesforce-web/src/main/app/bug.html
+nuxeo-salesforce-web/src/main/app/index_local.html
