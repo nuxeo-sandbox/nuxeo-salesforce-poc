@@ -323,9 +323,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         }
         if (this._sfopportunity) {
           // Filter stage
-          query = query + " AND sales:stage = '" + this._sfopportunity.StageName + "'";
+          query = query + " AND sales:stage = '" + this._mapSFDCStageToNuxeoID(this._sfopportunity.StageName) + "'";
           // Filter Customer SOA Score
-          query = query + " AND sales:custStage = '" + this._sfopportunity.Customer_Stage_of_Adoption_Score__c + "'";
+          query = query + " AND sales:custStage = '" + this._mapSFDCCustStageToNuxeoID(this._sfopportunity.Customer_Stage_of_Adoption_Score__c) + "'";
         }
         // Filter with competitors
         if (this._sfcompetitors) {
@@ -341,6 +341,47 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           }
         }
         return query;
+      },
+
+      // SFDC allows special chars in values. Nuxeo does not. Safest thing to to map them.
+      _mapSFDCCustStageToNuxeoID: function(sfdcCustStage) {
+        switch (sfdcCustStage) {
+          case "Stage 1 – PROJECT":
+            return "stage1";
+          case "Stage 2 - INTEGRATING":
+            return "stage2";
+          case "Stage 3 - SCALING":
+            return "stage3";
+          case "Stage 4 - CLOUD-FIRST/ALL-IN":
+            return "stage4";
+        }
+      },
+
+
+      // SFDC allows special chars in values. Nuxeo does not. Safest thing to to map them.
+      _mapSFDCStageToNuxeoID: function(sfdcCustStage) {
+        switch (sfdcCustStage) {
+          case "Prospecting":
+            return "prospecting";
+          case "Qualification":
+            return "qualification";
+          case "Needs Analysis":
+            return "needsAnalysis";
+          case "Value Proposition":
+            return "valueProposition";
+          case "Id. Decision Makers":
+            return "idDecisionMakers";
+          case "Perception Analysis":
+            return "perceptionAnalysis";
+          case "Proposal/Price Quote":
+            return "proposalPriceQuote";
+          case "Negotiation/Review":
+            return "negotiationReview";
+          case "Closed Won":
+            return "closedWon";
+          case "Closed Lost":
+            return "closedLost";
+        }
       },
 
       _genericFilter: function(type, terms) {
