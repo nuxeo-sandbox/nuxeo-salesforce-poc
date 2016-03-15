@@ -37,5 +37,17 @@
             <dataFile>data/vocabularies/Audience.csv</dataFile>
             <parentDirectory>Audience</parentDirectory>
         </directory>
+        <directory name="CustStage">
+            <schema>xvocabulary</schema>
+            <dataSource>java:/nxsqldirectory</dataSource>
+            <cacheTimeout>3600</cacheTimeout>
+            <cacheMaxSize>1000</cacheMaxSize>
+            <idField>id</idField>
+            <autoincrementIdField>false</autoincrementIdField>
+            <createTablePolicy>on_missing_columns</createTablePolicy>
+            <table>studio_vocabulary_CustStage</table>
+            <dataFile>data/vocabularies/CustStage.csv</dataFile>
+            <parentDirectory>CustStage</parentDirectory>
+        </directory>
     </extension>
 </component>

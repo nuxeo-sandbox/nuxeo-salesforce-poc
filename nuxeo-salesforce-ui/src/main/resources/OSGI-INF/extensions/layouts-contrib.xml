@@ -134,6 +134,12 @@
                     </properties>
                     <widget>stage</widget>
                 </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>custstage</widget>
+                </row>
             </rows>
             <widget name="audience" type="suggestOneDirectory">
                 <labels>
@@ -172,6 +178,19 @@
                 <properties widgetMode="edit">
                     <property name="hideHelpLabel">true</property>
                     <property name="directoryName">SalesStage</property>
+                </properties>
+            </widget>
+            <widget name="custstage" type="suggestManyDirectory">
+                <labels>
+                    <label mode="any">Customer SOA Score</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:custStage</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">CustStage</property>
                 </properties>
             </widget>
         </layout>
@@ -198,6 +217,12 @@
                     </properties>
                     <widget>stage</widget>
                 </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>custstage</widget>
+                </row>
             </rows>
             <widget name="audience" type="suggestOneDirectory">
                 <labels>
@@ -236,6 +261,19 @@
                 <properties widgetMode="edit">
                     <property name="hideHelpLabel">true</property>
                     <property name="directoryName">SalesStage</property>
+                </properties>
+            </widget>
+            <widget name="custstage" type="suggestManyDirectory">
+                <labels>
+                    <label mode="any">Customer SOA Score</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:custStage</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">CustStage</property>
                 </properties>
             </widget>
         </layout>
@@ -262,6 +300,12 @@
                     </properties>
                     <widget>stage</widget>
                 </row>
+                <row>
+                    <properties mode="any">
+                        <property name="nxl_colspan_0">1</property>
+                    </properties>
+                    <widget>custstage</widget>
+                </row>
             </rows>
             <widget name="audience" type="suggestOneDirectory">
                 <labels>
@@ -309,6 +353,22 @@
                 </properties>
                 <properties widgetMode="view">
                     <property name="directoryName">SalesStage</property>
+                </properties>
+            </widget>
+            <widget name="custstage" type="suggestManyDirectory">
+                <labels>
+                    <label mode="any">Customer SOA Score</label>
+                </labels>
+                <translated>false</translated>
+                <fields>
+                    <field>sales:custStage</field>
+                </fields>
+                <properties widgetMode="edit">
+                    <property name="hideHelpLabel">true</property>
+                    <property name="directoryName">CustStage</property>
+                </properties>
+                <properties widgetMode="view">
+                    <property name="directoryName">CustStage</property>
                 </properties>
             </widget>
         </layout>

@@ -35,4 +35,5 @@
   <xs:element name="audience" type="xs:string"/>
   <xs:element name="industry" type="nxs:stringList"/>
   <xs:element name="stage" type="nxs:stringList"/>
+  <xs:element name="custStage" type="nxs:stringList"/>
 </xs:schema>
