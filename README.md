@@ -1,98 +1,41 @@
-[![Build Status](https://qa.nuxeo.org/jenkins/buildStatus/icon?job=addons_nuxeo-salesforce-master)](https://qa.nuxeo.org/jenkins/job/addons_nuxeo-salesforce-master/)
+# About Nuxeo Salesforce POC
 
-## About Nuxeo Salesforce
+The **Nuxeo** addon [_nuxeo-salesforce_](https://github.com/nuxeo/nuxeo-salesforce) allows Salesforce users to attach documents to their Salesforce Objects (such as Opportunities, Contacts, Accounts...) through the Salesforce UI within a Nuxeo server.
 
-The **Nuxeo** addon _nuxeo-salesforce_ allows Salesforce users to attach documents to their Salesforce Objects (such as Opportunities, Contacts, Accounts...) through the Salesforce UI within a Nuxeo server.
+This project started as a fork of that add-on but has greatly extended the scope of the SFDC integration.  The main additional features are:
 
- to invite external user to access Nuxeo platform through basic or Shibboleth authentication.
+* Prescribed content; the SFDC metadata is used to filter content coming from Nuxeo.
+* Template support; generate templates from within SFDC, they are attached to the SFDC object on the back end.
+* Share Nuxeo content from within SFDC.
+* Content analytics; the time spend previewing a document is logged and displayed.
+* Repository-wide search page; can be used as a separate tab within SFDC.
 
-## Sub-Modules Organization
+## Sub-Module Organization
 
 - `nuxeo-salesforce-core`: Nuxeo plugin Core bringing access to Salesforce accounts.
+- `nuxeo-salesforce-ui`: Nuxeo plugin UI for managing SFDC metadata on the back-end.
 - `nuxeo-salesforce-web`: Nuxeo plugin Web providing UI components accessing Salesforce Objects.
 
 ## Building
 
 `mvn clean install`
 
-### Getting Started
+## Support
 
-- [Download a Nuxeo server](http://www.nuxeo.com/en/downloads) (the zip version)
+**These features are not part of the Nuxeo Production platform.**
 
-- Unzip it
+These solutions are provided for inspiration and we encourage customers to use them as code samples and learning resources.
 
-- Deploy `nuxeo-salesforce-core` and `nuxeo-salesforce-web` in `NUXEO_HOME/nxserver/bundles`
+This is a moving project (no API maintenance, no deprecation process, etc.) If any of these solutions are found to be useful for the Nuxeo Platform in general, they will be integrated directly into platform, not maintained here.
 
-OR
 
-- Install nuxeo-salesforce plugin from command line
-  - Linux/Mac:
-    - `NUXEO_HOME/bin/nuxeoctl mp-init`
-    - `NUXEO_HOME/bin/nuxeoctl mp-install nuxeo-salesforce`
-    - `NUXEO_HOME/bin/nuxeoctl start`
-  - Windows:
-    - `NUXEO_HOME\bin\nuxeoctl.bat mp-init`
-    - `NUXEO_HOME\bin\nuxeoctl.bat mp-install nuxeo-salesforce`
-    - `NUXEO_HOME\bin\nuxeoctl.bat start`
+## Licensing
 
-  or Install [the Nuxeo Salesforce Marketplace Package](https://connect.nuxeo.com/nuxeo/site/marketplace/package/nuxeo-salesforce).
+[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-- From your browser, go to `http://localhost:8080/nuxeo`
 
-- Follow Nuxeo Wizard by clicking 'Next' buttons, re-start once completed
+## About Nuxeo
 
-- Check Nuxeo correctly re-started `http://localhost:8080/nuxeo`
-  - username: Administrator
-  - password: Administrator
+Nuxeo dramatically improves how content-based applications are built, managed and deployed, making customers more agile, innovative and successful. Nuxeo provides a next generation, enterprise ready platform for building traditional and cutting-edge content oriented applications. Combining a powerful application development environment with SaaS-based tools and a modular architecture, the Nuxeo Platform and Products provide clear business value to some of the most recognizable brands including Verizon, Electronic Arts, Netflix, Sharp, FICO, the U.S. Navy, and Boeing. Nuxeo is headquartered in New York and Paris.
 
-### Nuxeo Configuration
-
-- HTTPS configuration:
-
-	Salesforce is requiring Nuxeo server to be accessed through HTTPS. Follow this [documentation](https://doc.nuxeo.com/x/GAFc) to configure your reverse proxy for production purpose. For a dev or test environment, you can configure your Nuxeo server in HTTPS directly with the following configuration parameters example:
-
-		nuxeo.server.https.port=8443
-		nuxeo.server.https.keystoreFile=/Users/vpasquier/.keystore
-		nuxeo.server.https.keystorePass=******
-
-	You can setup the keystore by following the [Oracle documentation](https://docs.oracle.com/cd/E19509-01/820-3503/ggfen/index.html)
-
-- Add the following configuration parameter (in `Admin Center> Cloud Services > OAuth2 Provider > Add`):
-
-		CliendID=YOUR_SALESFORCE_CONSUMER_KEY
-		User Authorization URL=https://NUXEO_URL/nuxeo/picker/callback/callback.html
-
-If you're using `Firefox` browser, you don't need to configure it for accessing the plugin within Salesforce. However with `chrome`, here are the guidelines to allow the access:
-
-- Authorize `Popups` from Salesforce (to allow OAuth execution)
-- Go to `https://NUXEO_URL:8443/nuxeo` and allow `chrome` to access in HTTPS your Nuxeo server
-
-### Salesforce Configuration
-
-In your Salesforce account, you can setup the Nuxeo Salesforce plugin through the Salesforce Marketplace (In progress)
-
-OR directly from your Salesforce dashboard:
-
-- Go in your Salesforce dashboard
-- Go on `Setup` (top right)
-- Go to `Build > Create > Apps`
-- Add a new `Connected Apps` named Nuxeo
-- Configure `OAuth` settings by referencing the callback URL: `https://NUXEO_URL/nuxeo/picker/callback/callback.html`
-- Configure Canvas App URL `https://NUXEO_URL/nuxeo/picker` and select OAuth Webflow for Access Method
-- Configure Canvas App locations > Layouts and Mobile Cards
-- Save the Nuxeo `Connected App`
-- Go to `Customize > Any SF Object` like Opportunity
-- Click on `Pages Layout > Edit SF Object Layout`
-- Add Nuxeo `Canvas App` anywhere in the page
-- Save
-
-##Report & Contribute
-
-We are glad to welcome new developers on this initiative, and even simple usage feedback is great.
-- Ask your questions on [Nuxeo Answers](http://answers.nuxeo.com)
-- Report issues on this GitHub repository (see [issues link](http://github.com/nuxeo/nuxeo-salesforce/issues) on the right)
-- Contribute: Send pull requests!
-
-##About Nuxeo
-
-Nuxeo dramatically improves how content-based applications are built, managed and deployed, making customers more agile, innovative and successful. Nuxeo provides a next generation, enterprise ready platform for building traditional and cutting-edge content oriented applications. Combining a powerful application development environment with SaaS-based tools and a modular architecture, the Nuxeo Platform and Products provide clear business value to some of the most recognizable brands including Verizon, Electronic Arts, Sharp, FICO, the U.S. Navy, and Boeing. Nuxeo is headquartered in New York and Paris. More information is available at www.nuxeo.com.
+More information is available at [www.nuxeo.com](http://www.nuxeo.com).
