@@ -38,9 +38,6 @@ Lesser General Public License for more details.
 
       <nuxeo-es-aggregates agg="{{aggregates}}"
         post-filters={{post_filter}}>
-        <nuxeo-es-aggregate-term name="Products"
-          field="ecm:tag"
-          selected-values="{{tagsAgg}}"></nuxeo-es-aggregate-term>
         <nuxeo-es-aggregate-term name="Customer SOA Stage"
           field="sales:custStage"
           selected-values="{{custStageAgg}}"></nuxeo-es-aggregate-term>
@@ -55,9 +52,7 @@ Lesser General Public License for more details.
           selected-values="{{industryAgg}}"></nuxeo-es-aggregate-term>
       </nuxeo-es-aggregates>
 
-      <nuxeo-checkbox-aggregation name='Products'
-        aggregations='[[aggregations]]'
-        selected-values="{{tagsAgg}}"></nuxeo-checkbox-aggregation>
+
       <nuxeo-checkbox-aggregation name='Customer SOA Stage'
         aggregations='[[aggregations]]'
         selected-values="{{custStageAgg}}"></nuxeo-checkbox-aggregation>
@@ -157,8 +152,8 @@ Lesser General Public License for more details.
 
       resetFacets: function() {
         this.industryAgg = [];
+        this.custStageAgg = [];
         this.stageAgg = [];
-        this.tagsAgg = [];
         this.diffusionAgg = [];
       },
 
