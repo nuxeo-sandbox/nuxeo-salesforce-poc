@@ -31,6 +31,8 @@ Requires <nuxeo-connection> in order to get icons.
     <style>
       paper-material {
         padding: 10px;
+        display: flex;
+        flex-direction: column;
       }
 
       .titleBar {
@@ -89,6 +91,7 @@ Requires <nuxeo-connection> in order to get icons.
 
       .documentPills {
         display: inline-flex;
+        margin-bottom: 5px;
       }
 
       .documentPill {
@@ -123,7 +126,7 @@ Requires <nuxeo-connection> in order to get icons.
       }
 
       .rating {
-        display: inline-block;
+        display: inline-flex;
       }
 
     </style>
@@ -191,19 +194,24 @@ Requires <nuxeo-connection> in order to get icons.
       </template>
 
       <template is="dom-if"
-        if="{{_docHasRatedFacet(doc)}}">
-        <nuxeo-star-rating class="rating"
-          rating="[[doc.properties.rated:avg]]"></nuxeo-star-rating>
-        <div class="rating">([[doc.properties.rated:count]])</div>
-      </template>
-
-      <template is="dom-if"
         if="[[_docHasPills(doc)]]">
         <div class="documentPills">
+ <!--         <template is="dom-repeat"
+            items="[[doc.properties.sales:asdf]]">
+            <div class="documentPill documentIndustry">[[item]]</div>
+          </template>-->
           <template is="dom-if"
             if="[[doc.properties.sales:audience]]">
             <div class="documentPill documentAudience">[[doc.properties.sales:audience]]</div>
           </template>
+        </div>
+      </template>
+
+      <template is="dom-if"
+        if="{{_docHasRatedFacet(doc)}}">
+        <div class="rating">
+          <nuxeo-star-rating rating="[[doc.properties.rated:avg]]"></nuxeo-star-rating>
+          <div>([[doc.properties.rated:count]])</div>
         </div>
       </template>
 
