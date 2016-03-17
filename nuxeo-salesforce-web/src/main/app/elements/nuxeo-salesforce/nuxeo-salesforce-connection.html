@@ -62,12 +62,6 @@ Note: Elements that depend on a id use `sf` as default.
       sfobject: {
         type: Object,
         notify: true
-      },
-
-      /* SalesForce Error. */
-      sfError:{
-        type: String,
-        notify: true
       }
     },
 
@@ -111,8 +105,7 @@ Note: Elements that depend on a id use `sf` as default.
             }
           });
         }
-        this.sfError = ctx.payload[0].errorCode;
-        console.log("Salesforce Error: " + this.sfError);
+        console.log("Salesforce Error: " + ctx.payload[0].errorCode);
       }
       var opId = ctx.payload.environment.record.Id;
       if (!opId) {
