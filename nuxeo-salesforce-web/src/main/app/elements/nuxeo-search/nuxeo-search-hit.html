@@ -104,13 +104,22 @@ Requires <nuxeo-connection> in order to get icons.
 
       .pillColor1 {
         color: var(--secondary-text-color);
-        background: #059EBD;
+        background: #0D58A6;
       }
 
-      .pillColor2
-      {
+      .pillColor2 {
+        color: var(--text-primary-color);
+        background: #FFC500;
+      }
+
+      .pillColor3 {
         color: var(--secondary-text-color);
-        background: #7C7C7C;
+        background: #1B128A;
+      }
+
+      .pillColor4 {
+        color: var(--text-primary-color);
+        background: #FFB039;
       }
 
       .documentHighlightContainer {
@@ -204,6 +213,10 @@ Requires <nuxeo-connection> in order to get icons.
           <template is="dom-repeat"
             items="[[doc.properties.sales:oppSolution]]">
             <div class="documentPill pillColor2">[[item]]</div>
+          </template>
+          <template is="dom-repeat"
+            items="[[doc.properties.sales:competitor]]">
+            <div class="documentPill pillColor3">[[item]]</div>
           </template>
         </div>
       </template>
