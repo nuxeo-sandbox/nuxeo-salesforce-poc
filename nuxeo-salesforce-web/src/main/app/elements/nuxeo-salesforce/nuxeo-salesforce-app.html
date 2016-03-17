@@ -373,13 +373,13 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         // Filter with competitors
         if (this._sfcompetitors && this._sfcompetitors.records && (this._sfcompetitors.records.length > 0)) {
 
-          for (i = 0; i < this._sfcompetitors.records; i++) {
+          for (i = 0; i < this._sfcompetitors.records.length; i++) {
             if (i == 0) {
               query = query + " OR sales:competitor IN ( ";
             } else {
               query = query + ", ";
             }
-            query = query + fields[i] + " = '" + values[i] + "'";
+            query = query +  "'" + this._sfcompetitors.records[i].CompetitorName + "'";
           }
 
           query = query + " )";
