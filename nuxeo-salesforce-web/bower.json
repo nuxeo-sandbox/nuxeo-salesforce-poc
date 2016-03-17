@@ -5,9 +5,9 @@
     "polymer": "Polymer/polymer#1.2.4",
     "iron-elements": "PolymerElements/iron-elements#^1.0.4",
     "paper-elements": "PolymerElements/paper-elements#^1.0.5",
-    "nuxeo-elements": "nuxeo/nuxeo-elements#b14c260342fc44ead950ab5eb934f861f78dad11",
+    "nuxeo-elements": "nuxeo/nuxeo-elements#6bcadc28cc0acc26cbc813350bd2a6b3fc122076",
     "sweet-material-table": "nuxeo/sweet-material-table#master",
     "paper-dialog-behavior": "PolymerElements/paper-dialog-behavior#^1.2.0",
-    "nuxeo-labs-elements": "nuxeo-sandbox/nuxeo-labs-elements"
+    "nuxeo-labs-elements": "nuxeo-sandbox/nuxeo-labs-elements#^1.0.0"
   }
 }
