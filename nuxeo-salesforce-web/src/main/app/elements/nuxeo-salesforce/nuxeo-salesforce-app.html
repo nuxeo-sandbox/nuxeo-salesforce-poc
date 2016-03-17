@@ -317,16 +317,44 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
       _sfdcFilter: function() {
         var query = "";
-        if (this._sfaccount) {
-          // Filter industry
-          query = query + " AND sales:industry = '" + this._sfaccount.Industry + "'";
+
+        var fields = [];
+        var values = [];
+
+        // Filter industry
+        if (this._sfaccount && this._sfaccount.Industry) {
+          fields.push("sales:industry");
+          values.push(this._sfaccount.Industry)
         }
-        if (this._sfopportunity) {
-          // Filter stage
-          query = query + " AND sales:stage = '" + this._slashToUnderscore(this._sfopportunity.StageName) + "'";
-          // Filter Customer SOA Score
-          query = query + " AND sales:custStage = '" + this._slashToUnderscore(this._sfopportunity.Customer_Stage_of_Adoption_Score__c) + "'";
+
+        // Filter stage
+        if (this._sfopportunity && this._sfopportunity.StageName) {
+          fields.push("sales:stage");
+          values.push(this._slashToUnderscore(this._sfopportunity.StageName))
         }
+
+        // Filter Customer SOA Score
+        if (this._sfopportunity && this._sfopportunity.Customer_Stage_of_Adoption_Score__c) {
+          fields.push("sales:custStage");
+          values.push(this._slashToUnderscore(this._sfopportunity.Customer_Stage_of_Adoption_Score__c))
+        }
+
+        // Filter Solution type
+        if (this._sfopportunity && this._sfopportunity.Opportunity_Solution__c) {
+          fields.push("sales:oppSolution");
+          values.push(this._sfopportunity.Opportunity_Solution__c)
+        }
+
+        // AWS requested this metadata be used as an OR instead of AND search.
+        for (i = 0; i < fields.length; i++) {
+          if (i = 0) {
+            query = query + "AND ( ";
+          } else {
+            query = query + " OR ";
+          }
+          query = query + fields[i] + " = '" + values[i] + "'";
+        }
+
         // Filter with competitors
         if (this._sfcompetitors) {
           var terms = this._sfcompetitors.records.map(function(item) {
@@ -337,9 +365,11 @@ The main nuxeo-salesforce application to be embedded in SFDC.
             /* The `match` hint performs an OR so we can match a document containing
                any of these instead of all. Note that the field is not important since
                I am querying _all. */
-            query = query + " AND /*+ES: INDEX(_all) ANALYZER(fulltext) OPERATOR(match) */ dc:description = '" + terms + "'";
+            query = query + " OR /*+ES: INDEX(_all) ANALYZER(fulltext) OPERATOR(match) */ dc:description = '" + terms + "'";
           }
         }
+
+        query = query + " )";
         return query;
       },
 
