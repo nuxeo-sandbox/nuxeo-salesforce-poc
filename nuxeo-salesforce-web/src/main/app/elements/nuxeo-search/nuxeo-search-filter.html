@@ -41,6 +41,9 @@ Lesser General Public License for more details.
         <nuxeo-es-aggregate-term name="Opportunity Solution Type"
           field="sales:oppSolution"
           selected-values="{{oppSolutionAgg}}"></nuxeo-es-aggregate-term>
+        <nuxeo-es-aggregate-term name="Competitors"
+          field="sales:competitor"
+          selected-values="{{competitorAgg}}"></nuxeo-es-aggregate-term>
 
         <!-- TODO: remove these per AWS -->
         <nuxeo-es-aggregate-term name="Customer SOA Stage"
@@ -61,6 +64,9 @@ Lesser General Public License for more details.
       <nuxeo-checkbox-aggregation name='Opportunity Solution Type'
         aggregations='[[aggregations]]'
         selected-values="{{oppSolutionAgg}}"></nuxeo-checkbox-aggregation>
+      <nuxeo-checkbox-aggregation name='Competitors'
+        aggregations='[[aggregations]]'
+        selected-values="{{competitorAgg}}"></nuxeo-checkbox-aggregation>
 
       <!-- TODO: remove these per AWS -->
       <nuxeo-checkbox-aggregation name='Customer SOA Stage'
