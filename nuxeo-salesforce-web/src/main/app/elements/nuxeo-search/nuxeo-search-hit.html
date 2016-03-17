@@ -102,12 +102,13 @@ Requires <nuxeo-connection> in order to get icons.
         font-weight: bold;
       }
 
-      .documentAudience {
+      .pillColor1 {
         color: var(--secondary-text-color);
         background: #059EBD;
       }
 
-      .documentStage {
+      .pillColor2
+      {
         color: var(--secondary-text-color);
         background: #7C7C7C;
       }
@@ -196,13 +197,13 @@ Requires <nuxeo-connection> in order to get icons.
       <template is="dom-if"
         if="[[_docHasPills(doc)]]">
         <div class="documentPills">
- <!--         <template is="dom-repeat"
-            items="[[doc.properties.sales:asdf]]">
-            <div class="documentPill documentIndustry">[[item]]</div>
-          </template>-->
           <template is="dom-if"
             if="[[doc.properties.sales:audience]]">
-            <div class="documentPill documentAudience">[[doc.properties.sales:audience]]</div>
+            <div class="documentPill pillColor1">[[doc.properties.sales:audience]]</div>
+          </template>
+          <template is="dom-repeat"
+            items="[[doc.properties.sales:oppSolution]]">
+            <div class="documentPill pillColor2">[[item]]</div>
           </template>
         </div>
       </template>
@@ -255,6 +256,9 @@ Requires <nuxeo-connection> in order to get icons.
 
       _docHasPills: function(doc) {
         if (doc && doc.properties && doc.properties["sales:audience"] && doc.properties["sales:audience"] != "") {
+          return true;
+        }
+        if (doc && doc.properties && doc.properties["sales:oppSolution"] && doc.properties["sales:oppSolution"] != "") {
           return true;
         }
         return false;
