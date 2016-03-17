@@ -241,24 +241,11 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         this.searchPageSize = 20;
       },
 
-
-      // Don't show the app unless we have SFDC data.
-      _displayCanvasApp: function() {
-        if (this._sfopportunity) {
-          $(".fullbleed").show();
-        } else {
-          $(".fullbleed").hide();
-        }
-      },
-
-
       // Error handling for the nuxeo-resource calls.
       _handleNuxeoResourceError: function() {
-        if (this.success) {
-          $("#authorized").show();
-          $("#error_content").hide();
-        } else {
+        if (this.error) {
           $("#authorized").hide();
+          $("#startup").hide();
           $("#error_content").show();
           document.getElementById("message_error").innerHTML = this.error;
         }
@@ -268,8 +255,19 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       _handleSFConnectionError: function() {
         if (this._sfError) {
           $("#authorized").hide();
+          $("#startup").hide();
           $("#error_content").show();
           document.getElementById("message_error").innerHTML = this._sfError;
+        }
+      },
+
+      // Don't show the app unless we have SFDC data.
+      _displayCanvasApp: function() {
+        if (this._sfopportunity) {
+          $("#authorized").show();
+          $("#startup").hide();
+        } else {
+          $("#authorized").hide();
         }
       },
 
