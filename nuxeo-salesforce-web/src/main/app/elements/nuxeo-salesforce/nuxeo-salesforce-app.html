@@ -91,7 +91,8 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     <nuxeo-salesforce-connection id="sfc"
       callback="[[result.userAuthorizationURL]]"
       clientid="[[result.clientId]]"
-      sfobject="{{_sfopportunity}}"></nuxeo-salesforce-connection>
+      sfobject="{{_sfopportunity}}"
+      sf-error="{{_sfError}}"></nuxeo-salesforce-connection>
 
     <nuxeo-salesforce-object id="sfa"
       callback="[[result.userAuthorizationURL]]"
@@ -219,8 +220,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
       observers: [
         '_displayCanvasApp(_sfopportunity)',
-        '_displayErrorCanvasApp(success, error)',
-        '_displayErrorCanvasApp(success)',
+        '_handleNuxeoResourceError(success, error)',
+        '_handleNuxeoResourceError(success)',
+        '_handleSFConnectionError(_sfError)',
         '_updateRelatedObjects(_sfopportunity)',
         '_fetchPublic(_sfopportunity,_sfaccount)',
         '_fetchPublic(_publicSearchTerms)',
@@ -251,7 +253,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
 
       // Error handling for the nuxeo-resource calls.
-      _displayErrorCanvasApp: function() {
+      _handleNuxeoResourceError: function() {
         if (this.success) {
           $("#authorized").show();
           $("#error_content").hide();
@@ -262,6 +264,14 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         }
       },
 
+      // Error handling for nuxeo-salesforce-connection calls.
+      _handleSFConnectionError: function() {
+        if (this._sfError) {
+          $("#authorized").hide();
+          $("#error_content").show();
+          document.getElementById("message_error").innerHTML = this._sfError;
+        }
+      },
 
       // Toggle the metadata/preview display.
       _toggleMetadata: function() {
@@ -379,7 +389,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
             } else {
               query = query + ", ";
             }
-            query = query +  "'" + this._sfcompetitors.records[i].CompetitorName + "'";
+            query = query + "'" + this._sfcompetitors.records[i].CompetitorName + "'";
           }
 
           query = query + " )";
