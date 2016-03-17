@@ -371,17 +371,18 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         }
 
         // Filter with competitors
-        if (this._sfcompetitors) {
-          var terms = this._sfcompetitors.records.map(function(item) {
-            return item.CompetitorName;
-          }).join(" ");
+        if (this._sfcompetitors && this._sfcompetitors.records && (this._sfcompetitors.records.length > 0)) {
 
-          if (terms) {
-            /* The `match` hint performs an OR so we can match a document containing
-               any of these instead of all. Note that the field is not important since
-               I am querying _all. */
-            query = query + " OR /*+ES: INDEX(_all) ANALYZER(fulltext) OPERATOR(match) */ dc:description = '" + terms + "'";
+          for (i = 0; i < this._sfcompetitors.records.length; i++) {
+            if (i == 0) {
+              query = query + " OR sales:competitor IN ( ";
+            } else {
+              query = query + ", ";
+            }
+            query = query +  "'" + this._sfcompetitors.records[i].CompetitorName + "'";
           }
+
+          query = query + " )";
         }
 
         query = query + " )";
