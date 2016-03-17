@@ -200,12 +200,15 @@ Requires <nuxeo-connection> in order to get icons.
         switch (this.selectedAction) {
           case "email":
             this._openEmailDialog(this.docForAction);
+            this.selectedAction = "";
             break;
           case "template":
             this._openRenditionDialog(this.docForAction);
+            this.selectedAction = "";
             break;
           case "analytics":
             this._openAnalyticsDialog(this.docForAction);
+            this.selectedAction = "";
             break;
         }
       },
