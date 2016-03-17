@@ -84,7 +84,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     <nuxeo-resource id="oauth2directory"
       path="/oauth2directory/salesforce"
       response="{{result}}"
-      auto=""
+      auto
       success="{{success}}"
       error="{{error}}"></nuxeo-resource>
 
@@ -126,7 +126,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
                See https://github.com/PolymerElements/paper-tabs/issues/130 -->
       <paper-tabs class="mainTabs"
         selected="{{selectedTab}}"
-        on-tap="hideMetadata">
+        on-tap="_toggleMetadata">
         <paper-tab>Public Docs</paper-tab>
         <paper-tab>Internal Docs</paper-tab>
         <paper-tab>Templates</paper-tab>
@@ -231,12 +231,16 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         '_fetchTemplates(_templateSearchTerms)'
       ],
 
+
+      // Select the first tab.
       ready: function() {
         this.searchTerm = '';
         this.selectedTab = 0;
         this.searchPageSize = 20;
       },
 
+
+      // Don't show the app unless we have SFDC data.
       _displayCanvasApp: function() {
         if (this._sfopportunity) {
           $(".fullbleed").show();
@@ -245,6 +249,8 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         }
       },
 
+
+      // Error handling for the nuxeo-resource calls.
       _displayErrorCanvasApp: function() {
         if (this.success) {
           $("#authorized").show();
@@ -256,20 +262,26 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         }
       },
 
-      hideMetadata: function() {
+
+      // Toggle the metadata/preview display.
+      _toggleMetadata: function() {
         0 == this.selectedTab ? $(".nuxeo-metadata").hide() : $(".nuxeo-metadata").show()
       },
 
+
+      // Fetch the icon for the app.
       _iconForApp: function() {
         /* TODO: figure out how to load this icon from app-theme.html */
         return "images/nuxeo.png";
       },
 
+
+      // Fetch documents for the Public tab.
       _fetchPublic: function() {
         if (this._sfopportunity && this._sfopportunity.StageName && this._sfaccount && this._sfaccount.Industry) {
           var query = this._genericFilter("Document", this._publicSearchTerms);
           query = query + this._typeFilter();
-          query = query + this._publicFilter();
+          query = query + this._audienceFilter("Public");
           query = query + this._sfdcFilter();
 
           this.$.publicPageProvider.query = query;
@@ -280,11 +292,13 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         }
       },
 
+
+      // Fetch documents for the Internal tab.
       _fetchInternal: function() {
         if (this._sfopportunity && this._sfopportunity.StageName && this._sfaccount && this._sfaccount.Industry) {
           var query = this._genericFilter("Document", this._internalSearchTerms);
           query = query + this._typeFilter();
-          query = query + this._internalFilter();
+          query = query + this._audienceFilter("Internal");
           query = query + this._sfdcFilter();
 
           this.$.internalPageProvider.query = query;
@@ -295,26 +309,27 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         }
       },
 
+
+      // Fetch documents for the Templates tab.
       _fetchTemplates: function() {
         var query = this._genericFilter("TemplateSource", this._templateSearchTerms);
         return query;
       },
 
+
+      // Filter document types.
       _typeFilter: function() {
-        // Filter document types
         return " AND ecm:primaryType IN('File', 'Picture', 'Video')";
       },
 
-      _publicFilter: function() {
-        // Filter audience
-        return " AND sales:audience = 'Public'";
+
+      // Filter audience.
+      _audienceFilter: function(audience) {
+        return " AND sales:audience = '" + audience + "'";
       },
 
-      _internalFilter: function() {
-        // Filter audience
-        return " AND sales:audience = 'Internal'";
-      },
 
+      // Filter using SFDC metadata.
       _sfdcFilter: function() {
         var query = "";
 
@@ -374,11 +389,14 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         return query;
       },
 
+
       // SFDC allows / chars in values. Nuxeo does not. Map them.
       _slashToUnderscore: function(value) {
         return value.replace("/", "_");
       },
 
+
+      // Useful generic filter for any NXQL query.
       _genericFilter: function(type, terms) {
         var query = "SELECT * FROM " + type +
           " WHERE ecm:currentLifeCycleState != 'deleted' " +
@@ -391,6 +409,8 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         return query;
       },
 
+
+      // Once we have the Opportunity, fetch related objects data.
       _updateRelatedObjects: function() {
         if (this._sfopportunity) {
           var id = this._sfopportunity.Id;
@@ -410,6 +430,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           }
         }
       }
+
     });
 
   </script>
