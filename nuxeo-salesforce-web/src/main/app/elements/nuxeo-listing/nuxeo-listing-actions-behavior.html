@@ -32,10 +32,11 @@ Behavior to manage the "actions" for a document.
     },
 
     _previewSupported: function(doc) {
-      if (doc && doc.facets && doc.facets.indexOf("Video") > -1) {
-        return false;
+      if(doc && doc.type && (doc.type == "File" || doc.type == "Picture" || doc.type == "WebPage")){
+        return true;
       }
-      return true;
+
+      return false;
     },
 
     _downloadSupported: function(doc) {
@@ -90,7 +91,7 @@ Behavior to manage the "actions" for a document.
               // Pictures; use REST previewer.
               return doc.contextParameters.preview.url;
             }
-            if (doc.properties["file:content"]["mime-type"] == "application/pdf") {
+            if (doc.properties["file:content"] && doc.properties["file:content"]["mime-type"] == "application/pdf") {
               // PDF's; use new previwer as is.
               return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
                 "/nuxeo/track/web/viewer.html?file=" + doc.properties["file:content"].data +
