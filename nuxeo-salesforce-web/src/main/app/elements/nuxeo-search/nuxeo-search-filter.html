@@ -44,11 +44,6 @@ Lesser General Public License for more details.
         <nuxeo-es-aggregate-term name="Competitors"
           field="sales:competitor"
           selected-values="{{competitorAgg}}"></nuxeo-es-aggregate-term>
-
-        <!-- This is not used, but the keyword search does not work unless I have at least 3 aggregates. -->
-        <nuxeo-es-aggregate-term name="Customer SOA Stage"
-          field="sales:custStage"
-          selected-values="{{custStageAgg}}"></nuxeo-es-aggregate-term>
       </nuxeo-es-aggregates>
 
       <nuxeo-checkbox-aggregation name='Opportunity Solution Type'
@@ -143,10 +138,8 @@ Lesser General Public License for more details.
       ],
 
       resetFacets: function() {
-        this.industryAgg = [];
-        this.custStageAgg = [];
-        this.stageAgg = [];
-        this.diffusionAgg = [];
+        this.oppSolutionAgg = [];
+        this.competitorAgg = [];
       },
 
       updateSort: function(changeRecord) {
@@ -201,8 +194,8 @@ Lesser General Public License for more details.
                         "ecm:isVersion": "0"
                       }
                     }, {
-                      term: {
-                        "ecm:primaryType": "File"
+                      terms: {
+                        "ecm:primaryType": ["File","Video","Picture","WebPage"]
                       }
                     }],
                     must_not: [{
