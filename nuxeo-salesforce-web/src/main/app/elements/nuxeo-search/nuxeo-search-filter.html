@@ -44,20 +44,6 @@ Lesser General Public License for more details.
         <nuxeo-es-aggregate-term name="Competitors"
           field="sales:competitor"
           selected-values="{{competitorAgg}}"></nuxeo-es-aggregate-term>
-
-        <!-- TODO: remove these per AWS -->
-        <nuxeo-es-aggregate-term name="Customer SOA Stage"
-          field="sales:custStage"
-          selected-values="{{custStageAgg}}"></nuxeo-es-aggregate-term>
-        <nuxeo-es-aggregate-term name="Sales Stage"
-          field="sales:stage"
-          selected-values="{{stageAgg}}"></nuxeo-es-aggregate-term>
-        <nuxeo-es-aggregate-term name="Audience"
-          field="sales:audience"
-          selected-values="{{diffusionAgg}}"></nuxeo-es-aggregate-term>
-        <nuxeo-es-aggregate-term name="Industry"
-          field="sales:industry"
-          selected-values="{{industryAgg}}"></nuxeo-es-aggregate-term>
       </nuxeo-es-aggregates>
 
 
@@ -67,21 +53,6 @@ Lesser General Public License for more details.
       <nuxeo-checkbox-aggregation name='Competitors'
         aggregations='[[aggregations]]'
         selected-values="{{competitorAgg}}"></nuxeo-checkbox-aggregation>
-
-      <!-- TODO: remove these per AWS -->
-      <nuxeo-checkbox-aggregation name='Customer SOA Stage'
-        aggregations='[[aggregations]]'
-        selected-values="{{custStageAgg}}"></nuxeo-checkbox-aggregation>
-      <nuxeo-checkbox-aggregation name='Sales Stage'
-        aggregations='[[aggregations]]'
-        selected-values="{{stageAgg}}"></nuxeo-checkbox-aggregation>
-      <nuxeo-checkbox-aggregation name='Audience'
-        aggregations='[[aggregations]]'
-        selected-values="{{diffusionAgg}}"></nuxeo-checkbox-aggregation>
-      <nuxeo-checkbox-aggregation name='Industry'
-        aggregations='[[aggregations]]'
-        selected-values="{{industryAgg}}"></nuxeo-checkbox-aggregation>
-
     </div>
 
     <nuxeo-es-search id='DocumentProvider'
