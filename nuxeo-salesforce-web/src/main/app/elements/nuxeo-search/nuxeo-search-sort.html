@@ -203,6 +203,7 @@ Example: <nuxeo-article-search-results articles={{articles}}></nuxeo-article-sea
         }
         this.push('availableProperties', property);
         this.displayDropDown = true;
+        if (this.selected == property) this.selected = undefined;
       },
 
     });
