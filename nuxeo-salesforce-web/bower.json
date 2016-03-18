@@ -8,6 +8,6 @@
     "nuxeo-elements": "nuxeo/nuxeo-elements#6bcadc28cc0acc26cbc813350bd2a6b3fc122076",
     "sweet-material-table": "nuxeo/sweet-material-table#master",
     "paper-dialog-behavior": "PolymerElements/paper-dialog-behavior#^1.2.0",
-    "nuxeo-labs-elements": "nuxeo-sandbox/nuxeo-labs-elements#^1.0.0"
+    "nuxeo-labs-elements": "nuxeo-sandbox/nuxeo-labs-elements#master"
   }
 }
