@@ -44,8 +44,12 @@ Lesser General Public License for more details.
         <nuxeo-es-aggregate-term name="Competitors"
           field="sales:competitor"
           selected-values="{{competitorAgg}}"></nuxeo-es-aggregate-term>
-      </nuxeo-es-aggregates>
 
+        <!-- This is not used, but the keyword search does not work unless I have at least 3 aggregates. -->
+        <nuxeo-es-aggregate-term name="Customer SOA Stage"
+          field="sales:custStage"
+          selected-values="{{custStageAgg}}"></nuxeo-es-aggregate-term>
+      </nuxeo-es-aggregates>
 
       <nuxeo-checkbox-aggregation name='Opportunity Solution Type'
         aggregations='[[aggregations]]'
@@ -53,6 +57,7 @@ Lesser General Public License for more details.
       <nuxeo-checkbox-aggregation name='Competitors'
         aggregations='[[aggregations]]'
         selected-values="{{competitorAgg}}"></nuxeo-checkbox-aggregation>
+
     </div>
 
     <nuxeo-es-search id='DocumentProvider'
