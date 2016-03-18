@@ -102,17 +102,17 @@ Requires <nuxeo-connection> in order to get icons.
         font-weight: bold;
       }
 
-      .pillColor1 {
+      nuxeo-document-pills#audience::content .pillColor {
         color: var(--secondary-text-color);
         background: #0D58A6;
       }
 
-      .pillColor2 {
+      nuxeo-document-pills#oppSolution::content .pillColor {
         color: var(--text-primary-color);
         background: #FFC500;
       }
 
-      .pillColor3 {
+      nuxeo-document-pills#competitor::content .pillColor {
         color: var(--secondary-text-color);
         background: #1B128A;
       }
@@ -200,18 +200,15 @@ Requires <nuxeo-connection> in order to get icons.
       <template is="dom-if"
         if="[[_docHasPills(doc)]]">
         <div class="documentPills">
-          <template is="dom-if"
-            if="[[doc.properties.sales:audience]]">
-            <div class="documentPill pillColor1">[[doc.properties.sales:audience]]</div>
-          </template>
-          <template is="dom-repeat"
-            items="[[doc.properties.sales:oppSolution]]">
-            <div class="documentPill pillColor2">[[item]]</div>
-          </template>
-          <template is="dom-repeat"
-            items="[[doc.properties.sales:competitor]]">
-            <div class="documentPill pillColor3">[[item]]</div>
-          </template>
+          <nuxeo-document-pills id="audience"
+            doc="[[doc]]"
+            field="sales:audience"></nuxeo-document-pills>
+          <nuxeo-document-pills id="oppSolution"
+            doc="[[doc]]"
+            field="sales:oppSolution"></nuxeo-document-pills>
+          <nuxeo-document-pills id="competitor"
+            doc="[[doc]]"
+            field="sales:competitor"></nuxeo-document-pills>
         </div>
       </template>
 
