@@ -81,7 +81,7 @@ Requires <nuxeo-connection> in order to get icons.
       <template is="dom-if"
         if="[[selected]]">
         <nuxeo-resource auto
-          path="/id/[[selected._id]]"
+          path="/id/[[selected.uid]]"
           response="{{doc}}"
           enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
         <nuxeo-metadata doc="{{doc}}"
@@ -123,7 +123,7 @@ Requires <nuxeo-connection> in order to get icons.
       },
 
       _isSame: function(item, selected) {
-        return selected && selected._id === item._id;
+        return selected && selected.uid === item.uid;
       }
     });
 

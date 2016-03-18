@@ -68,7 +68,11 @@ Lesser General Public License for more details.
       suggest=[[suggest]]
       suggestions={{suggestions}}></nuxeo-es-search>
 
-    <nuxeo-es-hits-to-docs hits={{hits}} docs={{docs}}></nuxeo-es-hits-to-docs>
+    <nuxeo-es-hits-to-docs
+      hits={{hits}}
+      docs={{docs}}
+      enrichers="preview, documentURL, driveEditURL">
+    </nuxeo-es-hits-to-docs>
 
   </template>
 
