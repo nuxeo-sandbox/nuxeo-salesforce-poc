@@ -38,32 +38,74 @@ Behavior to manage the "actions" for a document.
       return true;
     },
 
-    _previewUrl: function(doc) {
-      if (doc && doc.contextParameters) {
-        /* Note that doc.contextParameters.preview is the old previewer. My
-           assumption is that if the document can use the old previwer, it
-           can also use the new one. */
-        if (doc.contextParameters.preview) {
+    _downloadSupported: function(doc) {
+      if (doc && doc.type && doc.type == "WebPage") {
+        return false;
+      }
+      return true;
+    },
 
-          if (doc.facets.indexOf("Picture") > -1) {
-            // Pictures; use REST previewer.
-            return doc.contextParameters.preview.url;
-          }
-          if (doc.properties["file:content"]["mime-type"] == "application/pdf") {
-            // PDF's; use new previwer as is.
-            return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-              "/nuxeo/track/web/viewer.html?file=" + doc.properties["file:content"].data +
-              "&uuid=" + doc.uid;
+    _directEditSupported: function() {
+      if (doc && doc.type && doc.type == "WebPage") {
+        return false;
+      }
+      return true;
+    },
+
+    _renderingSupported: function(doc) {
+      if (doc && doc.type && doc.type == "TemplateSource") {
+        return true;
+      }
+      return false;
+    },
+
+    _sharingSupported: function(doc) {
+      if (doc && doc.type && doc.type == "TemplateSource") {
+        return false;
+      }
+      return true;
+    },
+
+    _analyticsSupported: function(doc) {
+      if (doc && doc.type && doc.type == "TemplateSource") {
+        return false;
+      }
+      if (doc && doc.type && doc.type == "WebPage") {
+        return false;
+      }
+      return true;
+    },
+
+    _previewUrl: function(doc) {
+      if (doc && doc.type && doc.type == "WebPage") {
+        return doc.properties["wpsa:url"];
+      } else {
+        if (doc && doc.contextParameters) {
+          /* Note that doc.contextParameters.preview is the old previewer. My
+             assumption is that if the document can use the old previwer, it
+             can also use the new one. */
+          if (doc.contextParameters.preview) {
+
+            if (doc.facets.indexOf("Picture") > -1) {
+              // Pictures; use REST previewer.
+              return doc.contextParameters.preview.url;
+            }
+            if (doc.properties["file:content"]["mime-type"] == "application/pdf") {
+              // PDF's; use new previwer as is.
+              return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
+                "/nuxeo/track/web/viewer.html?file=" + doc.properties["file:content"].data +
+                "&uuid=" + doc.uid;
+            } else {
+              // Other documents; use new previwer but convert to PDF first.
+              return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
+                "/nuxeo/track/web/viewer.html?file=" +
+                location.protocol + "//" + window.location.hostname + ":" + window.location.port +
+                "/nuxeo/api/v1/id/" + doc.uid + "/%40blob/blobholder%3A0/%40convert%3Fformat%3Dpdf" +
+                "&uuid=" + doc.uid;
+            }
           } else {
-            // Other documents; use new previwer but convert to PDF first.
-            return location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-              "/nuxeo/track/web/viewer.html?file=" +
-              location.protocol + "//" + window.location.hostname + ":" + window.location.port +
-              "/nuxeo/api/v1/id/" + doc.uid + "/%40blob/blobholder%3A0/%40convert%3Fformat%3Dpdf" +
-              "&uuid=" + doc.uid;
+            return doc.contextParameters.documentURL;
           }
-        } else {
-          return doc.contextParameters.documentURL;
         }
       }
     },
@@ -79,7 +121,7 @@ Behavior to manage the "actions" for a document.
       }
     },
 
-    _driveEdit: function(doc) {
+    _directEdit: function(doc) {
       if (doc && doc.contextParameters && doc.contextParameters.driveEditURL) {
         return doc.contextParameters.driveEditURL;
       }
@@ -95,16 +137,9 @@ Behavior to manage the "actions" for a document.
           }
         }
       }
-    },
-
-    _isTemplate: function(doc) {
-      if (doc && doc.type) {
-        if (doc.type == "TemplateSource") {
-          return true;
-        }
-      }
-      return false;
     }
+
+
 
   };
 
