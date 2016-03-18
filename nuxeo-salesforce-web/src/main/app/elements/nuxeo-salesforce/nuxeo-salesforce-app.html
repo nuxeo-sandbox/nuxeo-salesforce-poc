@@ -253,11 +253,10 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
       // Error handling for nuxeo-salesforce-connection calls.
       _handleSFConnectionError: function() {
-        if (this._sfError) {
+        if (this._sfError === "INVALID_SESSION_ID") {
           $("#authorized").hide();
           $("#startup").hide();
-          $("#error_content").show();
-          document.getElementById("message_error").innerHTML = this._sfError;
+          $("#sf-connection-error").show();
         }
       },
 
