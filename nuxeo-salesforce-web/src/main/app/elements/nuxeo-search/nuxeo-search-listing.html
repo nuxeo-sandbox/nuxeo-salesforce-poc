@@ -91,7 +91,7 @@ Requires <nuxeo-connection> in order to get icons.
       <div main>
         <template is="dom-repeat"
           items="[[documentList]]">
-          <nuxeo-search-hit doc-es=[[item]]
+          <nuxeo-search-hit doc=[[item]]
             on-tap="_select"
             selected$="[[_isSame(item, selected)]]"></nuxeo-search-hit>
         </template>

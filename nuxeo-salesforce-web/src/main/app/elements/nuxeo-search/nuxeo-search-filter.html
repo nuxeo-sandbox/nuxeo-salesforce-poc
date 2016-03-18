@@ -68,6 +68,8 @@ Lesser General Public License for more details.
       suggest=[[suggest]]
       suggestions={{suggestions}}></nuxeo-es-search>
 
+    <nuxeo-es-hits-to-docs hits={{hits}} docs={{docs}}></nuxeo-es-hits-to-docs>
+
   </template>
 
   <script>
@@ -81,6 +83,10 @@ Lesser General Public License for more details.
           notify: true
         },
         hits: {
+          type: Object,
+          notify: true
+        },
+        docs: {
           type: Object,
           notify: true
         },
@@ -132,13 +138,13 @@ Lesser General Public License for more details.
       },
       observers: [
         'resetFacets(fulltext)',
-        'updateQuery(aggregates,post_filter)',
         'updateParameter(response)',
         'updateSort(sortProperties.splices)'
       ],
 
       resetFacets: function() {
         this.$.aggregates.reset();
+        this.updateQuery();
       },
 
       updateSort: function(changeRecord) {

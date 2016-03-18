@@ -143,12 +143,6 @@ Requires <nuxeo-connection> in order to get icons.
 
     <nuxeo-connection id="nx"></nuxeo-connection>
 
-    <nuxeo-resource auto
-      path="/id/[[docEs._id]]"
-      response="{{doc}}"
-      schemas="sales"
-      enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
-
     <paper-material>
 
       <div class="titleBar">
@@ -195,10 +189,10 @@ Requires <nuxeo-connection> in order to get icons.
       </div>
 
       <template is="dom-if"
-        if="{{docEs.highlight}}">
+        if="{{doc.highlight}}">
         <div class="documentHighlightContainer">
           <div class="documentHighlight">
-            <html-echo html-to-inject="[[_getHighlightedText(docEs.highlight)]]"></html-echo>
+            <html-echo html-to-inject="[[_getHighlightedText(doc.highlight)]]"></html-echo>
           </div>
         </div>
       </template>
@@ -238,10 +232,6 @@ Requires <nuxeo-connection> in order to get icons.
       is: 'nuxeo-search-hit',
 
       properties: {
-        docEs: {
-          type: Object,
-          notify: true
-        },
         doc: {
           type: Object,
           notify: true
@@ -255,8 +245,6 @@ Requires <nuxeo-connection> in order to get icons.
           return this.$.nx.client._baseURL + doc.properties['common:icon'];
         }
       },
-
-
 
       _getHighlightedText: function(highlightObject) {
         if (highlightObject !== undefined) {
