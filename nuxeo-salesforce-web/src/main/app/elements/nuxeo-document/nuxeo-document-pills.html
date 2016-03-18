@@ -1,0 +1,117 @@
+<!--
+@license
+(C) Copyright 2016 Nuxeo SA (http://nuxeo.com/) and others.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Contributors:
+  Josh Fletcher <jfletcher@nuxeo.com>
+-->
+<!--
+An element to display metadata in a tag-like format.
+-->
+<dom-module id="nuxeo-document-pills">
+
+  <template>
+
+    <style>
+      .documentPills {
+        display: inline-flex;
+      }
+
+      .documentPill {
+        border-radius: 3px;
+        padding: 5px;
+        margin-right: 5px;
+        font-size: 80%;
+        font-weight: bold;
+      }
+
+      .pillColor {
+        color: var(--secondary-text-color);
+        background: #0D58A6;
+      }
+
+      .pillColor2 {
+        color: var(--text-primary-color);
+        background: #FFC500;
+      }
+
+      .pillColor3 {
+        color: var(--secondary-text-color);
+        background: #1B128A;
+      }
+
+      .pillColor4 {
+        color: var(--text-primary-color);
+        background: #FFB039;
+      }
+
+    </style>
+
+    <div class="documentPills">
+      <template is="dom-if"
+        if="[[_docHasMetadata(doc,field)]]">
+        <template is="dom-if"
+          if="[[!_metadataIsArray(doc, field)]]">
+          <div class="documentPill pillColor">[[_getMetadata(doc,field)]]</div>
+        </template>
+        <template is="dom-if"
+          if="[[_metadataIsArray(doc, field)]]">
+          <template is="dom-repeat"
+            items="[[_getMetadata(doc, field)]]">
+            <div class="documentPill pillColor">[[item]]</div>
+          </template>
+        </template>
+      </template>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-document-pills',
+
+      properties: {
+        doc: {
+          type: Object
+        },
+        field: {
+          type: String
+        }
+      },
+
+      _docHasMetadata: function(doc, field) {
+        if (doc && doc.properties && field && doc.properties[field] && doc.properties[field].length > 0) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _metadataIsArray: function(doc, field) {
+        if (doc.properties[field].constructor === Array) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      _getMetadata: function(doc, field) {
+        return doc.properties[field];
+      }
+
+    });
+
+  </script>
+</dom-module>
