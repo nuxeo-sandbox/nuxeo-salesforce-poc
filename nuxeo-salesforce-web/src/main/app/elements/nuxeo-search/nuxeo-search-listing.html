@@ -80,12 +80,7 @@ Requires <nuxeo-connection> in order to get icons.
       <!-- Drawer Content -->
       <template is="dom-if"
         if="[[selected]]">
-        <nuxeo-resource auto
-          path="/id/[[selected.uid]]"
-          response="{{doc}}"
-          enrichers="preview, documentURL, driveEditURL"></nuxeo-resource>
-        <nuxeo-metadata doc="{{doc}}"
-          drawer></nuxeo-metadata>
+        <nuxeo-metadata doc="{{selected}}" drawer></nuxeo-metadata>
       </template>
 
       <div main>
