@@ -45,7 +45,7 @@ Behavior to manage the "actions" for a document.
       return true;
     },
 
-    _directEditSupported: function() {
+    _directEditSupported: function(doc) {
       if (doc && doc.type && doc.type == "WebPage") {
         return false;
       }

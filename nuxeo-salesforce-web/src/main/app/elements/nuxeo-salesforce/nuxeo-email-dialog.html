@@ -118,7 +118,10 @@ An element to display a dialog for template rendering.
           value="{{message}}"></paper-textarea>
         <p>Attachment</p>
         <div class="attachmentContainer">
-          <nuxeo-template-document doc=[[doc]]></nuxeo-template-document>
+          <nuxeo-listing-document doc=[[doc]]
+            show-action-preview
+            show-action-download
+            show-action-lock></nuxeo-listing-document>
         </div>
       </div>
       <div class="buttons">
