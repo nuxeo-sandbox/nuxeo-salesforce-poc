@@ -287,9 +287,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       _fetchPublic: function() {
         if (this._sfopportunity && this._sfopportunity.StageName && this._sfaccount && this._sfaccount.Industry) {
           var query = this._genericFilter("Document", this._publicSearchTerms);
-          query = query + this._typeFilter();
-          query = query + this._audienceFilter("Public");
-          query = query + this._sfdcFilter();
+          query += this._typeFilter();
+          query += this._audienceFilter("Public");
+          query += this._sfdcFilter();
 
           this.$.publicPageProvider.query = query;
 
@@ -304,9 +304,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
       _fetchInternal: function() {
         if (this._sfopportunity && this._sfopportunity.StageName && this._sfaccount && this._sfaccount.Industry) {
           var query = this._genericFilter("Document", this._internalSearchTerms);
-          query = query + this._typeFilter();
-          query = query + this._audienceFilter("Internal");
-          query = query + this._sfdcFilter();
+          query += this._typeFilter();
+          query += this._audienceFilter("Internal");
+          query += this._sfdcFilter();
 
           this.$.internalPageProvider.query = query;
 
@@ -370,11 +370,11 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         // AWS requested this metadata be used as an OR instead of AND search.
         for (i = 0; i < fields.length; i++) {
           if (i == 0) {
-            query = query + "AND ( ";
+            query += "AND ( ";
           } else {
-            query = query + " OR ";
+            query += " OR ";
           }
-          query = query + fields[i] + " = '" + values[i] + "'";
+          query += fields[i] + " = '" + values[i] + "'";
         }
 
         // Filter with competitors
@@ -382,17 +382,17 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
           for (i = 0; i < this._sfcompetitors.records.length; i++) {
             if (i == 0) {
-              query = query + " OR sales:competitor IN ( ";
+              query += " OR sales:competitor IN ( ";
             } else {
-              query = query + ", ";
+              query += ", ";
             }
-            query = query + "'" + this._sfcompetitors.records[i].CompetitorName + "'";
+            query += "'" + this._sfcompetitors.records[i].CompetitorName + "'";
           }
 
-          query = query + " )";
+          query += " )";
         }
 
-        query = query + " )";
+        query += " )";
         return query;
       },
 
@@ -410,7 +410,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           " AND ecm:isCheckedInVersion = 0 " +
           " AND ecm:mixinType != 'HiddenInNavigation' ";
         if (terms) {
-          query = query + " AND ecm:fulltext = '" + terms + "'";
+          query += " AND ecm:fulltext = '" + terms + "'";
         }
 
         return query;
