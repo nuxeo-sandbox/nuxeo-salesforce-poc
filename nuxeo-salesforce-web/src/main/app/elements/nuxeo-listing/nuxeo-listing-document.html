@@ -116,25 +116,31 @@ Requires <nuxeo-connection> in order to get icons.
 
           <template is="dom-if"
             if="[[showActionDownload]]">
-            <a href="[[_downloadURL(doc)]]"
-              target="_blank">
-              <paper-icon-button icon="file-download"
-                title="Download"></paper-icon-button>
-            </a>
+            <template is="dom-if"
+              if="[[_downloadSupported(doc)]]">
+              <a href="[[_downloadURL(doc)]]"
+                target="_blank">
+                <paper-icon-button icon="file-download"
+                  title="Download"></paper-icon-button>
+              </a>
+            </template>
           </template>
 
           <template is="dom-if"
             if="[[showActionDirectEdit]]">
-            <a href="[[_driveEdit(doc)]]">
-              <paper-icon-button icon="create"
-                title="Edit Document"></paper-icon-button>
-            </a>
+            <template is="dom-if"
+              if="[[_directEditSupported(doc)]]">
+              <a href="[[_directEdit(doc)]]">
+                <paper-icon-button icon="create"
+                  title="Edit Document"></paper-icon-button>
+              </a>
+            </template>
           </template>
 
           <template is="dom-if"
             if="[[showActionShare]]">
             <template is="dom-if"
-              if="[[!_isTemplate(doc)]]">
+              if="[[_sharingSupported(doc)]]">
               <paper-icon-button icon="send"
                 title="Send Document"
                 on-click="_onEmailClick"></paper-icon-button>
@@ -144,7 +150,7 @@ Requires <nuxeo-connection> in order to get icons.
           <template is="dom-if"
             if="[[showActionTemplate]]">
             <template is="dom-if"
-              if="[[_isTemplate(doc)]]">
+              if="[[_renderingSupported(doc)]]">
               <paper-icon-button icon="av:play-circle-outline"
                 id="[[doc.uid]]"
                 title="Render Template"
@@ -155,7 +161,7 @@ Requires <nuxeo-connection> in order to get icons.
           <template is="dom-if"
             if="[[showActionAnalytics]]">
             <template is="dom-if"
-              if="[[!_isTemplate(doc)]]">
+              if="[[_analyticsSupported(doc)]]">
               <paper-icon-button icon="dashboard"
                 title="Analytics"
                 on-click="_onAnalyticsClick"></paper-icon-button>
