@@ -78,7 +78,7 @@ Behavior to manage the "actions" for a document.
 
     _previewUrl: function(doc) {
       if (doc && doc.type && doc.type == "WebPage") {
-        return doc.properties["wbsa:url"];
+        return doc.properties["wpsa:url"];
       } else {
         if (doc && doc.contextParameters) {
           /* Note that doc.contextParameters.preview is the old previewer. My
