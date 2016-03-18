@@ -25,9 +25,6 @@ An element to display metadata in a tag-like format.
   <template>
 
     <style>
-      .documentPills {
-        display: inline-flex;
-      }
 
       .documentPill {
         border-radius: 3px;
@@ -59,7 +56,6 @@ An element to display metadata in a tag-like format.
 
     </style>
 
-    <div class="documentPills">
       <template is="dom-if"
         if="[[_docHasMetadata(doc,field)]]">
         <template is="dom-if"
@@ -74,7 +70,6 @@ An element to display metadata in a tag-like format.
           </template>
         </template>
       </template>
-    </div>
 
   </template>
 
