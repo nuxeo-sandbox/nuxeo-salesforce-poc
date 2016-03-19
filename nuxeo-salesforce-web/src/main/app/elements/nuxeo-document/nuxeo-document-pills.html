@@ -25,13 +25,11 @@ An element to display metadata in a tag-like format.
   <template>
 
     <style>
-
       .documentPill {
         border-radius: 3px;
-        padding: 5px;
+        padding: 3px;
         margin-right: 5px;
         font-size: 80%;
-        font-weight: bold;
       }
 
       .pillColor {
@@ -39,37 +37,28 @@ An element to display metadata in a tag-like format.
         background: #0D58A6;
       }
 
-      .pillColor2 {
-        color: var(--text-primary-color);
-        background: #FFC500;
-      }
-
-      .pillColor3 {
-        color: var(--secondary-text-color);
-        background: #1B128A;
-      }
-
-      .pillColor4 {
-        color: var(--text-primary-color);
-        background: #FFB039;
-      }
-
     </style>
 
-      <template is="dom-if"
-        if="[[_docHasMetadata(doc,field)]]">
+    <div class="documentPills">
+      <template is="dom-repeat"
+        items="[[fields]]"
+        as="field">
         <template is="dom-if"
-          if="[[!_metadataIsArray(doc, field)]]">
-          <div class="documentPill pillColor">[[_getMetadata(doc,field)]]</div>
-        </template>
-        <template is="dom-if"
-          if="[[_metadataIsArray(doc, field)]]">
-          <template is="dom-repeat"
-            items="[[_getMetadata(doc, field)]]">
-            <div class="documentPill pillColor">[[item]]</div>
+          if="[[_docHasMetadata(doc,field)]]">
+          <template is="dom-if"
+            if="[[!_metadataIsArray(doc, field)]]">
+            <div class="documentPill pillColor">[[_getMetadata(doc,field)]]</div>
+          </template>
+          <template is="dom-if"
+            if="[[_metadataIsArray(doc, field)]]">
+            <template is="dom-repeat"
+              items="[[_getMetadata(doc, field)]]">
+              <div class="documentPill pillColor">[[item]]</div>
+            </template>
           </template>
         </template>
       </template>
+    </div>
 
   </template>
 
@@ -81,8 +70,8 @@ An element to display metadata in a tag-like format.
         doc: {
           type: Object
         },
-        field: {
-          type: String
+        fields: {
+          type: Array
         }
       },
 

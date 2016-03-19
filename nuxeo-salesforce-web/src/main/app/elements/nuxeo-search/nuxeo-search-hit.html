@@ -89,17 +89,9 @@ Requires <nuxeo-connection> in order to get icons.
         height: 28px;
       }
 
-      .documentPills {
+      nuxeo-document-pills::content .documentPills {
         display: inline-flex;
         margin-bottom: 5px;
-      }
-
-      .documentPill {
-        border-radius: 5px;
-        padding: 5px;
-        margin-right: 5px;
-        font-size: 80%;
-        font-weight: bold;
       }
 
       nuxeo-document-pills#audience::content .pillColor {
@@ -199,17 +191,8 @@ Requires <nuxeo-connection> in order to get icons.
 
       <template is="dom-if"
         if="[[_docHasPills(doc)]]">
-        <div class="documentPills">
-          <nuxeo-document-pills id="audience"
-            doc="[[doc]]"
-            field="sales:audience"></nuxeo-document-pills>
-          <nuxeo-document-pills id="oppSolution"
-            doc="[[doc]]"
-            field="sales:oppSolution"></nuxeo-document-pills>
-          <nuxeo-document-pills id="competitor"
-            doc="[[doc]]"
-            field="sales:competitor"></nuxeo-document-pills>
-        </div>
+        <nuxeo-document-pills doc="[[doc]]"
+          fields="[[_getPillFields(doc)]]"></nuxeo-document-pills>
       </template>
 
       <template is="dom-if"
@@ -259,7 +242,29 @@ Requires <nuxeo-connection> in order to get icons.
         if (doc && doc.properties && doc.properties["sales:oppSolution"] && doc.properties["sales:oppSolution"] != "") {
           return true;
         }
+        if (doc && doc.properties && doc.properties["sales:competitor"] && doc.properties["sales:competitor"] != "") {
+          return true;
+        }
         return false;
+      },
+
+      _getPillFields: function(doc) {
+        var pillFields = [];
+        if (doc && doc.properties && doc.properties["sales:audience"] && doc.properties["sales:audience"].length > 0) {
+          pillFields.push("sales:audience");
+        }
+        if (doc && doc.properties && doc.properties["sales:oppSolution"] && doc.properties["sales:oppSolution"].length > 0) {
+          pillFields.push("sales:oppSolution");
+        }
+        if (doc && doc.properties && doc.properties["sales:audience"] && doc.properties["sales:competitor"].length > 0) {
+          pillFields.push("sales:competitor");
+        }
+        if (pillFields.length > 0) {
+          return pillFields;
+        } else {
+          return null;
+        }
+
       },
 
       _docHasRatedFacet: function(doc) {
