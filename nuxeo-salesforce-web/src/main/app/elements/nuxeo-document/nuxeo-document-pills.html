@@ -84,7 +84,7 @@ An element to display metadata in a tag-like format.
       },
 
       _metadataIsArray: function(doc, field) {
-        if (doc.properties[field].constructor === Array) {
+        if (doc && doc.properties && field && doc.properties[field] && doc.properties[field].constructor === Array) {
           return true;
         } else {
           return false;
