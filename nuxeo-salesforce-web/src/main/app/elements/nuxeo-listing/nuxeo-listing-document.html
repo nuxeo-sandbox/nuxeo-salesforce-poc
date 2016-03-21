@@ -202,6 +202,15 @@ Requires <nuxeo-connection> in order to get icons.
       </paper-toolbar>
 
       <template is="dom-if"
+        if="{{doc.highlight}}">
+        <div class="documentHighlightContainer">
+          <div class="documentHighlight">
+            <html-echo html-to-inject="[[_getHighlightedText(doc.highlight)]]"></html-echo>
+          </div>
+        </div>
+      </template>
+
+      <template is="dom-if"
         if="[[showPills]]">
         <template is="dom-if"
           if="[[_docHasPills(doc)]]">
@@ -211,6 +220,14 @@ Requires <nuxeo-connection> in order to get icons.
               pill-colors="[[pillColors]]"></nuxeo-document-pills>
           </div>
         </template>
+      </template>
+
+      <template is="dom-if"
+        if="{{_docHasRatedFacet(doc)}}">
+        <div class="rating">
+          <nuxeo-star-rating rating="[[doc.properties.rated:avg]]"></nuxeo-star-rating>
+          <div>([[doc.properties.rated:count]])</div>
+        </div>
       </template>
 
     </paper-card>
@@ -324,7 +341,6 @@ Requires <nuxeo-connection> in order to get icons.
       _onEmailClick: function(e) {
         this.selectedAction = "email";
         this._setSelectedDocument(e);
-
       },
 
       _onTemplateClick: function(e) {
@@ -342,6 +358,17 @@ Requires <nuxeo-connection> in order to get icons.
         this.selectedDocument = this.doc;
       },
 
+      /** Get text that matches any keyword searches.
+       WARNING: this only works if you have results from ES passthrough currently. */
+      _getHighlightedText: function(highlightObject) {
+        if (highlightObject !== undefined) {
+          if (highlightObject['ecm:binarytext'] !== undefined && highlightObject['ecm:binarytext'].length > 0) {
+            return highlightObject['ecm:binarytext'][0];
+          }
+        }
+        return '<p>No Text Highlight</p>';
+      },
+
       // Check to see if the document has any metadata at all before trying to render the pill div.
       _docHasPills: function(doc) {
         for (i = 0; i < this.pillFields.length; i++) {
@@ -350,6 +377,10 @@ Requires <nuxeo-connection> in order to get icons.
           }
         }
         return false;
+      },
+
+      _docHasRatedFacet: function(doc) {
+        return doc && doc.facets && doc.facets.indexOf('Rated') !== -1;
       }
 
     });
