@@ -46,6 +46,9 @@ Requires <nuxeo-connection> in order to get icons.
         --paper-card-content: {
           padding-top: 0px;
           padding-bottom: 0px;
+          display: flex;
+          flex-direction: column;
+          padding-bottom: 5px;
         }
       }
 
@@ -199,36 +202,39 @@ Requires <nuxeo-connection> in order to get icons.
           </template>
 
         </template>
+
       </paper-toolbar>
 
-      <template is="dom-if"
-        if="{{doc.highlight}}">
-        <div class="documentHighlightContainer">
-          <div class="documentHighlight">
-            <html-echo html-to-inject="[[_getHighlightedText(doc.highlight)]]"></html-echo>
-          </div>
-        </div>
-      </template>
+      <div class="card-content">
 
-      <template is="dom-if"
-        if="[[showPills]]">
         <template is="dom-if"
-          if="[[_docHasPills(doc)]]">
-          <div class="card-content">
+          if="{{doc.highlight}}">
+          <div class="documentHighlightContainer">
+            <div class="documentHighlight">
+              <html-echo html-to-inject="[[_getHighlightedText(doc.highlight)]]"></html-echo>
+            </div>
+          </div>
+        </template>
+
+        <template is="dom-if"
+          if="[[showPills]]">
+          <template is="dom-if"
+            if="[[_docHasPills(doc)]]">
             <nuxeo-document-pills doc="[[doc]]"
               fields="[[pillFields]]"
               pill-colors="[[pillColors]]"></nuxeo-document-pills>
+          </template>
+        </template>
+
+        <template is="dom-if"
+          if="{{_docHasRatedFacet(doc)}}">
+          <div class="rating">
+            <nuxeo-star-rating rating="[[doc.properties.rated:avg]]"></nuxeo-star-rating>
+            <div>([[doc.properties.rated:count]])</div>
           </div>
         </template>
-      </template>
 
-      <template is="dom-if"
-        if="{{_docHasRatedFacet(doc)}}">
-        <div class="rating">
-          <nuxeo-star-rating rating="[[doc.properties.rated:avg]]"></nuxeo-star-rating>
-          <div>([[doc.properties.rated:count]])</div>
-        </div>
-      </template>
+      </div>
 
     </paper-card>
 
