@@ -26,7 +26,7 @@ Requires <nuxeo-connection> in order to get icons.
 
   <template>
 
-    <style>
+     <style>
       paper-drawer-panel {
         /* Allow the page to scroll if the content is too tall. */
         overflow-y: scroll;
@@ -80,7 +80,8 @@ Requires <nuxeo-connection> in order to get icons.
       <!-- Drawer Content -->
       <template is="dom-if"
         if="[[selected]]">
-        <nuxeo-metadata doc="{{selected}}" drawer></nuxeo-metadata>
+        <nuxeo-metadata doc="{{selected}}"
+          drawer></nuxeo-metadata>
       </template>
 
       <div main>
@@ -88,7 +89,8 @@ Requires <nuxeo-connection> in order to get icons.
           items="[[documentList]]">
           <nuxeo-search-hit doc=[[item]]
             on-tap="_select"
-            selected$="[[_isSame(item, selected)]]"></nuxeo-search-hit>
+            selected$="[[_isSame(item, selected)]]"
+            show-pills></nuxeo-search-hit>
         </template>
       </div>
 

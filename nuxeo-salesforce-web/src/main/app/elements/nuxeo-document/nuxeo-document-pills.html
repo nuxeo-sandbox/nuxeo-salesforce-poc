@@ -25,52 +25,62 @@ An element to display metadata in a tag-like format.
   <template>
 
     <style>
-      .documentPills {
-        display: inline-flex;
-      }
-
       .documentPill {
         border-radius: 3px;
-        padding: 5px;
+        padding: 3px;
         margin-right: 5px;
         font-size: 80%;
-        font-weight: bold;
       }
 
-      .pillColor {
-        color: var(--secondary-text-color);
-        background: #0D58A6;
+      .pillColor0 {
+        color: var(--nuxeo-document-pills-dark-color);
+        background: var(--nuxeo-document-pill0-color);
+      }
+
+      .pillColor1 {
+        color: var(--nuxeo-document-pills-dark-color);
+        background: var(--nuxeo-document-pill1-color);
       }
 
       .pillColor2 {
-        color: var(--text-primary-color);
-        background: #FFC500;
+        color: var(--nuxeo-document-pills-dark-color);
+        background: var(--nuxeo-document-pill2-color);
       }
 
       .pillColor3 {
-        color: var(--secondary-text-color);
-        background: #1B128A;
+        color: var(--nuxeo-document-pills-dark-color);
+        background: var(--nuxeo-document-pill3-color);
       }
 
       .pillColor4 {
-        color: var(--text-primary-color);
-        background: #FFB039;
+        color: var(--nuxeo-document-pills-dark-color);
+        background: var(--nuxeo-document-pill4-color);
+      }
+
+      .pillColor5 {
+        color: var(--nuxeo-document-pills-dark-color);
+        background: var(--nuxeo-document-pill5-color);
       }
 
     </style>
 
     <div class="documentPills">
-      <template is="dom-if"
-        if="[[_docHasMetadata(doc,field)]]">
+      <template is="dom-repeat"
+        items="[[fields]]"
+        as="field"
+        index-as="fieldNumber">
         <template is="dom-if"
-          if="[[!_metadataIsArray(doc, field)]]">
-          <div class="documentPill pillColor">[[_getMetadata(doc,field)]]</div>
-        </template>
-        <template is="dom-if"
-          if="[[_metadataIsArray(doc, field)]]">
-          <template is="dom-repeat"
-            items="[[_getMetadata(doc, field)]]">
-            <div class="documentPill pillColor">[[item]]</div>
+          if="[[_docHasMetadata(doc,field)]]">
+          <template is="dom-if"
+            if="[[!_metadataIsArray(doc, field)]]">
+            <div class$="documentPill pillColor[[_getPillColor(field,fieldNumber)]]">[[_getMetadata(doc,field)]]</div>
+          </template>
+          <template is="dom-if"
+            if="[[_metadataIsArray(doc, field)]]">
+            <template is="dom-repeat"
+              items="[[_getMetadata(doc, field)]]">
+              <div class$="documentPill pillColor[[_getPillColor(field,fieldNumber)]]">[[item]]</div>
+            </template>
           </template>
         </template>
       </template>
@@ -86,8 +96,11 @@ An element to display metadata in a tag-like format.
         doc: {
           type: Object
         },
-        field: {
-          type: String
+        fields: {
+          type: Array
+        },
+        pillColors: {
+          type: Array
         }
       },
 
@@ -109,8 +122,19 @@ An element to display metadata in a tag-like format.
 
       _getMetadata: function(doc, field) {
         return doc.properties[field];
-      }
+      },
 
+      _getPillColor: function(field, fieldNumber) {
+        if (this.pillColors) {
+          for (var i = 0; i < this.pillColors.length; i++) {
+            if (this.pillColors[i].field == field) {
+              return this.pillColors[i].color;
+            }
+          }
+          return fieldNumber;
+        } else
+          return fieldNumber;
+      }
     });
 
   </script>
