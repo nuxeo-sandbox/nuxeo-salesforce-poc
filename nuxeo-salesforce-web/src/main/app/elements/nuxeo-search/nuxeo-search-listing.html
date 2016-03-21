@@ -26,7 +26,7 @@ Requires <nuxeo-connection> in order to get icons.
 
   <template>
 
-     <style>
+    <style>
       paper-drawer-panel {
         /* Allow the page to scroll if the content is too tall. */
         overflow-y: scroll;
@@ -53,22 +53,16 @@ Requires <nuxeo-connection> in order to get icons.
         width: 300px;
       }
 
-      nuxeo-search-hit {
+      nuxeo-listing-document {
         padding: 5px;
         display: block;
       }
 
-      nuxeo-search-hit::content paper-material {
-        border-color: #ffffff;
-        border-style: solid;
-        border-width: thin;
-      }
-
-      nuxeo-search-hit[selected]::content paper-material {
+      nuxeo-listing-document[selected]::content paper-card {
         border-color: var(--paper-card-selected-primary-color);
       }
 
-      nuxeo-search-hit[selected]::content paper-material .titleBar {
+      nuxeo-listing-document[selected]::content paper-card paper-toolbar .title {
         font-weight: bold;
       }
 
@@ -87,10 +81,15 @@ Requires <nuxeo-connection> in order to get icons.
       <div main>
         <template is="dom-repeat"
           items="[[documentList]]">
-          <nuxeo-search-hit doc=[[item]]
+          <nuxeo-listing-document doc=[[item]]
             on-tap="_select"
             selected$="[[_isSame(item, selected)]]"
-            show-pills></nuxeo-search-hit>
+            show-action-preview
+            show-action-edit
+            show-action-download
+            show-action-direct-edit
+            show-pills
+            show-action-lock></nuxeo-listing-document>
         </template>
       </div>
 
