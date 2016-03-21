@@ -32,24 +32,24 @@ An element to display metadata in a tag-like format.
         font-size: 80%;
       }
 
-      .pillColor1 {
+      .pillColor0 {
         color: var(--secondary-text-color);
-        background: #0D58A6;
+        background: var(--nuxeo-document-pill0-color);
+      }
+
+      .pillColor1 {
+        color: var(--text-primary-color);
+        background: var(--nuxeo-document-pill1-color);
       }
 
       .pillColor2 {
-        color: var(--text-primary-color);
-        background: #FFC500;
+        color: var(--secondary-text-color);
+        background: var(--nuxeo-document-pill2-color);
       }
 
       .pillColor3 {
-        color: var(--secondary-text-color);
-        background: #1B128A;
-      }
-
-      .pillColor4 {
         color: var(--text-primary-color);
-        background: #FFB039;
+        background: var(--nuxeo-document-pill3-color);
       }
 
     </style>
@@ -63,13 +63,13 @@ An element to display metadata in a tag-like format.
           if="[[_docHasMetadata(doc,field)]]">
           <template is="dom-if"
             if="[[!_metadataIsArray(doc, field)]]">
-            <div class$="documentPill pillColor[[_computePillColor(fieldNumber)]]">[[_getMetadata(doc,field)]]</div>
+            <div class$="documentPill pillColor[[fieldNumber]]">[[_getMetadata(doc,field)]]</div>
           </template>
           <template is="dom-if"
             if="[[_metadataIsArray(doc, field)]]">
             <template is="dom-repeat"
               items="[[_getMetadata(doc, field)]]">
-              <div class$="documentPill pillColor[[_computePillColor(fieldNumber)]]">[[item]]</div>
+              <div class$="documentPill pillColor[[fieldNumber]]">[[item]]</div>
             </template>
           </template>
         </template>
@@ -109,10 +109,6 @@ An element to display metadata in a tag-like format.
 
       _getMetadata: function(doc, field) {
         return doc.properties[field];
-      },
-
-      _computePillColor: function(fieldNumber) {
-        return fieldNumber + 1;
       }
 
     });
