@@ -32,9 +32,24 @@ An element to display metadata in a tag-like format.
         font-size: 80%;
       }
 
-      .pillColor {
+      .pillColor1 {
         color: var(--secondary-text-color);
         background: #0D58A6;
+      }
+
+      .pillColor2 {
+        color: var(--text-primary-color);
+        background: #FFC500;
+      }
+
+      .pillColor3 {
+        color: var(--secondary-text-color);
+        background: #1B128A;
+      }
+
+      .pillColor4 {
+        color: var(--text-primary-color);
+        background: #FFB039;
       }
 
     </style>
@@ -42,18 +57,19 @@ An element to display metadata in a tag-like format.
     <div class="documentPills">
       <template is="dom-repeat"
         items="[[fields]]"
-        as="field">
+        as="field"
+        index-as="fieldNumber">
         <template is="dom-if"
           if="[[_docHasMetadata(doc,field)]]">
           <template is="dom-if"
             if="[[!_metadataIsArray(doc, field)]]">
-            <div class="documentPill pillColor">[[_getMetadata(doc,field)]]</div>
+            <div class$="documentPill pillColor[[_computePillColor(fieldNumber)]]">[[_getMetadata(doc,field)]]</div>
           </template>
           <template is="dom-if"
             if="[[_metadataIsArray(doc, field)]]">
             <template is="dom-repeat"
               items="[[_getMetadata(doc, field)]]">
-              <div class="documentPill pillColor">[[item]]</div>
+              <div class$="documentPill pillColor[[_computePillColor(fieldNumber)]]">[[item]]</div>
             </template>
           </template>
         </template>
@@ -93,6 +109,10 @@ An element to display metadata in a tag-like format.
 
       _getMetadata: function(doc, field) {
         return doc.properties[field];
+      },
+
+      _computePillColor: function(fieldNumber) {
+        return fieldNumber + 1;
       }
 
     });
