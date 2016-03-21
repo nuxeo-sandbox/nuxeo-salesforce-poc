@@ -98,26 +98,6 @@ Requires <nuxeo-connection> in order to get icons.
         margin-bottom: 5px;
       }
 
-      nuxeo-document-pills#audience::content .pillColor {
-        color: var(--secondary-text-color);
-        background: #0D58A6;
-      }
-
-      nuxeo-document-pills#oppSolution::content .pillColor {
-        color: var(--text-primary-color);
-        background: #FFC500;
-      }
-
-      nuxeo-document-pills#competitor::content .pillColor {
-        color: var(--secondary-text-color);
-        background: #1B128A;
-      }
-
-      .pillColor4 {
-        color: var(--text-primary-color);
-        background: #FFB039;
-      }
-
       .documentHighlightContainer {
         padding: 5px;
         margin-bottom: 5px;
@@ -250,12 +230,18 @@ Requires <nuxeo-connection> in order to get icons.
       },
 
       _docHasPills: function(doc) {
-        if (doc && doc.properties && doc.properties["sales:audience"] && doc.properties["sales:audience"] != "") {
-          return true;
+        this.pillFields = [];
+
+        this.pillFields.push("sales:custStage")
+        this.pillFields.push("sales:oppSolution")
+        this.pillFields.push("sales:competitor")
+
+        for (i = 0; i < this.pillFields.length; i++) {
+          if (doc && doc.properties && doc.properties[this.pillFields[i]] && doc.properties[this.pillFields[i]].length > 0) {
+            return true;
+          }
         }
-        if (doc && doc.properties && doc.properties["sales:oppSolution"] && doc.properties["sales:oppSolution"] != "") {
-          return true;
-        }
+
         return false;
       },
 

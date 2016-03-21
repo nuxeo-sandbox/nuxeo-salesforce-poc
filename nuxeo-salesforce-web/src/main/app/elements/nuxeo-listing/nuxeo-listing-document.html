@@ -38,12 +38,18 @@ Requires <nuxeo-connection> in order to get icons.
       }
 
       paper-card {
-        margin: 5px;
         --paper-card-background-color: var(--paper-card-light-primary-color);
         border-color: var(--paper-card-light-primary-color);
         border-style: solid;
         border-width: thin;
-        width: 300px;
+        display: block;
+        --paper-card-content: {
+          padding-top: 0px;
+          padding-bottom: 0px;
+          display: flex;
+          flex-direction: column;
+          padding-bottom: 5px;
+        }
       }
 
       paper-card[selected] {
@@ -52,6 +58,7 @@ Requires <nuxeo-connection> in order to get icons.
       }
 
       paper-toolbar {
+        margin: 5px;
         --paper-toolbar-height: 25px;
         --paper-toolbar-background: var(--default-primary-color);
         --paper-toolbar-color: var(--primary-text-color);
@@ -65,14 +72,36 @@ Requires <nuxeo-connection> in order to get icons.
         padding-right: 11px;
       }
 
-      .document-toolbar {
-        margin: 5px;
-      }
-
       paper-icon-button {
         padding: 4px;
         width: 28px;
         height: 28px;
+      }
+
+      nuxeo-document-pills::content .documentPills {
+        display: inline-flex;
+        flex-wrap: wrap;
+      }
+
+      nuxeo-document-pills::content .documentPill {
+        margin-bottom: 5px;
+      }
+
+      .documentHighlightContainer {
+        padding: 5px;
+        margin-bottom: 5px;
+      }
+
+      .documentHighlight {
+        font-style: italic;
+        font-size: smaller;
+        line-height: 2.5ex;
+        height: 4.4ex;
+        overflow: hidden;
+      }
+
+      .rating {
+        display: inline-flex;
       }
 
     </style>
@@ -86,10 +115,6 @@ Requires <nuxeo-connection> in order to get icons.
           title="Nuxeo">
         </paper-icon-button>
         <div class="title">[[doc.title]]</div>
-      </paper-toolbar>
-
-      <div class="card-actions horizontal justified">
-
         <template is="dom-if"
           if="[[showActionEdit]]">
           <a href="[[_docEditURL(doc)]]"
@@ -178,6 +203,37 @@ Requires <nuxeo-connection> in order to get icons.
 
         </template>
 
+      </paper-toolbar>
+
+      <div class="card-content">
+
+        <template is="dom-if"
+          if="{{doc.highlight}}">
+          <div class="documentHighlightContainer">
+            <div class="documentHighlight">
+              <html-echo html-to-inject="[[_getHighlightedText(doc.highlight)]]"></html-echo>
+            </div>
+          </div>
+        </template>
+
+        <template is="dom-if"
+          if="[[showPills]]">
+          <template is="dom-if"
+            if="[[_docHasPills(doc)]]">
+            <nuxeo-document-pills doc="[[doc]]"
+              fields="[[pillFields]]"
+              pill-colors="[[pillColors]]"></nuxeo-document-pills>
+          </template>
+        </template>
+
+        <template is="dom-if"
+          if="{{_docHasRatedFacet(doc)}}">
+          <div class="rating">
+            <nuxeo-star-rating rating="[[doc.properties.rated:avg]]"></nuxeo-star-rating>
+            <div>([[doc.properties.rated:count]])</div>
+          </div>
+        </template>
+
       </div>
 
     </paper-card>
@@ -233,6 +289,42 @@ Requires <nuxeo-connection> in order to get icons.
         showActionLock: {
           type: Boolean,
           value: true
+        },
+        showPills: {
+          type: Boolean,
+          value: false
+        },
+        pillFields: {
+          type: Array,
+          value: function() {
+            return ["sales:oppSolution",
+              "sales:competitor",
+              "sales:custStage",
+              "sales:industry",
+              "sales:stage"
+            ]
+          }
+        },
+        pillColors: {
+          type: Array,
+          value: function() {
+            return [{
+              "field": "sales:oppSolution",
+              "color": "0"
+            }, {
+              "field": "sales:competitor",
+              "color": "1"
+            }, {
+              "field": "sales:custStage",
+              "color": "2"
+            }, {
+              "field": "sales:industry",
+              "color": "3"
+            }, {
+              "field": "sales:stage",
+              "color": "4"
+            }]
+          }
         }
       },
 
@@ -255,7 +347,6 @@ Requires <nuxeo-connection> in order to get icons.
       _onEmailClick: function(e) {
         this.selectedAction = "email";
         this._setSelectedDocument(e);
-
       },
 
       _onTemplateClick: function(e) {
@@ -271,6 +362,31 @@ Requires <nuxeo-connection> in order to get icons.
       _setSelectedDocument: function(e) {
         var item = e.model.item;
         this.selectedDocument = this.doc;
+      },
+
+      /** Get text that matches any keyword searches.
+       WARNING: this only works if you have results from ES passthrough currently. */
+      _getHighlightedText: function(highlightObject) {
+        if (highlightObject !== undefined) {
+          if (highlightObject['ecm:binarytext'] !== undefined && highlightObject['ecm:binarytext'].length > 0) {
+            return highlightObject['ecm:binarytext'][0];
+          }
+        }
+        return '<p>No Text Highlight</p>';
+      },
+
+      // Check to see if the document has any metadata at all before trying to render the pill div.
+      _docHasPills: function(doc) {
+        for (i = 0; i < this.pillFields.length; i++) {
+          if (doc && doc.properties && doc.properties[this.pillFields[i]] && doc.properties[this.pillFields[i]].length > 0) {
+            return true;
+          }
+        }
+        return false;
+      },
+
+      _docHasRatedFacet: function(doc) {
+        return doc && doc.facets && doc.facets.indexOf('Rated') !== -1;
       }
 
     });
