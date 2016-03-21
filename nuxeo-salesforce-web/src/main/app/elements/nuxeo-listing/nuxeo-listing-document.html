@@ -112,7 +112,7 @@ Requires <nuxeo-connection> in order to get icons.
           title="Nuxeo">
         </paper-icon-button>
         <div class="title">[[doc.title]]</div>
-                <template is="dom-if"
+        <template is="dom-if"
           if="[[showActionEdit]]">
           <a href="[[_docEditURL(doc)]]"
             target="_blank">
@@ -207,7 +207,8 @@ Requires <nuxeo-connection> in order to get icons.
           if="[[_docHasPills(doc)]]">
           <div class="card-content">
             <nuxeo-document-pills doc="[[doc]]"
-              fields="[[_getPillFields(doc)]]"></nuxeo-document-pills>
+              fields="[[pillFields]]"
+              pill-colors="[[pillColors]]"></nuxeo-document-pills>
           </div>
         </template>
       </template>
@@ -271,7 +272,36 @@ Requires <nuxeo-connection> in order to get icons.
           value: false
         },
         pillFields: {
-          type: Array
+          type: Array,
+          value: function() {
+            return ["sales:oppSolution",
+              "sales:competitor",
+              "sales:custStage",
+              "sales:industry",
+              "sales:stage"
+            ]
+          }
+        },
+        pillColors: {
+          type: Array,
+          value: function() {
+            return [{
+              "field": "sales:oppSolution",
+              "color": "0"
+            }, {
+              "field": "sales:competitor",
+              "color": "1"
+            }, {
+              "field": "sales:custStage",
+              "color": "2"
+            }, {
+              "field": "sales:industry",
+              "color": "3"
+            }, {
+              "field": "sales:stage",
+              "color": "4"
+            }]
+          }
         }
       },
 
@@ -312,38 +342,14 @@ Requires <nuxeo-connection> in order to get icons.
         this.selectedDocument = this.doc;
       },
 
+      // Check to see if the document has any metadata at all before trying to render the pill div.
       _docHasPills: function(doc) {
-        this.pillFields = [];
-
-        this.pillFields.push("sales:industry")
-        this.pillFields.push("sales:stage")
-        this.pillFields.push("sales:custStage")
-        this.pillFields.push("sales:oppSolution")
-        this.pillFields.push("sales:competitor")
-
         for (i = 0; i < this.pillFields.length; i++) {
           if (doc && doc.properties && doc.properties[this.pillFields[i]] && doc.properties[this.pillFields[i]].length > 0) {
             return true;
           }
         }
-
         return false;
-      },
-
-      _getPillFields: function(doc) {
-        var pillFields = [];
-
-        for (i = 0; i < this.pillFields.length; i++) {
-          if (doc && doc.properties && doc.properties[this.pillFields[i]] && doc.properties[this.pillFields[i]].length > 0) {
-            pillFields.push(this.pillFields[i]);
-          }
-        }
-
-        if (pillFields.length > 0) {
-          return pillFields;
-        } else {
-          return null;
-        }
       }
 
     });
