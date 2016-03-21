@@ -199,7 +199,8 @@ Requires <nuxeo-connection> in order to get icons.
           if="[[_docHasPills(doc)]]">
           <div class="card-content">
             <nuxeo-document-pills doc="[[doc]]"
-              fields="[[_getPillFields(doc)]]"></nuxeo-document-pills>
+              fields="[[_getPillFields(doc)]]"
+              pill-colors="[[_getPillColors(doc)]]"></nuxeo-document-pills>
           </div>
         </template>
       </template>
@@ -275,6 +276,33 @@ Requires <nuxeo-connection> in order to get icons.
           return null;
         }
 
+      },
+
+      _getPillColors: function(doc) {
+        var pillColors = [];
+        if (doc && doc.properties && doc.properties["sales:audience"] && doc.properties["sales:audience"].length > 0) {
+          pillColors.push({
+            "field": "sales:audience",
+            "color": "0"
+          });
+        }
+        if (doc && doc.properties && doc.properties["sales:oppSolution"] && doc.properties["sales:oppSolution"].length > 0) {
+          pillColors.push({
+            "field": "sales:oppSolution",
+            "color": "1"
+          });
+        }
+        if (doc && doc.properties && doc.properties["sales:audience"] && doc.properties["sales:competitor"].length > 0) {
+          pillColors.push({
+            "field": "sales:competitor",
+            "color": "2"
+          });
+        }
+        if (pillColors.length > 0) {
+          return pillColors;
+        } else {
+          return null;
+        }
       },
 
       _docHasRatedFacet: function(doc) {
