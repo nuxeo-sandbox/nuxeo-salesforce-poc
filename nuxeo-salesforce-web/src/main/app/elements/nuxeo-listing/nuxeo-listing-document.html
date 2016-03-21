@@ -38,12 +38,11 @@ Requires <nuxeo-connection> in order to get icons.
       }
 
       paper-card {
-        margin: 5px;
         --paper-card-background-color: var(--paper-card-light-primary-color);
         border-color: var(--paper-card-light-primary-color);
         border-style: solid;
         border-width: thin;
-        width: 300px;
+        display: block;
         --paper-card-content: {
           padding-top: 0px;
           padding-bottom: 0px;
@@ -56,6 +55,7 @@ Requires <nuxeo-connection> in order to get icons.
       }
 
       paper-toolbar {
+        margin: 5px;
         --paper-toolbar-height: 25px;
         --paper-toolbar-background: var(--default-primary-color);
         --paper-toolbar-color: var(--primary-text-color);
@@ -67,10 +67,6 @@ Requires <nuxeo-connection> in order to get icons.
       paper-toolbar::content #topBar {
         padding-left: 11px;
         padding-right: 11px;
-      }
-
-      .document-toolbar {
-        margin: 5px;
       }
 
       paper-icon-button {
@@ -88,24 +84,21 @@ Requires <nuxeo-connection> in order to get icons.
         margin-bottom: 5px;
       }
 
-      nuxeo-document-pills#audience::content .pillColor {
-        color: var(--secondary-text-color);
-        background: #0D58A6;
+      .documentHighlightContainer {
+        padding: 5px;
+        margin-bottom: 5px;
       }
 
-      nuxeo-document-pills#oppSolution::content .pillColor {
-        color: var(--text-primary-color);
-        background: #FFC500;
+      .documentHighlight {
+        font-style: italic;
+        font-size: smaller;
+        line-height: 2.5ex;
+        height: 4.4ex;
+        overflow: hidden;
       }
 
-      nuxeo-document-pills#competitor::content .pillColor {
-        color: var(--secondary-text-color);
-        background: #1B128A;
-      }
-
-      .pillColor4 {
-        color: var(--text-primary-color);
-        background: #FFB039;
+      .rating {
+        display: inline-flex;
       }
 
     </style>
@@ -119,22 +112,7 @@ Requires <nuxeo-connection> in order to get icons.
           title="Nuxeo">
         </paper-icon-button>
         <div class="title">[[doc.title]]</div>
-      </paper-toolbar>
-
-      <template is="dom-if"
-        if="[[showPills]]">
-        <template is="dom-if"
-          if="[[_docHasPills(doc)]]">
-          <div class="card-content">
-            <nuxeo-document-pills doc="[[doc]]"
-              fields="[[_getPillFields(doc)]]"></nuxeo-document-pills>
-          </div>
-        </template>
-      </template>
-
-      <div class="card-actions horizontal justified">
-
-        <template is="dom-if"
+                <template is="dom-if"
           if="[[showActionEdit]]">
           <a href="[[_docEditURL(doc)]]"
             target="_blank">
@@ -221,8 +199,18 @@ Requires <nuxeo-connection> in order to get icons.
           </template>
 
         </template>
+      </paper-toolbar>
 
-      </div>
+      <template is="dom-if"
+        if="[[showPills]]">
+        <template is="dom-if"
+          if="[[_docHasPills(doc)]]">
+          <div class="card-content">
+            <nuxeo-document-pills doc="[[doc]]"
+              fields="[[_getPillFields(doc)]]"></nuxeo-document-pills>
+          </div>
+        </template>
+      </template>
 
     </paper-card>
 
