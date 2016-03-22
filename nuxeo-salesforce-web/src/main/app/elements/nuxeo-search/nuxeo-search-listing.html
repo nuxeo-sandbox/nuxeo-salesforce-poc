@@ -89,7 +89,9 @@ Requires <nuxeo-connection> in order to get icons.
             show-action-download
             show-action-direct-edit
             show-pills
-            show-action-lock></nuxeo-listing-document>
+            show-action-lock
+            pill-fields="[[pillFields]]"
+            pill-colors="[[pillColors]]"></nuxeo-listing-document>
         </template>
       </div>
 
@@ -110,6 +112,26 @@ Requires <nuxeo-connection> in order to get icons.
         selected: {
           type: Object,
           notify: true
+        },
+        pillFields: {
+          type: Array,
+          value: function() {
+            return ["sales:oppSolution",
+              "sales:competitor"
+            ]
+          }
+        },
+        pillColors: {
+          type: Array,
+          value: function() {
+            return [{
+              "field": "sales:oppSolution",
+              "color": "0"
+            }, {
+              "field": "sales:competitor",
+              "color": "1"
+            }]
+          }
         }
       },
 

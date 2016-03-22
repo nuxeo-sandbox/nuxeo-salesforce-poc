@@ -128,7 +128,9 @@ Requires <nuxeo-connection> in order to get icons.
             show-action-template
             show-action-analytics
             show-pills
-            show-action-lock></nuxeo-listing-document>
+            show-action-lock
+            pill-fields="[[pillFields]]"
+            pill-colors="[[pillColors]]"></nuxeo-listing-document>
         </template>
       </div>
 
@@ -161,6 +163,38 @@ Requires <nuxeo-connection> in order to get icons.
         parentPath: {
           type: String,
           notify: true
+        },
+        pillFields: {
+          type: Array,
+          value: function() {
+            return ["sales:oppSolution",
+              "sales:competitor",
+              "sales:custStage",
+              "sales:industry",
+              "sales:stage"
+            ]
+          }
+        },
+        pillColors: {
+          type: Array,
+          value: function() {
+            return [{
+              "field": "sales:oppSolution",
+              "color": "0"
+            }, {
+              "field": "sales:competitor",
+              "color": "1"
+            }, {
+              "field": "sales:custStage",
+              "color": "2"
+            }, {
+              "field": "sales:industry",
+              "color": "3"
+            }, {
+              "field": "sales:stage",
+              "color": "4"
+            }]
+          }
         }
       },
 
