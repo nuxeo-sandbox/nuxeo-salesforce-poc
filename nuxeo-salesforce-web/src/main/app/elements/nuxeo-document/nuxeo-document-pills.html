@@ -31,6 +31,7 @@ An element to display metadata in a tag-like format.
         margin-right: 5px;
         font-size: 80%;
       }
+      /** You can add more colors dynamically, just create a CSS class with the number on the end. */
 
       .pillColor0 {
         color: var(--nuxeo-document-pills-dark-color);
@@ -124,6 +125,7 @@ An element to display metadata in a tag-like format.
         return doc.properties[field];
       },
 
+      /** You can add more colors dynamically, just create a CSS class with the name "pillColor#" where '#' is the number on the end. */
       _getPillColor: function(field, fieldNumber) {
         if (this.pillColors) {
           for (var i = 0; i < this.pillColors.length; i++) {
