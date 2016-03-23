@@ -43,7 +43,19 @@ Contributors:
     }
 
     .section {
-      padding: 5px;
+      padding: 10px;
+    }
+
+    .metaDataContainer {
+      background: var(--light-background-color);
+      border-bottom-left-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+
+    .thumbnail {
+      box-shadow: 1px 1px 1px #888888;
+      border: 1px solid;
+      width: 100%;
     }
 
   </style>
@@ -65,12 +77,12 @@ Contributors:
         </a>
       </paper-toolbar>
 
-      <div>
+      <div class="metaDataContainer">
         <template is="dom-if"
           if="[[thumbnail]]">
           <div class="section">
-            <img src$="[[thumbnail]]"
-              style="width:100%">
+            <img class="thumbnail"
+              src$="[[thumbnail]]">
           </div>
         </template>
 
