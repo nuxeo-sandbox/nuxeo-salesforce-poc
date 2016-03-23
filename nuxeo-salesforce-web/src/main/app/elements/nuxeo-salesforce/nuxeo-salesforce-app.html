@@ -78,7 +78,6 @@ The main nuxeo-salesforce application to be embedded in SFDC.
 
     </style>
 
-
     <nuxeo-connection id="nx"></nuxeo-connection>
 
     <nuxeo-resource id="oauth2directory"
@@ -156,7 +155,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
               bind-value="{{_publicSearchTerms}}"></paper-input>
           </paper-toolbar>
           <nuxeo-listing document-list="[[publicDocs]]"
-            class="documentListContainer"></nuxeo-listing>
+            class="documentListContainer"
+            filter-pills
+            pill-filters=[[pillFilters]]></nuxeo-listing>
         </paper-header-panel>
       </div>
 
@@ -178,7 +179,9 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           </paper-toolbar>
 
           <nuxeo-listing document-list="[[internalDocs]]"
-            class="documentListContainer"></nuxeo-listing>
+            class="documentListContainer"
+            filter-pills
+            pill-filters=[[pillFilters]]></nuxeo-listing>
         </paper-header-panel>
       </div>
 
@@ -218,6 +221,12 @@ The main nuxeo-salesforce application to be embedded in SFDC.
     Polymer({
       is: 'nuxeo-salesforce-app',
 
+      properties: {
+        pillFilters: {
+          type: Object
+        }
+      },
+
       observers: [
         '_displayCanvasApp(_sfopportunity)',
         '_handleNuxeoResourceError(success, error)',
@@ -230,7 +239,8 @@ The main nuxeo-salesforce application to be embedded in SFDC.
         '_fetchInternal(_sfopportunity,_sfaccount)',
         '_fetchInternal(_internalSearchTerms)',
         '_fetchInternal(_sfcompetitors)',
-        '_fetchTemplates(_templateSearchTerms)'
+        '_fetchTemplates(_templateSearchTerms)',
+        '_setPillFilters(_sfopportunity,_sfaccount,_sfcompetitors,publicDocs)'
       ],
 
 
@@ -436,6 +446,54 @@ The main nuxeo-salesforce application to be embedded in SFDC.
             this.$.sfcp.query = query;
           }
         }
+      },
+
+      /* AWS requested that when displaying pills it would be nice to only display the
+         values that match the current opportunity object and not all matching values. */
+      _setPillFilters: function(sfopportunity, sfaccount, sfcompetitors, docs) {
+
+        var fields = [];
+        var values = [];
+
+        // Filter industry
+        if (sfaccount && sfaccount.Industry) {
+          fields.push("sales:industry");
+          values.push(sfaccount.Industry)
+        }
+
+        // Filter stage
+        if (sfopportunity && sfopportunity.StageName) {
+          fields.push("sales:stage");
+          values.push(this._slashToUnderscore(sfopportunity.StageName))
+        }
+
+        // Filter Customer SOA Score
+        if (sfopportunity && sfopportunity.Customer_Stage_of_Adoption_Score__c) {
+          fields.push("sales:custStage");
+          values.push(this._slashToUnderscore(sfopportunity.Customer_Stage_of_Adoption_Score__c))
+        }
+
+        // Filter Solution type
+        if (sfopportunity && sfopportunity.Opportunity_Solution__c) {
+          fields.push("sales:oppSolution");
+          values.push(sfopportunity.Opportunity_Solution__c)
+        }
+
+        // Filter Competitors
+        if (sfcompetitors && sfcompetitors.records && (sfcompetitors.records.length > 0)) {
+          for (i = 0; i < sfcompetitors.records.length; i++) {
+            fields.push("sales:competitor");
+            values.push(sfcompetitors.records[i].CompetitorName)
+          }
+        }
+
+        if (fields.length > 0) {
+          this.pillFilters = {
+            fields: fields,
+            values: values
+          }
+        }
+
       }
 
     });

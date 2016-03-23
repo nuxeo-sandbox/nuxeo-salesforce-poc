@@ -132,7 +132,9 @@ Requires <nuxeo-connection> in order to get icons.
             show-pills
             show-action-lock
             pill-fields="[[pillFields]]"
-            pill-colors="[[pillColors]]"></nuxeo-listing-document>
+            pill-colors="[[pillColors]]"
+            filter-pills=[[filterPills]]
+            pill-filters=[[pillFilters]]></nuxeo-listing-document>
         </template>
       </div>
 
@@ -197,6 +199,12 @@ Requires <nuxeo-connection> in order to get icons.
               "color": "4"
             }]
           }
+        },
+        filterPills: {
+          type: Boolean
+        },
+        pillFilters: {
+          type: Object
         }
       },
 
