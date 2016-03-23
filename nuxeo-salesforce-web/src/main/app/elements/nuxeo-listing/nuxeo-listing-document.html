@@ -235,7 +235,9 @@ Requires <nuxeo-connection> in order to get icons.
             if="[[_docHasPills(doc)]]">
             <nuxeo-document-pills doc="[[doc]]"
               fields="[[pillFields]]"
-              pill-colors="[[pillColors]]"></nuxeo-document-pills>
+              pill-colors="[[pillColors]]"
+              filter-pills=[[filterPills]]
+              pill-filters=[[pillFilters.fields]]></nuxeo-document-pills>
           </template>
         </template>
 
@@ -314,6 +316,12 @@ Requires <nuxeo-connection> in order to get icons.
         },
         pillColors: {
           type: Array
+        },
+        filterPills: {
+          type: Boolean
+        },
+        pillFilters: {
+          type: Object
         }
       },
 
