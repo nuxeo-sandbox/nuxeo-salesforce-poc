@@ -157,7 +157,7 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           <nuxeo-listing document-list="[[publicDocs]]"
             class="documentListContainer"
             filter-pills
-            pill-filters=[[pillFilters.fields]]></nuxeo-listing>
+            pill-filters=[[pillFilters]]></nuxeo-listing>
         </paper-header-panel>
       </div>
 
@@ -452,47 +452,46 @@ The main nuxeo-salesforce application to be embedded in SFDC.
          values that match the current opportunity object and not all matching values. */
       _setPillFilters: function(sfopportunity, sfaccount, sfcompetitors, docs) {
 
-        if (this.filterPills) {
+        var fields = [];
+        var values = [];
 
-          var fields = [];
-          var values = [];
+        // Filter industry
+        if (sfaccount && sfaccount.Industry) {
+          fields.push("sales:industry");
+          values.push(sfaccount.Industry)
+        }
 
-          // Filter industry
-          if (sfaccount && sfaccount.Industry) {
-            fields.push("sales:industry");
-            values.push(sfaccount.Industry)
-          }
+        // Filter stage
+        if (sfopportunity && sfopportunity.StageName) {
+          fields.push("sales:stage");
+          values.push(this._slashToUnderscore(sfopportunity.StageName))
+        }
 
-          // Filter stage
-          if (sfopportunity && sfopportunity.StageName) {
-            fields.push("sales:stage");
-            values.push(this._slashToUnderscore(sfopportunity.StageName))
-          }
+        // Filter Customer SOA Score
+        if (sfopportunity && sfopportunity.Customer_Stage_of_Adoption_Score__c) {
+          fields.push("sales:custStage");
+          values.push(this._slashToUnderscore(sfopportunity.Customer_Stage_of_Adoption_Score__c))
+        }
 
-          // Filter Customer SOA Score
-          if (sfopportunity && sfopportunity.Customer_Stage_of_Adoption_Score__c) {
-            fields.push("sales:custStage");
-            values.push(this._slashToUnderscore(sfopportunity.Customer_Stage_of_Adoption_Score__c))
-          }
+        // Filter Solution type
+        if (sfopportunity && sfopportunity.Opportunity_Solution__c) {
+          fields.push("sales:oppSolution");
+          values.push(sfopportunity.Opportunity_Solution__c)
+        }
 
-          // Filter Solution type
-          if (sfopportunity && sfopportunity.Opportunity_Solution__c) {
-            fields.push("sales:oppSolution");
-            values.push(sfopportunity.Opportunity_Solution__c)
-          }
-
-          // Filter Competitors
-          if (sfcompetitors && sfcompetitors.records && (sfcompetitors.records.length > 0)) {
-            for (i = 0; i < sfcompetitors.records.length; i++) {
-              fields.push("sales:competitor");
-              values.push(sfcompetitors.records[i].CompetitorName)
-            }
+        // Filter Competitors
+        if (sfcompetitors && sfcompetitors.records && (sfcompetitors.records.length > 0)) {
+          for (i = 0; i < sfcompetitors.records.length; i++) {
+            fields.push("sales:competitor");
+            values.push(sfcompetitors.records[i].CompetitorName)
           }
         }
 
-        if(fields.length>0){
-          pillFilters.fields = fields;
-          pillFilters.values = values;
+        if (fields.length > 0) {
+          this.pillFilters = {
+            fields: fields,
+            values: values
+          }
         }
 
       }
