@@ -125,19 +125,24 @@ An element to display metadata in a tag-like format.
       },
 
       _getMetadata: function(doc, field) {
-        if (this.filterPills) {
+        if (this.filterPills && this.pillFilters) {
           var docMetadata = doc.properties[field];
-
           if (this._metadataIsArray(doc, field)) {
             var filteredMetadata = [];
             for (i = 0; i < docMetadata.length; i++) {
-              if (this.pillFilters.values[docMetadata[i]]) {
-                filteredMetadata.push(docMetadata[i]);
+              for (j = 0; j < this.pillFilters.values.length; j++) {
+                if (this.pillFilters.values[j] == docMetadata[i]) {
+                  filteredMetadata.push(docMetadata[i]);
+                }
               }
-              return filteredMetadata;
             }
+            return filteredMetadata;
           } else {
-            return this.pillFilters.values[docMetadata];
+            for (j = 0; j < this.pillFilters.values.length; j++) {
+              if (this.pillFilters.values[j] == docMetadata) {
+                return this.pillFilters.values[j];
+              }
+            }
           }
         } else {
           return doc.properties[field];
