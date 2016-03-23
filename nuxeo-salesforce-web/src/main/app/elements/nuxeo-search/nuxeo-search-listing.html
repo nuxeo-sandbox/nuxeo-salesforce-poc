@@ -43,8 +43,7 @@ Requires <nuxeo-connection> in order to get icons.
       nuxeo-metadata {
         --paper-toolbar-background: var(--nuxeo-metadata-toolbar-background);
         --paper-toolbar-color: var(--nuxeo-metadata-toolbar-color);
-        /* Put a divider between the drawer and the main panel. */
-        border-left: solid 1px var(--divider-color);
+        --paper-toolbar-height: 48px;
         position: fixed;
       }
 
@@ -116,7 +115,9 @@ Requires <nuxeo-connection> in order to get icons.
         pillFields: {
           type: Array,
           value: function() {
-            return ["sales:oppSolution",
+            return [
+              "sales:audience",
+              "sales:oppSolution",
               "sales:competitor"
             ]
           }
@@ -130,6 +131,9 @@ Requires <nuxeo-connection> in order to get icons.
             }, {
               "field": "sales:competitor",
               "color": "1"
+            }, {
+              "field": "sales:audience",
+              "color": "2"
             }]
           }
         }
