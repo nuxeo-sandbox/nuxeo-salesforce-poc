@@ -156,7 +156,8 @@ The main nuxeo-salesforce application to be embedded in SFDC.
               bind-value="{{_publicSearchTerms}}"></paper-input>
           </paper-toolbar>
           <nuxeo-listing document-list="[[publicDocs]]"
-            class="documentListContainer"></nuxeo-listing>
+            class="documentListContainer"
+            filter-pills></nuxeo-listing>
         </paper-header-panel>
       </div>
 
@@ -178,7 +179,8 @@ The main nuxeo-salesforce application to be embedded in SFDC.
           </paper-toolbar>
 
           <nuxeo-listing document-list="[[internalDocs]]"
-            class="documentListContainer"></nuxeo-listing>
+            class="documentListContainer"
+            filter-pills></nuxeo-listing>
         </paper-header-panel>
       </div>
 
