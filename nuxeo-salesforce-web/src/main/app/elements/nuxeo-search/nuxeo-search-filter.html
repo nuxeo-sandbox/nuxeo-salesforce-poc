@@ -19,9 +19,32 @@ Lesser General Public License for more details.
       margin-left: 10px;
     }
 
-    .filterItemLabel {
-      margin-top: 10px;
-      margin-bottom: 8px;
+    nuxeo-checkbox-aggregation {
+      padding: 3px;
+    }
+
+    nuxeo-checkbox-aggregation::content .filterItemLabel {
+      margin-top: 0px;
+      margin-bottom: 5px;
+      padding: 3px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
+    nuxeo-checkbox-aggregation:nth-child(2)::content .filterItemLabel {
+      background: var(--nuxeo-document-pill0-color);
+    }
+
+    nuxeo-checkbox-aggregation:nth-child(3)::content .filterItemLabel {
+      background: var(--nuxeo-document-pill1-color);
+    }
+
+    nuxeo-checkbox-aggregation:nth-child(4)::content .filterItemLabel {
+      background: var(--nuxeo-document-pill2-color);
+    }
+
+    nuxeo-checkbox-aggregation:nth-child(5)::content .filterItemLabel {
+      background: var(--nuxeo-document-pill3-color);
     }
 
   </style>
@@ -36,7 +59,18 @@ Lesser General Public License for more details.
         class="filterItem"
         value="{{fulltext}}"></paper-input>
 
-      <nuxeo-es-aggregates id="aggregates" agg="{{aggregates}}"
+      <nuxeo-checkbox-aggregation name='Opportunity Solution Type'
+        aggregations='[[aggregations]]'
+        selected-values="{{oppSolutionAgg}}"></nuxeo-checkbox-aggregation>
+      <nuxeo-checkbox-aggregation name='Competitors'
+        aggregations='[[aggregations]]'
+        selected-values="{{competitorAgg}}"></nuxeo-checkbox-aggregation>
+      <nuxeo-checkbox-aggregation name='Audience'
+        aggregations='[[aggregations]]'
+        selected-values="{{audienceAgg}}"></nuxeo-checkbox-aggregation>
+
+      <nuxeo-es-aggregates id="aggregates"
+        agg="{{aggregates}}"
         post-filters={{post_filter}}>
         <nuxeo-es-aggregate-term name="Opportunity Solution Type"
           field="sales:oppSolution"
@@ -44,14 +78,10 @@ Lesser General Public License for more details.
         <nuxeo-es-aggregate-term name="Competitors"
           field="sales:competitor"
           selected-values="{{competitorAgg}}"></nuxeo-es-aggregate-term>
+        <nuxeo-es-aggregate-term name="Audience"
+          field="sales:audience"
+          selected-values="{{audienceAgg}}"></nuxeo-es-aggregate-term>
       </nuxeo-es-aggregates>
-
-      <nuxeo-checkbox-aggregation name='Opportunity Solution Type'
-        aggregations='[[aggregations]]'
-        selected-values="{{oppSolutionAgg}}"></nuxeo-checkbox-aggregation>
-      <nuxeo-checkbox-aggregation name='Competitors'
-        aggregations='[[aggregations]]'
-        selected-values="{{competitorAgg}}"></nuxeo-checkbox-aggregation>
 
     </div>
 
@@ -68,8 +98,7 @@ Lesser General Public License for more details.
       suggest=[[suggest]]
       suggestions={{suggestions}}></nuxeo-es-search>
 
-    <nuxeo-es-hits-to-docs
-      hits={{hits}}
+    <nuxeo-es-hits-to-docs hits={{hits}}
       docs={{docs}}
       enrichers="preview, documentURL, driveEditURL">
     </nuxeo-es-hits-to-docs>
@@ -205,7 +234,7 @@ Lesser General Public License for more details.
                       }
                     }, {
                       terms: {
-                        "ecm:primaryType": ["File","Video","Picture","WebPage"]
+                        "ecm:primaryType": ["File", "Video", "Picture", "WebPage"]
                       }
                     }],
                     must_not: [{

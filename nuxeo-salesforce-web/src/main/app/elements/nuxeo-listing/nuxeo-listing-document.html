@@ -53,7 +53,6 @@ Requires <nuxeo-connection> in order to get icons.
       }
 
       paper-card[selected] {
-        font-weight: bold;
         border-color: var(--paper-card-selected-primary-color);
       }
 
@@ -64,6 +63,7 @@ Requires <nuxeo-connection> in order to get icons.
         --paper-toolbar-color: var(--primary-text-color);
         --paper-toolbar-title: {
           font-size: initial;
+          font-weight: bold;
         }
       }
 
@@ -79,6 +79,8 @@ Requires <nuxeo-connection> in order to get icons.
       }
 
       nuxeo-document-pills::content .documentPills {
+        margin-left: 4px;
+        margin-bottom: 5px;
         display: inline-flex;
         flex-wrap: wrap;
       }
@@ -100,8 +102,19 @@ Requires <nuxeo-connection> in order to get icons.
         overflow: hidden;
       }
 
+      .rating-container {
+        margin-left: 4px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
+
       .rating {
+        border-radius: 3px;
         display: inline-flex;
+        padding: 3px;
+        box-shadow: 1px 1px 1px #888888;
+        background: var(--nuxeo-document-pills-light-color);
+        color: var(--nuxeo-document-pills-dark-color);
       }
 
     </style>
@@ -228,9 +241,11 @@ Requires <nuxeo-connection> in order to get icons.
 
         <template is="dom-if"
           if="{{_docHasRatedFacet(doc)}}">
-          <div class="rating">
-            <nuxeo-star-rating rating="[[doc.properties.rated:avg]]"></nuxeo-star-rating>
-            <div>([[doc.properties.rated:count]])</div>
+          <div class="rating-container">
+            <div class="rating">
+              <nuxeo-star-rating rating="[[doc.properties.rated:avg]]"></nuxeo-star-rating>
+              <div>([[doc.properties.rated:count]])</div>
+            </div>
           </div>
         </template>
 

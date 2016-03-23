@@ -30,10 +30,6 @@ Requires <nuxeo-connection> in order to get icons.
       paper-drawer-panel {
         /* Allow the page to scroll if the content is too tall. */
         overflow-y: scroll;
-        /* Put a divider between the drawer and the main panel. */
-        --paper-drawer-panel-main-container: {
-          border-right: solid 1px var(--divider-color);
-        }
       }
 
       paper-drawer-panel::content div#main [main] {
@@ -47,6 +43,7 @@ Requires <nuxeo-connection> in order to get icons.
       nuxeo-metadata {
         --paper-toolbar-background: var(--nuxeo-metadata-toolbar-background);
         --paper-toolbar-color: var(--nuxeo-metadata-toolbar-color);
+        --paper-toolbar-height: 48px;
         position: fixed;
       }
 
@@ -56,21 +53,23 @@ Requires <nuxeo-connection> in order to get icons.
       }
 
       nuxeo-listing-document {
-        padding: 5px;
+        padding-bottom: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
         display: block;
+      }
+
+      nuxeo-listing-document:first-child {
+        padding-top: 10px;
       }
 
       nuxeo-listing-document[selected]::content paper-card {
         border-color: var(--paper-card-selected-primary-color);
       }
 
-      nuxeo-listing-document[selected]::content paper-card paper-toolbar .title {
-        font-weight: bold;
-      }
-
       paper-drawer-panel {
         --paper-drawer-panel-right-drawer-container: {
-          background-color: var(--light-primary-color);
+          background: var(--primary-background-color);
         }
       }
 
