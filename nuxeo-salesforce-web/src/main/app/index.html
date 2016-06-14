@@ -24,57 +24,57 @@ Contributors:
 <head>
   <meta charset="utf-8">
   <meta name="description"
-    content="">
+      content="">
   <meta name="viewport"
-    content="width=device-width, initial-scale=1">
+      content="width=device-width, initial-scale=1">
   <meta name="generator"
-    content="Polymer Starter Kit" />
+      content="Polymer Starter Kit" />
   <title>Nuxeo Salesforce</title>
   <!-- Place favicon.ico in the `app/` directory -->
 
   <!-- Chrome for Android theme color -->
   <meta name="theme-color"
-    content="#222222">
+      content="#222222">
 
   <!-- Web Application Manifest -->
   <link rel="manifest"
-    href="manifest.json">
+      href="manifest.json">
 
   <!-- Tile color for Win8 -->
   <meta name="msapplication-TileColor"
-    content="#222222">
+      content="#222222">
 
   <!-- Add to homescreen for Chrome on Android -->
   <meta name="mobile-web-app-capable"
-    content="yes">
+      content="yes">
   <meta name="application-name"
-    content="PSK">
+      content="PSK">
   <link rel="icon"
-    sizes="192x192"
-    href="images/touch/chrome-touch-icon-192x192.png">
+      sizes="192x192"
+      href="images/touch/chrome-touch-icon-192x192.png">
 
   <!-- Add to homescreen for Safari on iOS -->
   <meta name="apple-mobile-web-app-capable"
-    content="yes">
+      content="yes">
   <meta name="apple-mobile-web-app-status-bar-style"
-    content="black">
+      content="black">
   <meta name="apple-mobile-web-app-title"
-    content="Polymer Starter Kit">
+      content="Polymer Starter Kit">
   <link rel="apple-touch-icon"
-    href="images/touch/apple-touch-icon.png">
+      href="images/touch/apple-touch-icon.png">
 
   <!-- Tile icon for Win8 (144x144) -->
   <meta name="msapplication-TileImage"
-    content="images/touch/ms-touch-icon-144x144-precomposed.png">
+      content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
   <!-- build:css styles/main.css -->
   <link rel="stylesheet"
-    href="styles/main.css">
+      href="styles/main.css">
   <!-- endbuild-->
 
   <!-- build:css https://fonts.googleapis.com/icon?family=Material+Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    rel="stylesheet">
+      rel="stylesheet">
   <!-- endbuild -->
 
   <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
@@ -92,7 +92,7 @@ Contributors:
 
   <!-- will be replaced with elements/elements.vulcanized.html -->
   <link rel="import"
-    href="elements/elements.html">
+      href="elements/elements.html">
   <!-- endreplace-->
 
   <style>
@@ -100,48 +100,47 @@ Contributors:
       border: 1px solid;
       box-shadow: 5px 5px 3px #888888;
     }
-
   </style>
 </head>
 
 <body unresolved
-  class="fullbleed layout vertical">
+    class="fullbleed layout vertical">
 
   <div id="authorized"
-    style="display:none">
+      style="display:none">
     <span id="browser-sync-binding"></span>
     <template is="dom-bind"
-      id="app">
+        id="app">
 
       <nuxeo-connection id="nx"
-        url="/nuxeo"></nuxeo-connection>
+          url="/nuxeo"></nuxeo-connection>
       <nuxeo-salesforce-app></nuxeo-salesforce-app>
 
     </template>
   </div>
 
   <div id="startup"
-    style="text-align:center; margin:3em;">
+      style="text-align:center; margin:3em;">
     <img src="images/nuxeo.png"
-      class="smallIcon">
+        class="smallIcon">
     <h2>Loading, Please Wait...</h2>
   </div>
 
   <div id="sf-connection-error"
-    style="text-align:center; margin:3em; display:none">
+      style="text-align:center; margin:3em; display:none">
     <img src="images/nuxeo.png"
-      class="smallIcon">
+        class="smallIcon">
     <h2>Unable to Contact Salesforce</h2>
     <p>Please ensure that Nuxeo is authorized to access Salesforce via the pop-up.</p>
     <p>If you do not see the pop-up please check to see if your browser is blocking it.</p>
     <p><img class="popup"
-        src="images/pop-up.png"></p>
+          src="images/pop-up.png"></p>
   </div>
 
   <div id="error_content"
-    style="text-align:center; margin:3em; display:none">
+      style="text-align:center; margin:3em; display:none">
     <img src="images/nuxeo.png"
-      class="smallIcon">
+        class="smallIcon">
     <h2>We're sorry.</h2>
     <p>An error occured.</p>
     <p id="message_error"></p>
