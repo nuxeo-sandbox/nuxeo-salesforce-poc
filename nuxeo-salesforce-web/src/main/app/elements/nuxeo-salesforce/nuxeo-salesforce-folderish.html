@@ -25,7 +25,8 @@ Includes a path breadcrumb and features for the folder.
 
 Includes the ability to upload a file to Nuxeo from the "Docs" tab.
 -->
-<dom-module id="nuxeo-salesforce-folderish" assetpath="nuxeo-salesforce/">
+<dom-module id="nuxeo-salesforce-folderish"
+    assetpath="nuxeo-salesforce/">
   <style>
     :host {
       display: block;
@@ -61,40 +62,78 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
     .searchBox {
       width: 25em;
     }
-
   </style>
 
   <template>
 
     <!-- Nuxeo and Salesforce connections -->
     <nuxeo-connection id="nx"></nuxeo-connection>
-    <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-salesforce-connection id="sf" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
+    <nuxeo-resource id="oauth2directory"
+        path="/oauth2directory/salesforce"
+        response="{{result}}"
+        auto=""
+        success="{{success}}"
+        error="{{error}}"></nuxeo-resource>
+    <nuxeo-salesforce-connection id="sf"
+        callback="[[result.userAuthorizationURL]]"
+        clientid="[[result.clientId]]"
+        sfobject="{{sfobject}}"></nuxeo-salesforce-connection>
 
     <!-- Nuxeo resources -->
-    <nuxeo-resource id="parentResource" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-resource id="query" path="/query" response="{{documentList}}" enrichers="preview, documentURL, driveEditURL" success="{{success}}" error="{{error}}"></nuxeo-resource>
-    <nuxeo-operation id="fetchSFObject" op="javascript.FetchSFObject" enrichers="documentURL" params="[[params]]" response="{{currentParent}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
-    <nuxeo-operation id="getChildren" op="javascript.SFGetChildren" input="[[currentParent.uid]]" enrichers="preview, documentURL, driveEditURL" response="{{documentList}}" success="{{success}}" error="{{error}}"></nuxeo-operation>
+    <nuxeo-resource id="parentResource"
+        response="{{currentParent}}"
+        success="{{success}}"
+        error="{{error}}"></nuxeo-resource>
+    <nuxeo-resource id="query"
+        path="/query"
+        response="{{documentList}}"
+        enrichers="preview, documentURL, driveEditURL"
+        success="{{success}}"
+        error="{{error}}"></nuxeo-resource>
+    <nuxeo-operation id="fetchSFObject"
+        op="javascript.FetchSFObject"
+        enrichers="documentURL"
+        params="[[params]]"
+        response="{{currentParent}}"
+        success="{{success}}"
+        error="{{error}}"></nuxeo-operation>
+    <nuxeo-operation id="getChildren"
+        op="javascript.SFGetChildren"
+        input="[[currentParent.uid]]"
+        enrichers="preview, documentURL, driveEditURL"
+        response="{{documentList}}"
+        success="{{success}}"
+        error="{{error}}"></nuxeo-operation>
 
     <div class="header-panel-container">
 
       <paper-header-panel mode="waterfall">
 
         <div class="paper-header">
-          <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]" new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
+          <nuxeo-listing-breadcrumb breadcrumb-path="[[currentParent.path]]"
+              new-parent-path="{{parentPath}}"></nuxeo-listing-breadcrumb>
           <paper-toolbar justify="justified">
-            <paper-input id="searchDocsInput" class="searchBox" type=search label="Search" bind-value="{{searchTerm}}"></paper-input>
-            <paper-icon-button icon="notification:sync" title="Refresh" on-tap="_refresh"></paper-icon-button>
+            <paper-input id="searchDocsInput"
+                class="searchBox"
+                type=search
+                label="Search"
+                bind-value="{{searchTerm}}"></paper-input>
+            <paper-icon-button icon="notification:sync"
+                title="Refresh"
+                on-tap="_refresh"></paper-icon-button>
           </paper-toolbar>
         </div>
 
-        <nuxeo-listing id="dropZone" document-list="[[documentList.entries]]" parent-path="{{parentPath}}" class="documentListContainer"></nuxeo-listing>
+        <nuxeo-listing id="dropZone"
+            document-list="[[documentList.entries]]"
+            parent-path="{{parentPath}}"
+            class="documentListContainer"></nuxeo-listing>
 
       </paper-header-panel>
     </div>
 
-    <paper-dialog id="modalWarning" class="folder-box">
+    <paper-dialog id="modalWarning"
+        class="folder-box">
       <h3>Warning</h3>
       <div id="modalWarningContent"></div>
       <div class="buttons">
@@ -209,12 +248,16 @@ Includes the ability to upload a file to Nuxeo from the "Docs" tab.
         for (var i = 0; i < files.length; i++) {
           // get item
           file = files.item(i);
-          var blob = new Nuxeo.Blob({content: file});
+          var blob = new Nuxeo.Blob({
+            content: file
+          });
           var nuxeo = this.$.nx.client;
           var currentParent = this.currentParent;
           var me = this;
           nuxeo.batchUpload().upload(blob).then(function(res) {
-            return nuxeo.operation('FileManager.Import').context({currentDocument: currentParent.path}).input(res.blob).execute({
+            return nuxeo.operation('FileManager.Import').context({
+              currentDocument: currentParent.path
+            }).input(res.blob).execute({
               schemas: ['dublincore', 'file']
             });
           }).then(function(doc) {
