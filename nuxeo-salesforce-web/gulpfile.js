@@ -35,7 +35,7 @@ var AUTOPREFIXER_BROWSERS = [
 ];
 
 var APP = 'src/main/app',
-    DIST = 'target/classes/web/nuxeo.war/picker';
+    DIST = 'target/classes/nuxeo.war/picker';
 
 var styleTask = function (stylesPath, srcs) {
   return gulp.src(srcs.map(function(src) {
@@ -44,7 +44,7 @@ var styleTask = function (stylesPath, srcs) {
     .pipe($.changed(stylesPath, {extension: '.css'}))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
     .pipe(gulp.dest('.tmp/' + stylesPath))
-    .pipe($.if('*.css', $.cssmin()))
+    .pipe($.if('*.css', $.minifyCss()))
     .pipe(gulp.dest(DIST + '/' + stylesPath))
     .pipe($.size({title: stylesPath}));
 };
@@ -127,10 +127,10 @@ gulp.task('html', function () {
     .pipe($.if('*.html', $.replace('elements/elements.html', 'elements/elements.vulcanized.html')))
     .pipe(assets)
     // Concatenate And Minify JavaScript
-    .pipe($.if('*.js', $.uglify({preserveComments: 'some'})))
+    .pipe($.if('*.js', $.uglify()))
     // Concatenate And Minify Styles
     // In case you are still using useref build blocks
-    .pipe($.if('*.css', $.cssmin()))
+    .pipe($.if('*.css', $.minifyCss()))
     .pipe(assets.restore())
     .pipe($.useref())
     // Minify Any HTML
@@ -212,7 +212,7 @@ gulp.task('serve', ['styles', 'elements', 'images'], function () {
     // Run as an https by uncommenting 'https: true'
     // Note: this uses an unsigned certificate which on first access
     //       will present a certificate warning in the browser.
-   https: true,
+   // https: true,
     server: {
       baseDir: ['.tmp', APP],
       middleware: [ require('proxy-middleware')(proxyOptions) ],
@@ -251,19 +251,12 @@ gulp.task('serve:dist', ['default'], function () {
   });
 });
 
-// Compress our picker.js
-gulp.task('compress', function() {
-  return gulp.src(APP + '/picker.js')
-    .pipe($.uglify())
-    .pipe(gulp.dest(DIST));
-});
-
 // Build Production Files, the Default Task
 gulp.task('default', ['clean'], function (cb) {
   runSequence(
     ['copy', 'styles'],
     'elements',
-    ['images', 'fonts', 'html', 'compress'],
+    ['images', 'fonts', 'html'],
     'vulcanize', 'dist:bower',
     cb);
     // Note: add , 'precache' , after 'vulcanize', if your are going to use Service Worker
