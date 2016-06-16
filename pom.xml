@@ -3,12 +3,12 @@
   <parent>
     <groupId>org.nuxeo</groupId>
     <artifactId>nuxeo-addons-parent</artifactId>
-    <version>7.10</version>
+    <version>8.2</version>
   </parent>
 
   <groupId>org.nuxeo.salesforce</groupId>
   <artifactId>nuxeo-salesforce-parent</artifactId>
-  <version>7.10-SNAPSHOT</version>
+  <version>8.2-SNAPSHOT</version>
   <name>Nuxeo Salesforce Parent</name>
   <description>Nuxeo Salesforce POM</description>
   <packaging>pom</packaging>
@@ -22,8 +22,8 @@
 
   <properties>
     <nuxeo.project.version>${project.version}</nuxeo.project.version>
-    <nuxeo.version>7.10</nuxeo.version>
-    <nuxeo.distribution.version>7.10</nuxeo.distribution.version>
+    <nuxeo.version>8.2</nuxeo.version>
+    <nuxeo.distribution.version>8.2</nuxeo.distribution.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
