@@ -79,16 +79,17 @@ public class RenderTemplateOp {
 
         // get template
         DocumentModel template = session.getDocument(new IdRef(templateUid));
+        String templateName = (String)template.getPropertyValue("dc:title");
 
         // create Doc
 
-        DocumentModel renderedTemplate = session.createDocumentModel(opportunityDoc.getPathAsString(),"SOW","File");
+        DocumentModel renderedTemplate = session.createDocumentModel(opportunityDoc.getPathAsString(),templateName,"File");
         renderedTemplate.addFacet("TemplateBased");
         renderedTemplate.addFacet("salesforceTemplate");
 
         //Map properties
         //opportunity
-        renderedTemplate.setPropertyValue("dc:title","SOW - "+opportunity.get("Name"));
+        renderedTemplate.setPropertyValue("dc:title",templateName +" for "+opportunity.get("Name"));
         renderedTemplate.setPropertyValue("sfop:name",opportunity.get("Name"));
 
         //Account
