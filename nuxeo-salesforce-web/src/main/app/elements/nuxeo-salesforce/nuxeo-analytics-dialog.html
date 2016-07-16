@@ -58,7 +58,7 @@ An element to display a dialog for template rendering.
     <nuxeo-resource id="oauth2directory" path="/oauth2directory/salesforce" response="{{result}}" auto="" success="{{success}}" error="{{error}}"></nuxeo-resource>
     <nuxeo-salesforce-connection id="sfc" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfopportunity}}"></nuxeo-salesforce-connection>
     <nuxeo-salesforce-query id="sfco" callback="[[result.userAuthorizationURL]]" clientid="[[result.clientId]]" sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
-    <nuxeo-es-search id='DocumentProvider' index="audit" query=[[query]] size="0" aggregates=[[aggregates]] aggregations={{aggregations}}></nuxeo-es-search>
+    <nuxeo-es-query id='DocumentProvider' index="audit" query=[[query]] size="0" aggregates=[[aggregates]] aggregations={{aggregations}}></nuxeo-es-query>
       <div class="titleContainer">
         <div class="verticalCenterAnything">Analytics</div>
       </div>
