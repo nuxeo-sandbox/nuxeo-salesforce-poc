@@ -3,7 +3,8 @@
 
   <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations">
     <operation class="org.nuxeo.salesforce.CreateSowOp" />
+    <operation class="org.nuxeo.salesforce.RenderTemplateOp" />
     <operation class="org.nuxeo.salesforce.ExtendedAuditLogOp" />
   </extension>
-  
+
 </component>
