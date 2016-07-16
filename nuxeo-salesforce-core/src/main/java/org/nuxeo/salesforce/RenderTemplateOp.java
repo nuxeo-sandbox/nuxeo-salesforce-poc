@@ -70,48 +70,48 @@ public class RenderTemplateOp {
         // get opportunity folder
         DocumentModelList list =
                 session.query(
-                        "Select * From Document WHERE sfop:objectId = '"+
-                                opportunity.get("Id")+"'");
+                        "Select * From Document WHERE sfop:objectId = '" +
+                                opportunity.get("Id") + "'");
 
-        if (list.size()==0) return null;
+        if (list.size() == 0) return null;
 
         DocumentModel opportunityDoc = list.get(0);
 
         // get template
         DocumentModel template = session.getDocument(new IdRef(templateUid));
-        String templateName = (String)template.getPropertyValue("dc:title");
+        String templateName = (String) template.getPropertyValue("dc:title");
 
         // create Doc
 
-        DocumentModel renderedTemplate = session.createDocumentModel(opportunityDoc.getPathAsString(),templateName,"File");
+        DocumentModel renderedTemplate = session.createDocumentModel(opportunityDoc.getPathAsString(), templateName, "File");
         renderedTemplate.addFacet("TemplateBased");
         renderedTemplate.addFacet("salesforceTemplate");
 
         //Map properties
         //opportunity
-        renderedTemplate.setPropertyValue("dc:title",templateName +" for "+opportunity.get("Name"));
-        renderedTemplate.setPropertyValue("sfop:name",opportunity.get("Name"));
+        renderedTemplate.setPropertyValue("dc:title", templateName + " for " + opportunity.get("Name"));
+        renderedTemplate.setPropertyValue("sfop:name", opportunity.get("Name"));
 
         //Account
-        renderedTemplate.setPropertyValue("sfa:name",account.get("Name"));
-        renderedTemplate.setPropertyValue("sfa:street",account.get("BillingStreet"));
-        renderedTemplate.setPropertyValue("sfa:city",account.get("BillingCity"));
-        renderedTemplate.setPropertyValue("sfa:country",account.get("BillingCountry"));
-        renderedTemplate.setPropertyValue("sfa:postalcode",account.get("BillingPostalCode"));
+        renderedTemplate.setPropertyValue("sfa:name", account.get("Name"));
+        renderedTemplate.setPropertyValue("sfa:street", account.get("BillingStreet"));
+        renderedTemplate.setPropertyValue("sfa:city", account.get("BillingCity"));
+        renderedTemplate.setPropertyValue("sfa:country", account.get("BillingCountry"));
+        renderedTemplate.setPropertyValue("sfa:postalcode", account.get("BillingPostalCode"));
 
 
         //Owner
-        renderedTemplate.setPropertyValue("sfu:name",account.get("Name"));
-        renderedTemplate.setPropertyValue("sfu:title",account.get("Title"));
-        renderedTemplate.setPropertyValue("sfu:phone",account.get("Phone"));
-        renderedTemplate.setPropertyValue("sfu:email",account.get("Email"));
+        renderedTemplate.setPropertyValue("sfu:name", account.get("Name"));
+        renderedTemplate.setPropertyValue("sfu:title", account.get("Title"));
+        renderedTemplate.setPropertyValue("sfu:phone", account.get("Phone"));
+        renderedTemplate.setPropertyValue("sfu:email", account.get("Email"));
 
         //sections
         renderedTemplate.setPropertyValue("sections:sections", (Serializable) sections);
 
         renderedTemplate = session.createDocument(renderedTemplate);
         TemplateBasedDocument templateBasedDocument = renderedTemplate.getAdapter(TemplateBasedDocument.class);
-        templateBasedDocument.setTemplate(template,false);
+        templateBasedDocument.setTemplate(template, false);
 
         Blob rendered = templateBasedDocument.renderWithTemplate(template.getName());
 
