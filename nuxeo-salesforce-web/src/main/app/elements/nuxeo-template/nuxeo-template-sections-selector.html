@@ -94,7 +94,7 @@ An element to display a dialog for template rendering.
       clientid="[[result.clientId]]"
       sfobject="{{sfcontacts}}"></nuxeo-salesforce-query>
     <nuxeo-operation id="render"
-      op="Conversion.CreateSowOp"
+      op="Conversion.RenderTemplateOp"
       enrichers="preview, documentURL, driveEditURL"
       response="{{_result}}"
       success="{{success}}"

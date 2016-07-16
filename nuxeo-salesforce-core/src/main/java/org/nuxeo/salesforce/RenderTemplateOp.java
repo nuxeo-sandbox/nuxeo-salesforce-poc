@@ -24,10 +24,7 @@ import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
 import org.nuxeo.ecm.automation.core.util.Properties;
-import org.nuxeo.ecm.core.api.Blob;
-import org.nuxeo.ecm.core.api.CoreSession;
-import org.nuxeo.ecm.core.api.DocumentModel;
-import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.*;
 import org.nuxeo.template.api.adapters.TemplateBasedDocument;
 
 import java.io.Serializable;
@@ -68,7 +65,7 @@ public class RenderTemplateOp {
     protected List<String> sections;
 
     @OperationMethod
-    public DocumentModel run(DocumentModel template) {
+    public DocumentModel run() {
 
         // get opportunity folder
         DocumentModelList list =
@@ -80,42 +77,45 @@ public class RenderTemplateOp {
 
         DocumentModel opportunityDoc = list.get(0);
 
+        // get template
+        DocumentModel template = session.getDocument(new IdRef(templateUid));
+
         // create Doc
 
-        DocumentModel sow = session.createDocumentModel(opportunityDoc.getPathAsString(),"SOW","File");
-        sow.addFacet("TemplateBased");
-        sow.addFacet("salesforceTemplate");
+        DocumentModel renderedTemplate = session.createDocumentModel(opportunityDoc.getPathAsString(),"SOW","File");
+        renderedTemplate.addFacet("TemplateBased");
+        renderedTemplate.addFacet("salesforceTemplate");
 
         //Map properties
         //opportunity
-        sow.setPropertyValue("dc:title","SOW - "+opportunity.get("Name"));
-        sow.setPropertyValue("sfop:name",opportunity.get("Name"));
+        renderedTemplate.setPropertyValue("dc:title","SOW - "+opportunity.get("Name"));
+        renderedTemplate.setPropertyValue("sfop:name",opportunity.get("Name"));
 
         //Account
-        sow.setPropertyValue("sfa:name",account.get("Name"));
-        sow.setPropertyValue("sfa:street",account.get("BillingStreet"));
-        sow.setPropertyValue("sfa:city",account.get("BillingCity"));
-        sow.setPropertyValue("sfa:country",account.get("BillingCountry"));
-        sow.setPropertyValue("sfa:postalcode",account.get("BillingPostalCode"));
+        renderedTemplate.setPropertyValue("sfa:name",account.get("Name"));
+        renderedTemplate.setPropertyValue("sfa:street",account.get("BillingStreet"));
+        renderedTemplate.setPropertyValue("sfa:city",account.get("BillingCity"));
+        renderedTemplate.setPropertyValue("sfa:country",account.get("BillingCountry"));
+        renderedTemplate.setPropertyValue("sfa:postalcode",account.get("BillingPostalCode"));
 
 
         //Owner
-        sow.setPropertyValue("sfu:name",account.get("Name"));
-        sow.setPropertyValue("sfu:title",account.get("Title"));
-        sow.setPropertyValue("sfu:phone",account.get("Phone"));
-        sow.setPropertyValue("sfu:email",account.get("Email"));
+        renderedTemplate.setPropertyValue("sfu:name",account.get("Name"));
+        renderedTemplate.setPropertyValue("sfu:title",account.get("Title"));
+        renderedTemplate.setPropertyValue("sfu:phone",account.get("Phone"));
+        renderedTemplate.setPropertyValue("sfu:email",account.get("Email"));
 
         //sections
-        sow.setPropertyValue("sections:sections", (Serializable) sections);
+        renderedTemplate.setPropertyValue("sections:sections", (Serializable) sections);
 
-        sow = session.createDocument(sow);
-        TemplateBasedDocument templateBasedDocument = sow.getAdapter(TemplateBasedDocument.class);
+        renderedTemplate = session.createDocument(renderedTemplate);
+        TemplateBasedDocument templateBasedDocument = renderedTemplate.getAdapter(TemplateBasedDocument.class);
         templateBasedDocument.setTemplate(template,false);
 
         Blob rendered = templateBasedDocument.renderWithTemplate(template.getName());
 
-        sow.setPropertyValue("file:content", (Serializable) rendered);
-        session.saveDocument(sow);
-        return sow;
+        renderedTemplate.setPropertyValue("file:content", (Serializable) rendered);
+        session.saveDocument(renderedTemplate);
+        return renderedTemplate;
     }
 }
