@@ -55,14 +55,14 @@ public class RenderTemplateOp {
     @Param(name = "opportunity", required = true)
     protected Properties opportunity;
 
-    @Param(name = "owner", required = true)
+    @Param(name = "owner", required = false)
     protected Properties owner;
 
-    @Param(name = "contacts", required = true)
+    @Param(name = "contacts", required = false)
     protected Properties contacts;
 
-    @Param(name = "sections", required = true)
-    protected List<String> sections;
+    @Param(name = "sections", required = false)
+    protected List<String> sections = null;
 
     @OperationMethod
     public DocumentModel run() {
